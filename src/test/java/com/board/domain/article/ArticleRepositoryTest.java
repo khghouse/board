@@ -1,5 +1,6 @@
-package com.board.domain;
+package com.board.domain.article;
 
+import com.board.domain.RepositoryTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

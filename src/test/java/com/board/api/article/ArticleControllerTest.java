@@ -1,6 +1,7 @@
-package com.board.api;
+package com.board.api.article;
 
-import com.board.domain.Article;
+import com.board.api.ControllerTestSupport;
+import com.board.domain.article.Article;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
