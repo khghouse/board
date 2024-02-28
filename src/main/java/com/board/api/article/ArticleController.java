@@ -1,5 +1,6 @@
 package com.board.api.article;
 
+import com.board.api.ApiResponse;
 import com.board.api.article.request.ArticleCreateRequest;
 import com.board.service.article.ArticleService;
 import lombok.RequiredArgsConstructor;
@@ -16,9 +17,8 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping
-    public String postArticle(@RequestBody ArticleCreateRequest request) {
-        articleService.postArticle(request.toServiceRequest());
-        return "hello";
+    public ApiResponse postArticle(@RequestBody ArticleCreateRequest request) {
+        return ApiResponse.ok(articleService.postArticle(request.toServiceRequest()));
     }
 
 }
