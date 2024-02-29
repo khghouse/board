@@ -1,7 +1,6 @@
 package com.board.service.article.request;
 
 import com.board.domain.article.Article;
-import jakarta.validation.constraints.Max;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +9,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ArticleCreateServiceRequest {
 
-    @Max(1)
     private String title;
     private String content;
 
