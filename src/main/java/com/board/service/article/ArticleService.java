@@ -6,11 +6,13 @@ import com.board.service.article.request.ArticleCreateServiceRequest;
 import com.board.service.article.response.ArticleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
@@ -18,13 +20,14 @@ public class ArticleService {
     /**
      * 게시글을 등록한다.
      */
+    @Transactional
     public ArticleResponse postArticle(ArticleCreateServiceRequest request) {
         Article article = articleRepository.save(request.toEntity());
         return ArticleResponse.of(article);
     }
 
     /**
-     * 게시글 1건을 조회한다.s
+     * 게시글 1건을 조회한다.
      */
     public ArticleResponse getArticle(Long id) {
         Article article = articleRepository.findById(id)
