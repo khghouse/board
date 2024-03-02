@@ -2,13 +2,15 @@ package com.board.api.article;
 
 import com.board.api.ControllerTestSupport;
 import com.board.api.article.request.ArticleCreateRequest;
+import com.board.api.article.request.ArticleRequest;
 import com.board.service.article.ArticleService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -21,14 +23,14 @@ class ArticleControllerTest extends ControllerTestSupport {
     @Test
     @DisplayName("게시글을 등록하고 정상 응답한다.")
     void postArticle() throws Exception {
-        //given
+        // given
         ArticleCreateRequest request = ArticleCreateRequest.builder()
                 .title("게시글 제목입니다.")
                 .content("게시글 내용입니다.")
                 .build();
 
         // when, then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/articles")
+        mockMvc.perform(post("/api/v1/articles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
@@ -44,7 +46,7 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/articles")
+        mockMvc.perform(post("/api/v1/articles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
@@ -64,7 +66,7 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/articles")
+        mockMvc.perform(post("/api/v1/articles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
@@ -83,7 +85,7 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/articles")
+        mockMvc.perform(post("/api/v1/articles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
@@ -103,7 +105,7 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/articles")
+        mockMvc.perform(post("/api/v1/articles")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
@@ -111,6 +113,54 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error").value("게시글 내용을 입력해 주세요."));
+    }
+
+    @Test
+    @DisplayName("게시글 1건을 조회하고 정상 응답한다.")
+    void getArticle() throws Exception {
+        // given
+        ArticleRequest request = ArticleRequest.builder()
+                .id(1L)
+                .build();
+
+        // when, then
+        mockMvc.perform(get("/api/v1/articles/{id}", request.getId()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("게시글 1건을 조회할 때 ID값이 0이면 클라이언트 에러를 응답한다.")
+    void getArticleIdZero() throws Exception {
+        // given
+        ArticleRequest request = ArticleRequest.builder()
+                .id(0L)
+                .build();
+
+        // when, then
+        mockMvc.perform(get("/api/v1/articles/{id}", request.getId()))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("게시글 ID는 양수여야 합니다."));
+    }
+
+    @Test
+    @DisplayName("게시글 1건을 조회할 때 ID값이 음수이면 클라이언트 에러를 응답한다.")
+    void getArticleIdNegative() throws Exception {
+        // given
+        ArticleRequest request = ArticleRequest.builder()
+                .id(-1L)
+                .build();
+
+        // when, then
+        mockMvc.perform(get("/api/v1/articles/{id}", request.getId()))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("게시글 ID는 양수여야 합니다."));
     }
 
 }

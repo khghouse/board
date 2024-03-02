@@ -6,3 +6,6 @@ Content-Type: application/json
   "title" : "게시글 제목입니다.",
   "content" : "게시글 내용입니다."
 }
+
+### 게시글 1건 조회
+GET localhost:8080/api/v1/articles/1
