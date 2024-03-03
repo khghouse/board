@@ -43,4 +43,8 @@ public class Article extends BaseEntity {
         return content;
     }
 
+    public void update(String title, String content) {
+        this.title = validateTitle(title);
+        this.content = validateContent(content);
+    }
 }

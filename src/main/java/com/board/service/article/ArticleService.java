@@ -3,6 +3,7 @@ package com.board.service.article;
 import com.board.domain.article.Article;
 import com.board.domain.article.ArticleRepository;
 import com.board.service.article.request.ArticleCreateServiceRequest;
+import com.board.service.article.request.ArticleUpdateServiceRequest;
 import com.board.service.article.response.ArticleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -33,6 +34,18 @@ public class ArticleService {
         Article article = articleRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("게시글 정보가 존재하지 않습니다."));
 
+        return ArticleResponse.of(article);
+    }
+
+    /**
+     * 게시글을 수정한다.
+     */
+    @Transactional
+    public ArticleResponse putArticle(ArticleUpdateServiceRequest request) {
+        Article article = articleRepository.findById(request.getId())
+                .orElseThrow(() -> new NoSuchElementException("게시글 정보가 존재하지 않습니다."));
+
+        article.update(request.getTitle(), request.getContent());
         return ArticleResponse.of(article);
     }
 

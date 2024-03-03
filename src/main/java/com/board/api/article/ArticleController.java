@@ -3,6 +3,7 @@ package com.board.api.article;
 import com.board.api.ApiResponse;
 import com.board.api.article.request.ArticleCreateRequest;
 import com.board.api.article.request.ArticleRequest;
+import com.board.api.article.request.ArticleUpdateRequest;
 import com.board.service.article.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -23,6 +24,11 @@ public class ArticleController {
     @GetMapping("/{id}")
     public ApiResponse getArticle(@Validated ArticleRequest request) {
         return ApiResponse.ok(articleService.getArticle(request.getId()));
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse putArticle(@Validated @RequestBody ArticleUpdateRequest request) {
+        return ApiResponse.ok(articleService.putArticle(request.toServiceRequest()));
     }
 
 }
