@@ -10,15 +10,15 @@ import java.time.LocalDateTime;
 @Getter
 public class ArticleResponse {
 
-    private Long id;
-    private String title;
-    private String content;
+    private final Long id;
+    private final String title;
+    private final String content;
 
     @JsonIgnore
-    private LocalDateTime createdDateTime;
+    private final LocalDateTime createdDateTime;
 
     @JsonIgnore
-    private LocalDateTime modifiedDateTime;
+    private final LocalDateTime modifiedDateTime;
 
     @Builder
     private ArticleResponse(Long id, String title, String content, LocalDateTime createdDateTime, LocalDateTime modifiedDateTime) {

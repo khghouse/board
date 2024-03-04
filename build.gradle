@@ -2,7 +2,7 @@ plugins {
     id 'java'
     id 'org.springframework.boot' version '3.2.3'
     id 'io.spring.dependency-management' version '1.1.4'
-    id 'org.asciidoctor.jvm.convert' version '3.3.2'
+    id 'org.asciidoctor.jvm.convert' version '3.3.2' // Asciidoctor에 대한 플러그인 추가
 }
 
 group = 'com.board'
@@ -16,6 +16,8 @@ configurations {
     compileOnly {
         extendsFrom annotationProcessor
     }
+
+    asciidoctorExt // Asciidoctor Extension에 대한 구성 정의
 }
 
 repositories {
@@ -37,14 +39,32 @@ dependencies {
 
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+    asciidoctorExt 'org.springframework.restdocs:spring-restdocs-asciidoctor' // Asciidoctor Extension 의존성 추가
 }
 
 tasks.named('test') {
-    outputs.dir snippetsDir
+    outputs.dir snippetsDir // 테스트가 끝난 결과물을 스니펫 디렉토리로 지정
     useJUnitPlatform()
 }
 
 tasks.named('asciidoctor') {
     inputs.dir snippetsDir
-    dependsOn test
+    configurations 'asciidoctorExt' // 스니펫 티렉토리의 테스트 결과물을 가지고 문서 생성
+
+    sources { // 특정 파일만 html로 만든다.
+        include("**/index.adoc")
+    }
+    baseDirFollowsSourceFile() // 다른 adoc 파일을 include 할 때 경로를 baseDir로 맞춘다.
+
+    dependsOn test  // 작업 순서를 정의 : test{} 수행 후 asciidoctor{}가 수행됨
+}
+
+tasks.named('bootJar') {
+    dependsOn asciidoctor
+
+    // 정적 파일로 보기 위해 static/docs에 복사
+    from("${asciidoctor.outputDir}") {
+        into 'static/docs'
+    }
 }

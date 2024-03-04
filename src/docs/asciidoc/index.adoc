@@ -1,0 +1,20 @@
+ifndef::snippets[]
+:snippets: ../../build/generated-snippets
+endif::[]
+= Board REST API 문서
+:doctype: book
+:icons: font
+//- json 값 하이라이트
+:source-highlighter: highlightjs
+//- 목차 위치
+:toc: left
+//- 목차에 대한 레벨
+:toclevels: 2
+//- 제목에 대한 링크 생성
+:sectlinks:
+
+[[Article-API]]
+== Article API
+
+//- 도메인별 adoc 파일을 분리해놓고 include 가능
+include::api/article.adoc[]
