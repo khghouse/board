@@ -1,6 +1,7 @@
 package com.board.service.article;
 
 import com.board.IntegrationTestSupport;
+import com.board.api.article.request.ArticleRequest;
 import com.board.domain.article.Article;
 import com.board.domain.article.ArticleRepository;
 import com.board.service.article.request.ArticleCreateServiceRequest;
@@ -120,7 +121,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("게시글 1건의 조회 결과가 없어서 에러가 발생한다.")
+    @DisplayName("게시글 1건의 조회 결과가 없어서 예외가 발생한다.")
     void getArticleNotFind() {
         // when, then
         assertThatThrownBy(() -> articleService.getArticle(1L))
@@ -154,7 +155,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("게시글 1건의 조회 결과가 없어서 에러가 발생한다.")
+    @DisplayName("수정하려는 게시글 정보가 없어서 예외가 발생한다.")
     void putArticleNotFind() {
         // given
         ArticleUpdateServiceRequest request = ArticleUpdateServiceRequest.builder()
@@ -246,6 +247,66 @@ class ArticleServiceTest extends IntegrationTestSupport {
         assertThatThrownBy(() -> articleService.putArticle(request))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("게시글 내용은 500자를 초과할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("등록된 게시글을 삭제하고 검증한다.")
+    void deleteArticle() {
+        // given
+        Article article = Article.builder()
+                .title("게시글 제목")
+                .content("게시글 내용")
+                .deleted(false)
+                .build();
+
+        articleRepository.save(article);
+
+        ArticleRequest request = ArticleRequest.builder()
+                .id(article.getId())
+                .build();
+
+        // when
+        articleService.deleteArticle(request.getId());
+
+        // then
+        Article result = articleRepository.findById(request.getId()).get();
+        assertThat(result.getDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("등록된 게시글을 삭제하려고 했는데 이미 삭제된 게시글이라 예외가 발생한다.")
+    void deleteArticleAlreadyDeleted() {
+        // given
+        Article article = Article.builder()
+                .title("게시글 제목")
+                .content("게시글 내용")
+                .deleted(true)
+                .build();
+
+        articleRepository.save(article);
+
+        ArticleRequest request = ArticleRequest.builder()
+                .id(article.getId())
+                .build();
+
+        // when, then
+        assertThatThrownBy(() -> articleService.deleteArticle(request.getId()))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 삭제된 게시글입니다.");
+    }
+
+    @Test
+    @DisplayName("삭제하려는 게시글 정보가 없어서 예외가 발생한다.")
+    void deleteArticleNotFind() {
+        // given
+        ArticleRequest request = ArticleRequest.builder()
+                .id(1L)
+                .build();
+
+        // when, then
+        assertThatThrownBy(() -> articleService.deleteArticle(request.getId()))
+                .isInstanceOf(NoSuchElementException.class)
+                .hasMessage("게시글 정보가 존재하지 않습니다.");
     }
 
 }

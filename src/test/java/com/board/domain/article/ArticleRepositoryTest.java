@@ -89,4 +89,21 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
         assertThat(result.getContent()).isEqualTo("내용");
     }
 
+    @Test
+    @DisplayName("(물리 삭제) 생성된 게시글을 삭제하고 검증한다.")
+    void delete() {
+        // given
+        Article article = Article.builder()
+                .title("게시글 제목")
+                .content("게시글 내용")
+                .build();
+        articleRepository.save(article);
+
+        // when
+        articleRepository.delete(article);
+
+        // then
+        assertThat(articleRepository.existsById(article.getId())).isFalse();
+    }
+
 }

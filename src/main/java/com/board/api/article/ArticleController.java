@@ -31,4 +31,10 @@ public class ArticleController {
         return ApiResponse.ok(articleService.putArticle(request.toServiceRequest()));
     }
 
+    @DeleteMapping("/{id}")
+    public ApiResponse deleteArticle(@Validated ArticleRequest request) {
+        articleService.deleteArticle(request.getId());
+        return ApiResponse.ok();
+    }
+
 }

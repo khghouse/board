@@ -32,3 +32,15 @@ include::{snippets}/article-controller-docs-test/put-article/request-fields.adoc
 ==== HTTP Response
 include::{snippets}/article-controller-docs-test/put-article/http-response.adoc[]
 include::{snippets}/article-controller-docs-test/put-article/response-fields.adoc[]
+
+''''
+
+=== 게시글 삭제
+
+==== HTTP Request
+include::{snippets}/article-controller-docs-test/delete-article/http-request.adoc[]
+include::{snippets}/article-controller-docs-test/delete-article/path-parameters.adoc[]
+
+==== HTTP Response
+include::{snippets}/article-controller-docs-test/delete-article/http-response.adoc[]
+include::{snippets}/article-controller-docs-test/delete-article/response-fields.adoc[]

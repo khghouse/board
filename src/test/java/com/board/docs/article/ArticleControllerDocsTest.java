@@ -173,4 +173,33 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                 ));
     }
 
+    @Test
+    @DisplayName("게시글 삭제 API")
+    void deleteArticle() throws Exception {
+        // given
+        ArticleRequest request = ArticleRequest.builder()
+                .id(1L)
+                .build();
+
+        // when, then
+        mockMvc.perform(delete("/api/v1/articles/{id}", request.getId()))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document.document(
+                        pathParameters(
+                                parameterWithName("id").description("게시글 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("status").type(JsonFieldType.NUMBER)
+                                        .description("HTTP 상태 코드"),
+                                fieldWithPath("error").type(JsonFieldType.OBJECT)
+                                        .description("에러 정보")
+                                        .optional(),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("응답 데이터")
+                                        .optional()
+                        )
+                ));
+    }
+
 }

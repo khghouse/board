@@ -31,9 +31,7 @@ public class ArticleService {
      * 게시글 1건을 조회한다.
      */
     public ArticleResponse getArticle(Long id) {
-        Article article = articleRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("게시글 정보가 존재하지 않습니다."));
-
+        Article article = findById(id);
         return ArticleResponse.of(article);
     }
 
@@ -42,11 +40,22 @@ public class ArticleService {
      */
     @Transactional
     public ArticleResponse putArticle(ArticleUpdateServiceRequest request) {
-        Article article = articleRepository.findById(request.getId())
-                .orElseThrow(() -> new NoSuchElementException("게시글 정보가 존재하지 않습니다."));
-
+        Article article = findById(request.getId());
         article.update(request.getTitle(), request.getContent());
         return ArticleResponse.of(article);
+    }
+
+    /**
+     * 게시글을 삭제한다.
+     */
+    public void deleteArticle(Long id) {
+        Article article = findById(id);
+        article.delete();
+    }
+
+    private Article findById(Long id) {
+        return articleRepository.findById(id)
+                .orElseThrow(() -> new NoSuchElementException("게시글 정보가 존재하지 않습니다."));
     }
 
 }

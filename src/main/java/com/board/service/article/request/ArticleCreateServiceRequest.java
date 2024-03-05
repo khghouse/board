@@ -13,7 +13,7 @@ public class ArticleCreateServiceRequest {
     private String content;
 
     @Builder
-    public ArticleCreateServiceRequest(String title, String content) {
+    private ArticleCreateServiceRequest(String title, String content) {
         this.title = title;
         this.content = content;
     }
@@ -22,6 +22,7 @@ public class ArticleCreateServiceRequest {
         return Article.builder()
                 .title(title)
                 .content(content)
+                .deleted(false)
                 .build();
     }
 

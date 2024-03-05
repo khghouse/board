@@ -22,11 +22,14 @@ public class Article extends BaseEntity {
     @Column(length = 500)
     private String content;
 
+    private Boolean deleted;
+
     @Builder
-    private Article(Long id, String title, String content) {
+    public Article(Long id, String title, String content, Boolean deleted) {
         this.id = id;
         this.title = validateTitle(title);
         this.content = validateContent(content);
+        this.deleted = deleted;
     }
 
     private String validateTitle(String title) {
@@ -47,4 +50,12 @@ public class Article extends BaseEntity {
         this.title = validateTitle(title);
         this.content = validateContent(content);
     }
+
+    public void delete() {
+        if (this.deleted) {
+            throw new IllegalArgumentException("이미 삭제된 게시글입니다.");
+        }
+        this.deleted = true;
+    }
+    
 }

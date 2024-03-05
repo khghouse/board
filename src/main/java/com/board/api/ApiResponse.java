@@ -22,6 +22,10 @@ public class ApiResponse {
         return new ApiResponse(httpStatus.value(), data, error);
     }
 
+    public static ApiResponse ok() {
+        return new ApiResponse(HttpStatus.OK.value(), null, null);
+    }
+
     public static ApiResponse ok(Object data) {
         return new ApiResponse(HttpStatus.OK.value(), data, null);
     }

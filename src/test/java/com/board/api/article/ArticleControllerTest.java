@@ -300,4 +300,52 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.error").value("게시글 ID는 양수여야 합니다."));
     }
 
+    @Test
+    @DisplayName("게시글을 삭제하고 정상 응답한다.")
+    void deleteArticle() throws Exception {
+        // given
+        ArticleRequest request = ArticleRequest.builder()
+                .id(1L)
+                .build();
+
+        // when, then
+        mockMvc.perform(delete("/api/v1/articles/{id}", request.getId()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("게시글을 삭제할 때 ID값이 0이면 클라이언트 에러를 응답한다.")
+    void deleteArticleIdZero() throws Exception {
+        // given
+        ArticleRequest request = ArticleRequest.builder()
+                .id(0L)
+                .build();
+
+        // when, then
+        mockMvc.perform(delete("/api/v1/articles/{id}", request.getId()))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("게시글 ID는 양수여야 합니다."));
+    }
+
+    @Test
+    @DisplayName("게시글을 삭제할 때 ID값이 음수이면 클라이언트 에러를 응답한다.")
+    void deleteArticleIdNegative() throws Exception {
+        // given
+        ArticleRequest request = ArticleRequest.builder()
+                .id(-1L)
+                .build();
+
+        // when, then
+        mockMvc.perform(delete("/api/v1/articles/{id}", request.getId()))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("게시글 ID는 양수여야 합니다."));
+    }
+
 }
