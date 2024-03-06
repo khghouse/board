@@ -348,4 +348,13 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(jsonPath("$.error").value("게시글 ID는 양수여야 합니다."));
     }
 
+    @Test
+    @DisplayName("게시글 리스트를 조회하고 정상 응답한다.")
+    void getArticleList() throws Exception {
+        // when, then
+        mockMvc.perform(get("/api/v1/articles"))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
 }

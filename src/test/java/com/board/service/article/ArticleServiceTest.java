@@ -7,11 +7,13 @@ import com.board.domain.article.ArticleRepository;
 import com.board.service.article.request.ArticleCreateServiceRequest;
 import com.board.service.article.request.ArticleUpdateServiceRequest;
 import com.board.service.article.response.ArticleResponse;
+import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -104,11 +106,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글 1건을 조회하고 검증한다.")
     void getArticle() {
         // given
-        Article article = Article.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .build();
-
+        Article article = toEntity("게시글 제목", "게시글 내용");
         articleRepository.save(article);
 
         // when
@@ -133,11 +131,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글을 수정하고 검증한다.")
     void putArticle() {
         // given
-        Article article = Article.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .build();
-
+        Article article = toEntity("게시글 제목", "게시글 내용");
         articleRepository.save(article);
 
         ArticleUpdateServiceRequest request = ArticleUpdateServiceRequest.builder()
@@ -172,11 +166,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글 제목 글자수가 50자로 게시글은 정상 수정된다.")
     void putArticleBoundaryValue() {
         // given
-        Article article = Article.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .build();
-
+        Article article = toEntity("게시글 제목", "게시글 내용");
         articleRepository.save(article);
 
         ArticleUpdateServiceRequest request = ArticleUpdateServiceRequest.builder()
@@ -198,11 +188,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글 제목을 50자 초과하여 예외가 발생한다.")
     void putArticleExceedingTitle() {
         // given
-        Article article = Article.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .build();
-
+        Article article = toEntity("게시글 제목", "게시글 내용");
         articleRepository.save(article);
 
         ArticleUpdateServiceRequest request = ArticleUpdateServiceRequest.builder()
@@ -221,11 +207,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글 내용을 500자 초과하여 예외가 발생한다.")
     void putArticleExceedingContent() {
         // given
-        Article article = Article.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .build();
-
+        Article article = toEntity("게시글 제목", "게시글 내용");
         articleRepository.save(article);
 
         ArticleUpdateServiceRequest request = ArticleUpdateServiceRequest.builder()
@@ -253,12 +235,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("등록된 게시글을 삭제하고 검증한다.")
     void deleteArticle() {
         // given
-        Article article = Article.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .deleted(false)
-                .build();
-
+        Article article = toEntity("게시글 제목", "게시글 내용", false);
         articleRepository.save(article);
 
         ArticleRequest request = ArticleRequest.builder()
@@ -277,12 +254,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("등록된 게시글을 삭제하려고 했는데 이미 삭제된 게시글이라 예외가 발생한다.")
     void deleteArticleAlreadyDeleted() {
         // given
-        Article article = Article.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .deleted(true)
-                .build();
-
+        Article article = toEntity("게시글 제목", "게시글 내용", true);
         articleRepository.save(article);
 
         ArticleRequest request = ArticleRequest.builder()
@@ -307,6 +279,55 @@ class ArticleServiceTest extends IntegrationTestSupport {
         assertThatThrownBy(() -> articleService.deleteArticle(request.getId()))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessage("게시글 정보가 존재하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("게시글 리스트를 조회하고 검증한다.")
+    void getArticleList() {
+        // given
+        Article article1 = toEntity("게시글 제목 1", "게시글 내용 1", false);
+        Article article2 = toEntity("게시글 제목 2", "게시글 내용 2", true);
+        Article article3 = toEntity("게시글 제목 3", "게시글 내용 3", false);
+        Article article4 = toEntity("게시글 제목 4", "게시글 내용 4", false);
+        articleRepository.saveAll(List.of(article1, article2, article3, article4));
+
+        // when
+        List<ArticleResponse> result = articleService.getArticleList();
+
+        // then
+        assertThat(result).hasSize(3)
+                .extracting("title", "content")
+                .containsExactly(
+                        Tuple.tuple("게시글 제목 4", "게시글 내용 4"),
+                        Tuple.tuple("게시글 제목 3", "게시글 내용 3"),
+                        Tuple.tuple("게시글 제목 1", "게시글 내용 1")
+                );
+    }
+
+    @Test
+    @DisplayName("게시글 리스트 사이즈가 0이면 빈 배열을 응답한다.")
+    void getArticleListSizeZero() {
+        // when
+        List<ArticleResponse> result = articleService.getArticleList();
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
+    private static Article toEntity(String title, String content, boolean deleted) {
+        return Article.builder()
+                .title(title)
+                .content(content)
+                .deleted(deleted)
+                .build();
+    }
+
+    private static Article toEntity(String title, String content) {
+        return Article.builder()
+                .title(title)
+                .content(content)
+                .deleted(false)
+                .build();
     }
 
 }

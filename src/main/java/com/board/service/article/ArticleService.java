@@ -9,7 +9,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -51,6 +53,16 @@ public class ArticleService {
     public void deleteArticle(Long id) {
         Article article = findById(id);
         article.delete();
+    }
+
+    /**
+     * 게시글 리스트를 조회한다.
+     */
+    public List<ArticleResponse> getArticleList() {
+        List<Article> articles = articleRepository.findAllByDeletedFalseOrderByIdDesc();
+        return articles.stream()
+                .map(article -> ArticleResponse.of(article))
+                .collect(Collectors.toList());
     }
 
     private Article findById(Long id) {

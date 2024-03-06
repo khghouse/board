@@ -37,4 +37,9 @@ public class ArticleController {
         return ApiResponse.ok();
     }
 
+    @GetMapping
+    public ApiResponse getArticleList() {
+        return ApiResponse.ok(articleService.getArticleList());
+    }
+
 }

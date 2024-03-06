@@ -1,11 +1,13 @@
 package com.board.domain.article;
 
 import com.board.domain.RepositoryTestSupport;
+import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,10 +25,7 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
     @DisplayName("게시글을 등록하고 검증한다.")
     void save() {
         // given
-        Article article = Article.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .build();
+        Article article = toEntity("게시글 제목", "게시글 내용");
 
         // when
         Article result = articleRepository.save(article);
@@ -40,10 +39,7 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
     @DisplayName("게시글 1건을 조회하고 검증한다.")
     void findById() {
         // given
-        Article article = Article.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .build();
+        Article article = toEntity("게시글 제목", "게시글 내용");
 
         articleRepository.save(article);
 
@@ -69,10 +65,7 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
     @DisplayName("게시글을 수정하고 검증한다.")
     void update() {
         // given
-        Article article = Article.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .build();
+        Article article = toEntity("게시글 제목", "게시글 내용");
 
         articleRepository.save(article);
         Article dbArticle = testEntityManager.find(Article.class, article.getId());
@@ -93,10 +86,7 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
     @DisplayName("(물리 삭제) 생성된 게시글을 삭제하고 검증한다.")
     void delete() {
         // given
-        Article article = Article.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .build();
+        Article article = toEntity("게시글 제목", "게시글 내용");
         articleRepository.save(article);
 
         // when
@@ -104,6 +94,67 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
 
         // then
         assertThat(articleRepository.existsById(article.getId())).isFalse();
+    }
+
+    @Test
+    @DisplayName("게시글 리스트를 조회하고 검증한다.")
+    void findAll() {
+        // given
+        Article article1 = toEntity("게시글 제목 1", "게시글 내용 1");
+        Article article2 = toEntity("게시글 제목 2", "게시글 내용 2");
+        Article article3 = toEntity("게시글 제목 3", "게시글 내용 3");
+        articleRepository.saveAll(List.of(article1, article2, article3));
+
+        // when
+        List<Article> result = articleRepository.findAll();
+
+        // then
+        assertThat(result).hasSize(3)
+                .extracting("title", "content")
+                .containsExactly(
+                        Tuple.tuple("게시글 제목 1", "게시글 내용 1"),
+                        Tuple.tuple("게시글 제목 2", "게시글 내용 2"),
+                        Tuple.tuple("게시글 제목 3", "게시글 내용 3")
+                );
+    }
+
+    @Test
+    @DisplayName("삭제되지 않은 게시글 리스트를 조회하고 검증한다.")
+    void findAllByDeletedFalseOrderByIdDesc() {
+        // given
+        Article article1 = toEntity("게시글 제목 1", "게시글 내용 1", false);
+        Article article2 = toEntity("게시글 제목 2", "게시글 내용 2", false);
+        Article article3 = toEntity("게시글 제목 3", "게시글 내용 3", true);
+        Article article4 = toEntity("게시글 제목 4", "게시글 내용 4", false);
+        articleRepository.saveAll(List.of(article1, article2, article3, article4));
+
+        // when
+        List<Article> result = articleRepository.findAllByDeletedFalseOrderByIdDesc();
+
+        // then
+        assertThat(result).hasSize(3)
+                .extracting("title", "content")
+                .containsExactly(
+                        Tuple.tuple("게시글 제목 4", "게시글 내용 4"),
+                        Tuple.tuple("게시글 제목 2", "게시글 내용 2"),
+                        Tuple.tuple("게시글 제목 1", "게시글 내용 1")
+                );
+    }
+
+    private static Article toEntity(String title, String content, Boolean deleted) {
+        return Article.builder()
+                .title(title)
+                .content(content)
+                .deleted(deleted)
+                .build();
+    }
+
+    private static Article toEntity(String title, String content) {
+        return Article.builder()
+                .title(title)
+                .content(content)
+                .deleted(false)
+                .build();
     }
 
 }
