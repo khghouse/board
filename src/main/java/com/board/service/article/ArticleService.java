@@ -2,14 +2,17 @@ package com.board.service.article;
 
 import com.board.domain.article.Article;
 import com.board.domain.article.ArticleRepository;
+import com.board.exceptions.BusinessException;
+import com.board.service.PageResponse;
+import com.board.service.PageServiceRequest;
 import com.board.service.article.request.ArticleCreateServiceRequest;
 import com.board.service.article.request.ArticleUpdateServiceRequest;
 import com.board.service.article.response.ArticleResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 
@@ -58,11 +61,21 @@ public class ArticleService {
     /**
      * 게시글 리스트를 조회한다.
      */
-    public List<ArticleResponse> getArticleList() {
-        List<Article> articles = articleRepository.findAllByDeletedFalseOrderByIdDesc();
-        return articles.stream()
-                .map(article -> ArticleResponse.of(article))
-                .collect(Collectors.toList());
+    public PageResponse getArticleList(PageServiceRequest request) {
+        Page<Article> pageArticles;
+        try {
+            pageArticles = articleRepository.findAllByDeletedFalse(request.toPageable());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+
+        return PageResponse.of(
+                pageArticles,
+                pageArticles.getContent()
+                        .stream()
+                        .map(ArticleResponse::of)
+                        .collect(Collectors.toList())
+        );
     }
 
     private Article findById(Long id) {

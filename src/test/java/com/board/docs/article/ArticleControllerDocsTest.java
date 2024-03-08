@@ -5,6 +5,8 @@ import com.board.api.article.request.ArticleCreateRequest;
 import com.board.api.article.request.ArticleRequest;
 import com.board.api.article.request.ArticleUpdateRequest;
 import com.board.docs.RestDocsSupport;
+import com.board.service.PageInfomation;
+import com.board.service.PageResponse;
 import com.board.service.article.ArticleService;
 import com.board.service.article.response.ArticleResponse;
 import org.junit.jupiter.api.DisplayName;
@@ -20,8 +22,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
-import static org.springframework.restdocs.request.RequestDocumentation.parameterWithName;
-import static org.springframework.restdocs.request.RequestDocumentation.pathParameters;
+import static org.springframework.restdocs.request.RequestDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -199,32 +200,64 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
     @DisplayName("게시글 리스트 조회 API")
     void getArticleList() throws Exception {
         // given
-        ArticleResponse response1 = toResponse(1L, "게시글 제목입니다. 1", "게시글 내용입니다. 1");
-        ArticleResponse response2 = toResponse(2L, "게시글 제목입니다. 2", "게시글 내용입니다. 2");
-        ArticleResponse response3 = toResponse(3L, "게시글 제목입니다. 3", "게시글 내용입니다. 3");
+        ArticleResponse articleResponse1 = toResponse(1L, "게시글 제목입니다. 1", "게시글 내용입니다. 1");
+        ArticleResponse articleResponse2 = toResponse(2L, "게시글 제목입니다. 2", "게시글 내용입니다. 2");
+        ArticleResponse articleResponse3 = toResponse(3L, "게시글 제목입니다. 3", "게시글 내용입니다. 3");
 
-        BDDMockito.given(articleService.getArticleList())
-                .willReturn(List.of(response3, response2, response1));
+        PageResponse response = PageResponse.builder()
+                .pageInfomation(PageInfomation.of(1, 1, 3, true))
+                .contents(List.of(articleResponse1, articleResponse2, articleResponse3))
+                .build();
+
+        BDDMockito.given(articleService.getArticleList(any()))
+                .willReturn(response);
 
         // when, then
-        mockMvc.perform(get("/api/v1/articles"))
+        mockMvc.perform(get("/api/v1/articles")
+                        .param("pageNumber", "1")
+                        .param("pageSize", "20")
+                        .param("direction", "desc")
+                        .param("property", "id"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document.document(
+                        queryParameters(
+                                parameterWithName("pageNumber").description("페이지 번호 (페이지 번호가 넘어올 경우에만 페이징 처리)")
+                                        .optional(),
+                                parameterWithName("pageSize").description("한 페이지당 데이터 수 - default = 20")
+                                        .optional(),
+                                parameterWithName("direction").description("정렬 순서 [asc|desc] - default = desc")
+                                        .optional(),
+                                parameterWithName("property").description("정렬 기준 컬럼 - default = id")
+                                        .optional()
+                        ),
                         responseFields(
                                 fieldWithPath("status").type(JsonFieldType.NUMBER)
                                         .description("HTTP 상태 코드"),
                                 fieldWithPath("error").type(JsonFieldType.OBJECT)
                                         .description("에러 정보")
                                         .optional(),
-                                fieldWithPath("data[]").type(JsonFieldType.ARRAY)
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답 데이터")
                                         .optional(),
-                                fieldWithPath("data[].id").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.pageInfomation").type(JsonFieldType.OBJECT)
+                                        .description("페이지 정보"),
+                                fieldWithPath("data.pageInfomation.pageNumber").type(JsonFieldType.NUMBER)
+                                        .description("현재 페이지 번호"),
+                                fieldWithPath("data.pageInfomation.totalPages").type(JsonFieldType.NUMBER)
+                                        .description("총 페이지"),
+                                fieldWithPath("data.pageInfomation.totalElements").type(JsonFieldType.NUMBER)
+                                        .description("총 데이터 수"),
+                                fieldWithPath("data.pageInfomation.isLast").type(JsonFieldType.BOOLEAN)
+                                        .description("마지막 페이지 여부 (true : 마지막 페이지, false : 마지막 페이지 아님)"),
+                                fieldWithPath("data.contents[]").type(JsonFieldType.ARRAY)
+                                        .description("데이터 목록")
+                                        .optional(),
+                                fieldWithPath("data.contents[].id").type(JsonFieldType.NUMBER)
                                         .description("게시글 ID"),
-                                fieldWithPath("data[].title").type(JsonFieldType.STRING)
+                                fieldWithPath("data.contents[].title").type(JsonFieldType.STRING)
                                         .description("게시글 제목"),
-                                fieldWithPath("data[].content").type(JsonFieldType.STRING)
+                                fieldWithPath("data.contents[].content").type(JsonFieldType.STRING)
                                         .description("게시글 내용")
                         )
                 ));

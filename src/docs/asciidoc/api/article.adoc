@@ -1,10 +1,12 @@
 === 게시글 등록
 
 ==== HTTP Request
+
 include::{snippets}/article-controller-docs-test/post-article/http-request.adoc[]
 include::{snippets}/article-controller-docs-test/post-article/request-fields.adoc[]
 
 ==== HTTP Response
+
 include::{snippets}/article-controller-docs-test/post-article/http-response.adoc[]
 include::{snippets}/article-controller-docs-test/post-article/response-fields.adoc[]
 
@@ -13,10 +15,12 @@ include::{snippets}/article-controller-docs-test/post-article/response-fields.ad
 === 게시글 1건 조회
 
 ==== HTTP Request
+
 include::{snippets}/article-controller-docs-test/get-article/http-request.adoc[]
 include::{snippets}/article-controller-docs-test/get-article/path-parameters.adoc[]
 
 ==== HTTP Response
+
 include::{snippets}/article-controller-docs-test/get-article/http-response.adoc[]
 include::{snippets}/article-controller-docs-test/get-article/response-fields.adoc[]
 
@@ -25,11 +29,13 @@ include::{snippets}/article-controller-docs-test/get-article/response-fields.ado
 === 게시글 수정
 
 ==== HTTP Request
+
 include::{snippets}/article-controller-docs-test/put-article/http-request.adoc[]
 include::{snippets}/article-controller-docs-test/put-article/path-parameters.adoc[]
 include::{snippets}/article-controller-docs-test/put-article/request-fields.adoc[]
 
 ==== HTTP Response
+
 include::{snippets}/article-controller-docs-test/put-article/http-response.adoc[]
 include::{snippets}/article-controller-docs-test/put-article/response-fields.adoc[]
 
@@ -38,10 +44,12 @@ include::{snippets}/article-controller-docs-test/put-article/response-fields.ado
 === 게시글 삭제
 
 ==== HTTP Request
+
 include::{snippets}/article-controller-docs-test/delete-article/http-request.adoc[]
 include::{snippets}/article-controller-docs-test/delete-article/path-parameters.adoc[]
 
 ==== HTTP Response
+
 include::{snippets}/article-controller-docs-test/delete-article/http-response.adoc[]
 include::{snippets}/article-controller-docs-test/delete-article/response-fields.adoc[]
 
@@ -50,8 +58,11 @@ include::{snippets}/article-controller-docs-test/delete-article/response-fields.
 === 게시글 리스트 조회
 
 ==== HTTP Request
+
 include::{snippets}/article-controller-docs-test/get-article-list/http-request.adoc[]
+include::{snippets}/article-controller-docs-test/get-article-list/query-parameters.adoc[]
 
 ==== HTTP Response
+
 include::{snippets}/article-controller-docs-test/get-article-list/http-response.adoc[]
 include::{snippets}/article-controller-docs-test/get-article-list/response-fields.adoc[]

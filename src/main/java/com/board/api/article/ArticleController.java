@@ -1,6 +1,7 @@
 package com.board.api.article;
 
 import com.board.api.ApiResponse;
+import com.board.api.PageRequest;
 import com.board.api.article.request.ArticleCreateRequest;
 import com.board.api.article.request.ArticleRequest;
 import com.board.api.article.request.ArticleUpdateRequest;
@@ -38,8 +39,8 @@ public class ArticleController {
     }
 
     @GetMapping
-    public ApiResponse getArticleList() {
-        return ApiResponse.ok(articleService.getArticleList());
+    public ApiResponse getArticleList(PageRequest request) {
+        return ApiResponse.ok(articleService.getArticleList(request.toServiceRequest()));
     }
 
 }

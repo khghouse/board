@@ -1,5 +1,6 @@
 package com.board.api;
 
+import com.board.exceptions.BusinessException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -21,6 +22,11 @@ public class ExceptionAdvice {
 
     @ExceptionHandler(NoSuchElementException.class)
     public ApiResponse noSuchElementException(NoSuchElementException e) {
+        return ApiResponse.businessException(e.getMessage());
+    }
+
+    @ExceptionHandler(BusinessException.class)
+    public ApiResponse businessException(BusinessException e) {
         return ApiResponse.businessException(e.getMessage());
     }
 
