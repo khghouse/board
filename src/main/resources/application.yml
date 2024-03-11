@@ -12,6 +12,11 @@ spring:
     hibernate:
       ddl-auto: none
 
+jwt:
+  secret: b1jU7YyAZqwCYI8KrMrJrUThs1yd3DkTc/FytboO/pk=
+  access-token:
+    expiration-millisecord: 3600 # 1시간
+
 ---
 
 spring:

@@ -1,6 +1,7 @@
 package com.board.api;
 
 import com.board.exceptions.BusinessException;
+import com.board.exceptions.UnauthorizedException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.BindException;
@@ -28,6 +29,11 @@ public class ExceptionAdvice {
     @ExceptionHandler(BusinessException.class)
     public ApiResponse businessException(BusinessException e) {
         return ApiResponse.businessException(e.getMessage());
+    }
+
+    @ExceptionHandler(UnauthorizedException.class)
+    public ApiResponse unauthorizedException(UnauthorizedException e) {
+        return ApiResponse.of(HttpStatus.UNAUTHORIZED, null, e.getMessage());
     }
 
 }
