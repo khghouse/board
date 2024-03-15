@@ -48,6 +48,10 @@ public class JwtTokenProvider {
                     .getPayload();
         } catch (ExpiredJwtException e) {
             throw new UnauthorizedException("인증 정보가 유효하지 않습니다.");
+        } catch (IllegalArgumentException e) {
+            throw new UnauthorizedException("인증 정보가 존재하지 않습니다.");
+        } catch (Exception e) {
+            throw new UnauthorizedException();
         }
     }
 

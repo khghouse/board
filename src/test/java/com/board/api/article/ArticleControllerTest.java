@@ -4,10 +4,8 @@ import com.board.api.ControllerTestSupport;
 import com.board.api.article.request.ArticleCreateRequest;
 import com.board.api.article.request.ArticleRequest;
 import com.board.api.article.request.ArticleUpdateRequest;
-import com.board.service.article.ArticleService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -16,9 +14,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class ArticleControllerTest extends ControllerTestSupport {
-
-    @MockBean
-    private ArticleService articleService;
 
     @Test
     @DisplayName("게시글을 등록하고 정상 응답한다.")

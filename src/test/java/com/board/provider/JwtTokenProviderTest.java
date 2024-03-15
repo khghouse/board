@@ -63,7 +63,7 @@ class JwtTokenProviderTest {
 
     @Test
     @DisplayName("생성된 액세스 토큰을 파싱힌다.")
-    void getAuthentication() {
+    void getAuthentication() throws Exception {
         // given
         String accessToken = jwtTokenProvider.createAccessToken();
 

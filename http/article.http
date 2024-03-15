@@ -1,5 +1,7 @@
+
 ### 게시글 등록
-POST localhost:8080/api/v1/articles
+POST {{domain}}/api/v1/articles
+Authorization: Bearer {{accessToken}}
 Content-Type: application/json
 
 {
@@ -8,16 +10,20 @@ Content-Type: application/json
 }
 
 ### 게시글 1건 조회
-GET localhost:8080/api/v1/articles/1
+GET {{domain}}/api/v1/articles/1
+Authorization: Bearer {{accessToken}}
 
 ### 게시글 리스트 조회
-GET localhost:8080/api/v1/articles
+GET {{domain}}/api/v1/articles
+Authorization: Bearer {{accessToken}}
 
 ### 게시글 리스트 조회
-GET localhost:8080/api/v1/articles?pageNumber=0&pageSize=1&direction=asc&property=id
+GET {{domain}}/api/v1/articles?pageNumber=0&pageSize=1&direction=asc&property=id
+Authorization: Bearer {{accessToken}}
 
 ### 게시글 수정
-PUT localhost:8080/api/v1/articles/1
+PUT {{domain}}/api/v1/articles/1
+Authorization: Bearer {{accessToken}}
 
 Content-Type: application/json
 
@@ -27,4 +33,5 @@ Content-Type: application/json
 }
 
 ### 게시글 삭제
-DELETE localhost:8080/api/v1/articles/1
+DELETE {{domain}}/api/v1/articles/1
+Authorization: Bearer {{accessToken}}

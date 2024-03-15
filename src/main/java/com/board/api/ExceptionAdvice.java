@@ -32,6 +32,7 @@ public class ExceptionAdvice {
     }
 
     @ExceptionHandler(UnauthorizedException.class)
+    @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ApiResponse unauthorizedException(UnauthorizedException e) {
         return ApiResponse.of(HttpStatus.UNAUTHORIZED, null, e.getMessage());
     }
