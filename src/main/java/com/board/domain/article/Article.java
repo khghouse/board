@@ -2,7 +2,10 @@ package com.board.domain.article;
 
 import com.board.domain.BaseEntity;
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Getter
@@ -22,7 +25,7 @@ public class Article extends BaseEntity {
     private Boolean deleted;
 
     @Builder
-    public Article(Long id, String title, String content, Boolean deleted) {
+    private Article(Long id, String title, String content, Boolean deleted) {
         this.id = id;
         this.title = validateTitle(title);
         this.content = validateContent(content);
@@ -54,5 +57,5 @@ public class Article extends BaseEntity {
         }
         this.deleted = true;
     }
-    
+
 }

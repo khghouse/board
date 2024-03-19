@@ -15,6 +15,9 @@ endif::[]
 
 [[Article-API]]
 == Article API
-
 //- 도메인별 adoc 파일을 분리해놓고 include 가능
 include::api/article.adoc[]
+
+[[Member-API]]
+== Member API
+include::api/member.adoc[]

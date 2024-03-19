@@ -1,0 +1,9 @@
+
+### 회원 등록
+POST {{domain}}/api/v1/members
+Content-Type: application/json
+
+{
+  "email" : "khghouse@daum.net",
+  "password" : "Khghouse12!@"
+}

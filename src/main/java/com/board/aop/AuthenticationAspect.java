@@ -30,7 +30,12 @@ public class AuthenticationAspect {
     public void authApi() {
     }
 
-    @Before("beforeApi() && !authApi()")
+    @Pointcut("@annotation(com.board.annotation.NoAuth)")
+    public void noAuthAnnotation() {
+
+    }
+
+    @Before("beforeApi() && !authApi() && !noAuthAnnotation()")
     public void authentication() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
