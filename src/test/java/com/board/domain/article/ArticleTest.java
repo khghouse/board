@@ -29,7 +29,7 @@ class ArticleTest {
 
     @Test
     @DisplayName("게시글 내용을 500자 초과하여 예외가 발생한다.")
-    void postArticleExceedingContent() {
+    void validateContentOverLength() {
         // when, then
         assertThatThrownBy(() -> toEntityByContent("반갑습니다. 설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
                 "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
@@ -43,6 +43,56 @@ class ArticleTest {
                 "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("게시글 내용은 500자를 초과할 수 없습니다.");
+    }
+
+    @Test
+    @DisplayName("게시글 제목과 내용을 수정하고 확인한다.")
+    void update() {
+        // given
+        Article article = Article.builder()
+                .title("제목")
+                .content("내용")
+                .build();
+
+        // when
+        article.update("안녕하세요.", "반갑습니다.");
+
+        // then
+        assertThat(article).extracting("title", "content")
+                .contains("안녕하세요.", "반갑습니다.");
+    }
+
+    @Test
+    @DisplayName("게시글을 삭제하고 확인한다.")
+    void delete() {
+        // given
+        Article article = Article.builder()
+                .title("제목")
+                .content("내용")
+                .deleted(false)
+                .build();
+
+        // when
+        article.delete();
+
+        // then
+        assertThat(article.getDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("이미 삭제된 게시글이라 예외가 발생한다.")
+    void deleteAlready() {
+        // given
+        Article article = Article.builder()
+                .title("제목")
+                .content("내용")
+                .deleted(true)
+                .build();
+
+        // when, then
+        assertThatThrownBy(() -> article.delete())
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("이미 삭제된 게시글입니다.");
     }
 
     private static Article toEntityByTitle(String title) {
