@@ -3,7 +3,7 @@ package com.board.service.article;
 import com.board.IntegrationTestSupport;
 import com.board.domain.article.Article;
 import com.board.domain.article.ArticleRepository;
-import com.board.exceptions.BusinessException;
+import com.board.exception.BusinessException;
 import com.board.service.PageResponse;
 import com.board.service.PageServiceRequest;
 import com.board.service.article.request.ArticleServiceRequest;

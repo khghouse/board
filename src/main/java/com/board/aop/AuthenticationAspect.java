@@ -1,6 +1,6 @@
 package com.board.aop;
 
-import com.board.exceptions.UnauthorizedException;
+import com.board.exception.UnauthorizedException;
 import com.board.provider.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;

@@ -1,6 +1,6 @@
 package com.board.provider;
 
-import com.board.exceptions.UnauthorizedException;
+import com.board.exception.UnauthorizedException;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Encoders;

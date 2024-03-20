@@ -2,7 +2,7 @@ package com.board.service.member;
 
 import com.board.domain.member.Member;
 import com.board.domain.member.MemberRepository;
-import com.board.exceptions.BusinessException;
+import com.board.exception.BusinessException;
 import com.board.service.member.request.MemberServiceRequest;
 import com.board.service.member.response.MemberResponse;
 import lombok.RequiredArgsConstructor;
