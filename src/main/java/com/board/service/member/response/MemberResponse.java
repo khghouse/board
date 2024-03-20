@@ -2,12 +2,16 @@ package com.board.service.member.response;
 
 import com.board.domain.member.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class MemberResponse {
 
     private final Long id;
@@ -24,16 +28,6 @@ public class MemberResponse {
 
     @JsonIgnore
     private final LocalDateTime modifiedDateTime;
-
-    @Builder
-    private MemberResponse(Long id, String email, String password, Boolean deleted, LocalDateTime createdDateTime, LocalDateTime modifiedDateTime) {
-        this.id = id;
-        this.email = email;
-        this.password = password;
-        this.deleted = deleted;
-        this.createdDateTime = createdDateTime;
-        this.modifiedDateTime = modifiedDateTime;
-    }
 
     public static MemberResponse of(Member member) {
         return MemberResponse.builder()

@@ -1,5 +1,7 @@
 package com.board.service;
 
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import org.springframework.data.domain.Page;
@@ -7,16 +9,12 @@ import org.springframework.data.domain.Page;
 import java.util.List;
 
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PageResponse {
 
     private final PageInfomation pageInfomation;
     private final List<?> contents;
-
-    @Builder
-    private PageResponse(PageInfomation pageInfomation, List<?> contents) {
-        this.pageInfomation = pageInfomation;
-        this.contents = contents;
-    }
 
     public static PageResponse of(Page<?> page, List<?> dtoContents) {
         return PageResponse.builder()

@@ -1,14 +1,12 @@
 package com.board.service.article;
 
 import com.board.IntegrationTestSupport;
-import com.board.api.article.request.ArticleRequest;
 import com.board.domain.article.Article;
 import com.board.domain.article.ArticleRepository;
 import com.board.exceptions.BusinessException;
 import com.board.service.PageResponse;
 import com.board.service.PageServiceRequest;
-import com.board.service.article.request.ArticleCreateServiceRequest;
-import com.board.service.article.request.ArticleUpdateServiceRequest;
+import com.board.service.article.request.ArticleServiceRequest;
 import com.board.service.article.response.ArticleResponse;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
@@ -37,7 +35,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글을 등록하고 검증한다.")
     void postArticle() {
         // given
-        ArticleCreateServiceRequest request = ArticleCreateServiceRequest.builder()
+        ArticleServiceRequest request = ArticleServiceRequest.builder()
                 .title("안녕하세요.")
                 .content("반갑습니다.")
                 .build();
@@ -48,63 +46,6 @@ class ArticleServiceTest extends IntegrationTestSupport {
         // then
         assertThat(result).extracting("title", "content")
                 .contains("안녕하세요.", "반갑습니다.");
-    }
-
-    @Test
-    @DisplayName("게시글 제목 글자수가 50자로 게시글은 정상 등록된다.")
-    void postArticleBoundaryValue() {
-        // given
-        ArticleCreateServiceRequest request = ArticleCreateServiceRequest.builder()
-                .title("안녕하세요. 50자에 맞춰보겠습니다. 아직 부족한가요? 제목은 50자를 초과하며 안됩니다.")
-                .content("반갑습니다.")
-                .build();
-
-        // when
-        ArticleResponse result = articleService.postArticle(request);
-
-        // then
-        assertThat(request.getTitle().length()).isEqualTo(50);
-        assertThat(result).extracting("title", "content")
-                .contains("안녕하세요. 50자에 맞춰보겠습니다. 아직 부족한가요? 제목은 50자를 초과하며 안됩니다.", "반갑습니다.");
-    }
-
-    @Test
-    @DisplayName("게시글 제목을 50자 초과하여 예외가 발생한다.")
-    void postArticleExceedingTitle() {
-        // given
-        ArticleCreateServiceRequest request = ArticleCreateServiceRequest.builder()
-                .title("안녕하세요. 50자를 한번 넘겨보겠습니다. 아직 부족한가요?? 제목은 50자를 초과하며 안됩니다.")
-                .content("반갑습니다.")
-                .build();
-
-        // when, then
-        assertThatThrownBy(() -> articleService.postArticle(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("게시글 제목은 50자를 초과할 수 없습니다.");
-    }
-
-    @Test
-    @DisplayName("게시글 내용을 500자 초과하여 예외가 발생한다.")
-    void postArticleExceedingContent() {
-        // given
-        ArticleCreateServiceRequest request = ArticleCreateServiceRequest.builder()
-                .title("안녕하세요.")
-                .content("반갑습니다. 설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!")
-                .build();
-
-        // when, then
-        assertThatThrownBy(() -> articleService.postArticle(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("게시글 내용은 500자를 초과할 수 없습니다.");
     }
 
     @Test
@@ -139,7 +80,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
         Article article = toEntity("게시글 제목", "게시글 내용");
         articleRepository.save(article);
 
-        ArticleUpdateServiceRequest request = ArticleUpdateServiceRequest.builder()
+        ArticleServiceRequest request = ArticleServiceRequest.builder()
                 .id(article.getId())
                 .title("안녕하세요.")
                 .content("반갑습니다.")
@@ -157,7 +98,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("수정하려는 게시글 정보가 없어서 예외가 발생한다.")
     void putArticleNotFind() {
         // given
-        ArticleUpdateServiceRequest request = ArticleUpdateServiceRequest.builder()
+        ArticleServiceRequest request = ArticleServiceRequest.builder()
                 .id(1L)
                 .build();
 
@@ -168,90 +109,17 @@ class ArticleServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("게시글 제목 글자수가 50자로 게시글은 정상 수정된다.")
-    void putArticleBoundaryValue() {
-        // given
-        Article article = toEntity("게시글 제목", "게시글 내용");
-        articleRepository.save(article);
-
-        ArticleUpdateServiceRequest request = ArticleUpdateServiceRequest.builder()
-                .id(article.getId())
-                .title("안녕하세요. 50자에 맞춰보겠습니다. 아직 부족한가요? 제목은 50자를 초과하며 안됩니다.")
-                .content("반갑습니다.")
-                .build();
-
-        // when
-        ArticleResponse result = articleService.putArticle(request);
-
-        // then
-        assertThat(request.getTitle().length()).isEqualTo(50);
-        assertThat(result).extracting("title", "content")
-                .contains("안녕하세요. 50자에 맞춰보겠습니다. 아직 부족한가요? 제목은 50자를 초과하며 안됩니다.", "반갑습니다.");
-    }
-
-    @Test
-    @DisplayName("게시글 제목을 50자 초과하여 예외가 발생한다.")
-    void putArticleExceedingTitle() {
-        // given
-        Article article = toEntity("게시글 제목", "게시글 내용");
-        articleRepository.save(article);
-
-        ArticleUpdateServiceRequest request = ArticleUpdateServiceRequest.builder()
-                .id(article.getId())
-                .title("안녕하세요. 50자를 한번 넘겨보겠습니다. 아직 부족한가요?? 제목은 50자를 초과하며 안됩니다.")
-                .content("반갑습니다.")
-                .build();
-
-        // when, then
-        assertThatThrownBy(() -> articleService.putArticle(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("게시글 제목은 50자를 초과할 수 없습니다.");
-    }
-
-    @Test
-    @DisplayName("게시글 내용을 500자 초과하여 예외가 발생한다.")
-    void putArticleExceedingContent() {
-        // given
-        Article article = toEntity("게시글 제목", "게시글 내용");
-        articleRepository.save(article);
-
-        ArticleUpdateServiceRequest request = ArticleUpdateServiceRequest.builder()
-                .id(article.getId())
-                .title("안녕하세요.")
-                .content("반갑습니다. 설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
-                        "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!")
-                .build();
-
-        // when, then
-        assertThatThrownBy(() -> articleService.putArticle(request))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("게시글 내용은 500자를 초과할 수 없습니다.");
-    }
-
-    @Test
     @DisplayName("등록된 게시글을 삭제하고 검증한다.")
     void deleteArticle() {
         // given
         Article article = toEntity("게시글 제목", "게시글 내용", false);
         articleRepository.save(article);
 
-        ArticleRequest request = ArticleRequest.builder()
-                .id(article.getId())
-                .build();
-
         // when
-        articleService.deleteArticle(request.getId());
+        articleService.deleteArticle(article.getId());
 
         // then
-        Article result = articleRepository.findById(request.getId()).get();
+        Article result = articleRepository.findById(article.getId()).get();
         assertThat(result.getDeleted()).isTrue();
     }
 
@@ -262,12 +130,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
         Article article = toEntity("게시글 제목", "게시글 내용", true);
         articleRepository.save(article);
 
-        ArticleRequest request = ArticleRequest.builder()
-                .id(article.getId())
-                .build();
-
         // when, then
-        assertThatThrownBy(() -> articleService.deleteArticle(request.getId()))
+        assertThatThrownBy(() -> articleService.deleteArticle(article.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 삭제된 게시글입니다.");
     }
@@ -275,13 +139,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @Test
     @DisplayName("삭제하려는 게시글 정보가 없어서 예외가 발생한다.")
     void deleteArticleNotFind() {
-        // given
-        ArticleRequest request = ArticleRequest.builder()
-                .id(1L)
-                .build();
-
         // when, then
-        assertThatThrownBy(() -> articleService.deleteArticle(request.getId()))
+        assertThatThrownBy(() -> articleService.deleteArticle(1L))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessage("게시글 정보가 존재하지 않습니다.");
     }

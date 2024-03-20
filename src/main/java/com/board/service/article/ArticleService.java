@@ -5,8 +5,7 @@ import com.board.domain.article.ArticleRepository;
 import com.board.exceptions.BusinessException;
 import com.board.service.PageResponse;
 import com.board.service.PageServiceRequest;
-import com.board.service.article.request.ArticleCreateServiceRequest;
-import com.board.service.article.request.ArticleUpdateServiceRequest;
+import com.board.service.article.request.ArticleServiceRequest;
 import com.board.service.article.response.ArticleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -27,7 +26,7 @@ public class ArticleService {
      * 게시글을 등록한다.
      */
     @Transactional
-    public ArticleResponse postArticle(ArticleCreateServiceRequest request) {
+    public ArticleResponse postArticle(ArticleServiceRequest request) {
         Article article = articleRepository.save(request.toEntity());
         return ArticleResponse.of(article);
     }
@@ -44,7 +43,7 @@ public class ArticleService {
      * 게시글을 수정한다.
      */
     @Transactional
-    public ArticleResponse putArticle(ArticleUpdateServiceRequest request) {
+    public ArticleResponse putArticle(ArticleServiceRequest request) {
         Article article = findById(request.getId());
         article.update(request.getTitle(), request.getContent());
         return ArticleResponse.of(article);

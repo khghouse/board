@@ -24,7 +24,6 @@ Authorization: Bearer {{accessToken}}
 ### 게시글 수정
 PUT {{domain}}/api/v1/articles/1
 Authorization: Bearer {{accessToken}}
-
 Content-Type: application/json
 
 {

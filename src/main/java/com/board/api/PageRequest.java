@@ -1,28 +1,18 @@
 package com.board.api;
 
 import com.board.service.PageServiceRequest;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.ToString;
+import lombok.*;
 
 @Getter
-@ToString
+@Builder
 @NoArgsConstructor
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class PageRequest {
 
     private Integer pageNumber;
     private Integer pageSize;
     private String direction;
     private String property;
-
-    @Builder
-    private PageRequest(Integer pageNumber, Integer pageSize, String direction, String property) {
-        this.pageNumber = pageNumber;
-        this.pageSize = pageSize;
-        this.direction = direction;
-        this.property = property;
-    }
 
     public PageServiceRequest toServiceRequest() {
         return PageServiceRequest.builder()

@@ -8,6 +8,7 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 
 import java.util.NoSuchElementException;
 
@@ -35,6 +36,12 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     public ApiResponse unauthorizedException(UnauthorizedException e) {
         return ApiResponse.of(HttpStatus.UNAUTHORIZED, null, e.getMessage());
+    }
+
+    @ExceptionHandler(MethodArgumentTypeMismatchException.class)
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ApiResponse methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+        return ApiResponse.badRequest("요청 파라미터가 유효하지 않습니다.");
     }
 
 }

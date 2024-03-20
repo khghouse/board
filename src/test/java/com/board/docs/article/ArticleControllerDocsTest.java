@@ -1,9 +1,7 @@
 package com.board.docs.article;
 
 import com.board.api.article.ArticleController;
-import com.board.api.article.request.ArticleCreateRequest;
 import com.board.api.article.request.ArticleRequest;
-import com.board.api.article.request.ArticleUpdateRequest;
 import com.board.docs.RestDocsSupport;
 import com.board.service.PageInfomation;
 import com.board.service.PageResponse;
@@ -39,7 +37,7 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
     @DisplayName("게시글 등록 API")
     void postArticle() throws Exception {
         // given
-        ArticleCreateRequest request = ArticleCreateRequest.builder()
+        ArticleRequest request = ArticleRequest.builder()
                 .title("게시글 제목입니다.")
                 .content("게시글 내용입니다.")
                 .build();
@@ -55,6 +53,9 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                 .andDo(print())
                 .andDo(document.document(
                         requestFields(
+                                fieldWithPath("id").type(JsonFieldType.NUMBER)
+                                        .description("게시글 ID")
+                                        .ignored(),
                                 fieldWithPath("title").type(JsonFieldType.STRING)
                                         .description("게시글 제목"),
                                 fieldWithPath("content").type(JsonFieldType.STRING)
@@ -83,15 +84,11 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
     @DisplayName("게시글 1건 조회 API")
     void getArticle() throws Exception {
         // given
-        ArticleRequest request = ArticleRequest.builder()
-                .id(1L)
-                .build();
-
         BDDMockito.given(articleService.getArticle(anyLong()))
                 .willReturn(toResponse(1L, "게시글 제목입니다.", "게시글 내용입니다."));
 
         // when, then
-        mockMvc.perform(get("/api/v1/articles/{id}", request.getId()))
+        mockMvc.perform(get("/api/v1/articles/{id}", 1L))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document.document(
@@ -121,7 +118,7 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
     @DisplayName("게시글 수정 API")
     void putArticle() throws Exception {
         // given
-        ArticleUpdateRequest request = ArticleUpdateRequest.builder()
+        ArticleRequest request = ArticleRequest.builder()
                 .title("게시글 제목")
                 .content("게시글 내용.")
                 .build();
@@ -170,13 +167,8 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
     @Test
     @DisplayName("게시글 삭제 API")
     void deleteArticle() throws Exception {
-        // given
-        ArticleRequest request = ArticleRequest.builder()
-                .id(1L)
-                .build();
-
         // when, then
-        mockMvc.perform(delete("/api/v1/articles/{id}", request.getId()))
+        mockMvc.perform(delete("/api/v1/articles/{id}", 1L))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document.document(

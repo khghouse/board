@@ -1,22 +1,17 @@
 package com.board.service.article.request;
 
 import com.board.domain.article.Article;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @Getter
+@Builder
 @NoArgsConstructor
-public class ArticleCreateServiceRequest {
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
+public class ArticleServiceRequest {
 
+    private Long id;
     private String title;
     private String content;
-
-    @Builder
-    private ArticleCreateServiceRequest(String title, String content) {
-        this.title = title;
-        this.content = content;
-    }
 
     public Article toEntity() {
         return Article.builder()

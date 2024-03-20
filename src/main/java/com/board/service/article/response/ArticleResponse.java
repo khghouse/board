@@ -2,12 +2,16 @@ package com.board.service.article.response;
 
 import com.board.domain.article.Article;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import lombok.AccessLevel;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 
 import java.time.LocalDateTime;
 
 @Getter
+@Builder
+@AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ArticleResponse {
 
     private final Long id;
@@ -22,16 +26,6 @@ public class ArticleResponse {
 
     @JsonIgnore
     private final LocalDateTime modifiedDateTime;
-
-    @Builder
-    private ArticleResponse(Long id, String title, String content, Boolean deleted, LocalDateTime createdDateTime, LocalDateTime modifiedDateTime) {
-        this.id = id;
-        this.title = title;
-        this.content = content;
-        this.deleted = deleted;
-        this.createdDateTime = createdDateTime;
-        this.modifiedDateTime = modifiedDateTime;
-    }
 
     public static ArticleResponse of(Article article) {
         return ArticleResponse.builder()
