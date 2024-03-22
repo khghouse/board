@@ -1,6 +1,6 @@
-package com.board.api;
+package com.board.dto.page;
 
-import com.board.service.PageServiceRequest;
+import com.board.dto.page.PageServiceRequest;
 import lombok.*;
 
 @Getter

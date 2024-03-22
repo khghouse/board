@@ -1,4 +1,4 @@
-package com.board.service;
+package com.board.dto.page;
 
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;

@@ -1,4 +1,4 @@
-package com.board.service;
+package com.board.dto.page;
 
 import lombok.Builder;
 import lombok.Getter;
