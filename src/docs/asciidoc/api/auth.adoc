@@ -1,0 +1,11 @@
+=== 로그인
+
+==== HTTP Request
+
+include::{snippets}/auth-controller-docs-test/post-login/http-request.adoc[]
+include::{snippets}/auth-controller-docs-test/post-login/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/auth-controller-docs-test/post-login/http-response.adoc[]
+include::{snippets}/auth-controller-docs-test/post-login/response-fields.adoc[]

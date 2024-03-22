@@ -36,7 +36,7 @@ class AuthenticationAspectTest extends IntegrationTestSupport {
     @DisplayName("API 호출 전, 액세스 토큰을 검증한다.")
     void authentication() throws Exception {
         // given
-        String accessToken = jwtTokenProvider.createAccessToken();
+        String accessToken = jwtTokenProvider.createAccessToken(1L);
 
         // when, then
         mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/articles")

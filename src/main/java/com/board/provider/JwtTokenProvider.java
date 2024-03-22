@@ -29,9 +29,10 @@ public class JwtTokenProvider {
         this.accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
     }
 
-    public String createAccessToken() {
+    public String createAccessToken(Long memberId) {
         return Jwts.builder()
-                .subject("Joe")
+                .subject("accessToken")
+                .claim("memberId", memberId)
                 .signWith(accessKey)
                 .expiration(getExpiration())
                 .compact();

@@ -3,6 +3,7 @@ package com.board.service.member;
 import com.board.domain.member.Member;
 import com.board.domain.member.MemberRepository;
 import com.board.exception.BusinessException;
+import com.board.provider.JwtTokenProvider;
 import com.board.service.member.request.MemberServiceRequest;
 import com.board.service.member.response.MemberResponse;
 import lombok.RequiredArgsConstructor;
@@ -17,13 +18,14 @@ import java.util.Optional;
 public class MemberService {
 
     private final MemberRepository memberRepository;
+    private final JwtTokenProvider jwtTokenProvider;
 
     @Transactional
     public MemberResponse postMember(MemberServiceRequest request) {
         validateJoinedMemberByEmail(request.getEmail());
 
         Member member = memberRepository.save(request.toEntity());
-        return MemberResponse.of(member);
+        return MemberResponse.of(member, jwtTokenProvider.createAccessToken(member.getId()));
     }
 
     private void validateJoinedMemberByEmail(String email) {

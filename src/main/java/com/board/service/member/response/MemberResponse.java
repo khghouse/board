@@ -29,7 +29,9 @@ public class MemberResponse {
     @JsonIgnore
     private final LocalDateTime modifiedDateTime;
 
-    public static MemberResponse of(Member member) {
+    private final String accessToken;
+
+    public static MemberResponse of(Member member, String accessToken) {
         return MemberResponse.builder()
                 .id(member.getId())
                 .email(member.getEmail())
@@ -37,6 +39,7 @@ public class MemberResponse {
                 .deleted(member.getDeleted())
                 .createdDateTime(member.getCreatedDateTime())
                 .modifiedDateTime(member.getModifiedDateTime())
+                .accessToken(accessToken)
                 .build();
     }
 

@@ -21,3 +21,7 @@ include::api/article.adoc[]
 [[Member-API]]
 == Member API
 include::api/member.adoc[]
+
+[[Auth-API]]
+== Auth API
+include::api/auth.adoc[]

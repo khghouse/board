@@ -54,7 +54,7 @@ class JwtTokenProviderTest {
     @DisplayName("JWT 액세스 토큰을 생성한다.")
     void createAccessToken() {
         // when
-        String result = jwtTokenProvider.createAccessToken();
+        String result = jwtTokenProvider.createAccessToken(1L);
 
         // then
         assertThat(result).isNotNull();
@@ -65,13 +65,13 @@ class JwtTokenProviderTest {
     @DisplayName("생성된 액세스 토큰을 파싱힌다.")
     void getAuthentication() throws Exception {
         // given
-        String accessToken = jwtTokenProvider.createAccessToken();
+        String accessToken = jwtTokenProvider.createAccessToken(1L);
 
         // when
         Claims result = jwtTokenProvider.getAuthentication(accessToken);
 
         // then
-        assertThat(result.getSubject()).isEqualTo("Joe");
+        assertThat(result.getSubject()).isEqualTo("accessToken");
     }
 
     @Test
@@ -79,7 +79,7 @@ class JwtTokenProviderTest {
     void getAuthenticationExpiration() throws Exception {
         // given
         ReflectionTestUtils.setField(jwtTokenProvider, "expirationMillisecord", 1L);
-        String accessToken = jwtTokenProvider.createAccessToken();
+        String accessToken = jwtTokenProvider.createAccessToken(1L);
         TimeUnit.SECONDS.sleep(1);
 
         // when, then

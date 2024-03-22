@@ -5,6 +5,7 @@ import com.board.api.auth.AuthController;
 import com.board.api.member.MemberController;
 import com.board.provider.JwtTokenProvider;
 import com.board.service.article.ArticleService;
+import com.board.service.auth.AuthService;
 import com.board.service.member.MemberService;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,8 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected MemberService memberService;
+
+    @MockBean
+    protected AuthService authService;
 
 }

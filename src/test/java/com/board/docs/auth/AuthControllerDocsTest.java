@@ -1,10 +1,10 @@
-package com.board.docs.member;
+package com.board.docs.auth;
 
-import com.board.api.member.MemberController;
-import com.board.api.member.request.MemberRequest;
+import com.board.api.auth.AuthController;
+import com.board.api.auth.request.LoginRequest;
 import com.board.docs.RestDocsSupport;
-import com.board.service.member.MemberService;
-import com.board.service.member.response.MemberResponse;
+import com.board.service.auth.AuthService;
+import com.board.service.auth.response.LoginResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -18,33 +18,31 @@ import static org.springframework.restdocs.payload.PayloadDocumentation.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-public class MemberControllerDocsTest extends RestDocsSupport {
+public class AuthControllerDocsTest extends RestDocsSupport {
 
-    private final MemberService memberService = mock(MemberService.class);
+    private final AuthService authService = mock(AuthService.class);
 
     @Override
     protected Object initController() {
-        return new MemberController(memberService);
+        return new AuthController(authService);
     }
 
     @Test
-    @DisplayName("회원 등록 API")
-    void postMember() throws Exception {
+    @DisplayName("로그인 API")
+    void postLogin() throws Exception {
         // given
-        MemberRequest request = MemberRequest.builder()
+        LoginRequest request = LoginRequest.builder()
                 .email("khghouse@daum.net")
                 .password("Khghouse12!@")
                 .build();
 
-        BDDMockito.given(memberService.postMember(any()))
-                .willReturn(MemberResponse.builder()
-                        .id(1L)
-                        .email("khghouse@daum.net")
+        BDDMockito.given(authService.postLogin(any()))
+                .willReturn(LoginResponse.builder()
                         .accessToken("json.web.token")
                         .build());
 
         // when, then
-        mockMvc.perform(post("/api/v1/members")
+        mockMvc.perform(post("/api/v1/auth/login")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andExpect(status().isOk())
@@ -65,10 +63,6 @@ public class MemberControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답 데이터")
                                         .optional(),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER)
-                                        .description("회원 ID"),
-                                fieldWithPath("data.email").type(JsonFieldType.STRING)
-                                        .description("이메일"),
                                 fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
                                         .description("액세스 토큰")
                         )
