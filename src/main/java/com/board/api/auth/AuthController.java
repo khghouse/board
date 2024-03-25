@@ -19,9 +19,14 @@ public class AuthController {
         return ApiResponse.ok(authService.postLogin(request.toServiceRequest()));
     }
 
-    @GetMapping("/login")
-    public ApiResponse getLogin() {
-        return ApiResponse.ok("로그인 페이지입니다.");
+    @GetMapping("/user")
+    public ApiResponse getUser() {
+        return ApiResponse.ok("사용자 페이지입니다.");
+    }
+
+    @GetMapping("/admin")
+    public ApiResponse getAdmin() {
+        return ApiResponse.ok("어드민 페이지입니다.");
     }
 
 }
