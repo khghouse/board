@@ -33,11 +33,12 @@ public class Member extends BaseEntity {
 
     @Builder
     private Member(Long id, String email, String password, Boolean deleted) {
-        validatePassword(password);
+        // validatePassword(password);
 
         this.id = id;
         this.email = validateEmail(email);
-        this.password = hashPassword(password);
+        // this.password = hashPassword(password);
+        this.password = password;
         this.deleted = deleted;
     }
 

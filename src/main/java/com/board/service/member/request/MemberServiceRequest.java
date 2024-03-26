@@ -20,4 +20,12 @@ public class MemberServiceRequest {
                 .build();
     }
 
+    public Member toEntity(String encryptedPassword) {
+        return Member.builder()
+                .email(email)
+                .password(encryptedPassword)
+                .deleted(false)
+                .build();
+    }
+
 }

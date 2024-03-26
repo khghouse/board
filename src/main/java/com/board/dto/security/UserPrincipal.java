@@ -1,4 +1,4 @@
-package com.board.configuration;
+package com.board.dto.security;
 
 import com.board.domain.member.Member;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
