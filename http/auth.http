@@ -1,6 +1,6 @@
 
-### 인증
-POST {{domain}}/api/v1/auth/login
+### 회원 가입
+POST {{domain}}/api/v1/auth/signup
 Content-Type: application/json
 
 {
@@ -8,10 +8,11 @@ Content-Type: application/json
   "password" : "Khghouse12!@"
 }
 
-### 사용자
-GET {{domain}}/api/v1/auth/user
-Authorization: Bearer {{accessToken}}
+### 로그인
+POST {{domain}}/api/v1/auth/login
+Content-Type: application/json
 
-### 어드민
-GET {{domain}}/api/v1/auth/admin
-Authorization: Bearer {{accessToken}}
+{
+  "email" : "khghouse@daum.net",
+  "password" : "Khghouse12!@"
+}

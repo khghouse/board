@@ -1,22 +1,20 @@
 package com.board.dto.security;
 
 import com.board.domain.member.Member;
+import lombok.Getter;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 
 import java.util.List;
 
-public class UserPrincipal extends User {
+@Getter
+public class SecurityUser extends User {
 
     private final Long memberId;
 
-    public UserPrincipal(Member member) {
-        super(member.getEmail(), member.getPassword(), List.of(new SimpleGrantedAuthority("ROLE_ADMIN")));
+    public SecurityUser(Member member) {
+        super(member.getEmail(), "", List.of(new SimpleGrantedAuthority("ROLE_USER")));
         this.memberId = member.getId();
-    }
-
-    public Long getMemberId() {
-        return memberId;
     }
 
 }

@@ -1,18 +1,16 @@
 package com.board.domain.member;
 
-import com.board.component.Hashing;
+import com.board.component.SecurityEncoder;
 import com.board.domain.BaseEntity;
 import jakarta.persistence.*;
-import lombok.AccessLevel;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 @Entity
 @Getter
+@ToString
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Member extends BaseEntity {
 
@@ -33,12 +31,11 @@ public class Member extends BaseEntity {
 
     @Builder
     private Member(Long id, String email, String password, Boolean deleted) {
-        // validatePassword(password);
+        validatePassword(password);
 
         this.id = id;
         this.email = validateEmail(email);
-        // this.password = hashPassword(password);
-        this.password = password;
+        this.password = hashPassword(password);
         this.deleted = deleted;
     }
 
@@ -65,8 +62,8 @@ public class Member extends BaseEntity {
     }
 
     private String hashPassword(String password) {
-        this.salt = Hashing.createSaltKey();
-        return Hashing.hash(password, salt);
+        return SecurityEncoder.passwordEncoder()
+                .encode(password);
     }
 
 }

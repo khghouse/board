@@ -1,4 +1,4 @@
-package com.board.service.member.request;
+package com.board.service.auth.request;
 
 import com.board.domain.member.Member;
 import lombok.*;
@@ -7,23 +7,15 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class MemberServiceRequest {
+public class SignupServiceRequest {
 
     private String email;
     private String password;
-    
+
     public Member toEntity() {
         return Member.builder()
                 .email(email)
                 .password(password)
-                .deleted(false)
-                .build();
-    }
-
-    public Member toEntity(String encryptedPassword) {
-        return Member.builder()
-                .email(email)
-                .password(encryptedPassword)
                 .deleted(false)
                 .build();
     }

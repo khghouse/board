@@ -1,4 +1,4 @@
-package com.board.service.member.response;
+package com.board.service.auth.response;
 
 import com.board.domain.member.Member;
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class MemberResponse {
+public class SignupResponse {
 
     private final Long id;
     private final String email;
@@ -31,8 +31,8 @@ public class MemberResponse {
 
     private final String accessToken;
 
-    public static MemberResponse of(Member member, String accessToken) {
-        return MemberResponse.builder()
+    public static SignupResponse of(Member member, String accessToken) {
+        return SignupResponse.builder()
                 .id(member.getId())
                 .email(member.getEmail())
                 .password(member.getPassword())

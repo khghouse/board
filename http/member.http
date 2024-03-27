@@ -1,9 +1,8 @@
 
-### 회원 등록
-POST {{domain}}/api/v1/members
-Content-Type: application/json
+### 사용자
+GET {{domain}}/api/v1/members/user
+Authorization: Bearer {{accessToken}}
 
-{
-  "email" : "khghouse@daum.net",
-  "password" : "Khghouse12!@"
-}
+### 어드민
+GET {{domain}}/api/v1/members/admin
+Authorization: Bearer {{accessToken}}

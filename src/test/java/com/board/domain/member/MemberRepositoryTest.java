@@ -1,6 +1,6 @@
 package com.board.domain.member;
 
-import com.board.component.Hashing;
+import com.board.component.SecurityEncoder;
 import com.board.domain.RepositoryTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,8 +26,8 @@ class MemberRepositoryTest extends RepositoryTestSupport {
         Member result = memberRepository.save(member);
 
         // then
-        assertThat(result).extracting("email", "password")
-                .contains("khghouse@daum.net", Hashing.hash("Khghouse12!@", result.getSalt()));
+        assertThat(result.getEmail()).isEqualTo("khghouse@daum.net");
+        assertThat(SecurityEncoder.passwordEncoder().matches("Khghouse12!@", result.getPassword())).isTrue();
     }
 
 }

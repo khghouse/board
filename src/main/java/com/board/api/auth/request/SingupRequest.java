@@ -1,6 +1,6 @@
-package com.board.api.member.request;
+package com.board.api.auth.request;
 
-import com.board.service.member.request.MemberServiceRequest;
+import com.board.service.auth.request.SignupServiceRequest;
 import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
@@ -8,7 +8,7 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class MemberRequest {
+public class SingupRequest {
 
     @NotBlank(message = "이메일을 입력해 주세요.")
     private String email;
@@ -16,8 +16,8 @@ public class MemberRequest {
     @NotBlank(message = "비밀번호를 입력해 주세요.")
     private String password;
 
-    public MemberServiceRequest toServiceRequest() {
-        return MemberServiceRequest.builder()
+    public SignupServiceRequest toServiceRequest() {
+        return SignupServiceRequest.builder()
                 .email(email)
                 .password(password)
                 .build();

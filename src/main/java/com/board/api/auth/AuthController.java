@@ -2,6 +2,7 @@ package com.board.api.auth;
 
 import com.board.api.ApiResponse;
 import com.board.api.auth.request.LoginRequest;
+import com.board.api.auth.request.SingupRequest;
 import com.board.service.auth.AuthService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -15,18 +16,13 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/login")
-    public ApiResponse postLogin(@RequestBody @Validated LoginRequest request) {
-        return ApiResponse.ok(authService.postLogin(request.toServiceRequest()));
+    public ApiResponse login(@RequestBody @Validated LoginRequest request) {
+        return ApiResponse.ok(authService.login(request.toServiceRequest()));
     }
 
-    @GetMapping("/user")
-    public ApiResponse getUser() {
-        return ApiResponse.ok("사용자 페이지입니다.");
-    }
-
-    @GetMapping("/admin")
-    public ApiResponse getAdmin() {
-        return ApiResponse.ok("어드민 페이지입니다.");
+    @PostMapping("/signup")
+    public ApiResponse signup(@RequestBody @Validated SingupRequest request) {
+        return ApiResponse.ok(authService.signup(request.toServiceRequest()));
     }
 
 }

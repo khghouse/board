@@ -8,6 +8,7 @@ import java.security.SecureRandom;
 import java.util.Base64;
 
 @Component
+@Deprecated
 public class Hashing {
 
     private static final int SALT_LENGTH = 32;

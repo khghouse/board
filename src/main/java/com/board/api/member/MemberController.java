@@ -1,13 +1,9 @@
 package com.board.api.member;
 
-import com.board.annotation.NoAuth;
 import com.board.api.ApiResponse;
-import com.board.api.member.request.MemberRequest;
 import com.board.service.member.MemberService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -18,10 +14,16 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    @NoAuth
-    @PostMapping
-    public ApiResponse postMember(@Validated @RequestBody MemberRequest request) {
-        return ApiResponse.ok(memberService.postMember(request.toServiceRequest()));
+    @Deprecated
+    @GetMapping("/user")
+    public ApiResponse getUser() {
+        return ApiResponse.ok("사용자 페이지입니다.");
     }
 
+    @Deprecated
+    @GetMapping("/admin")
+    public ApiResponse getAdmin() {
+        return ApiResponse.ok("어드민 페이지입니다.");
+    }
+    
 }

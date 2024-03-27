@@ -2,9 +2,11 @@ package com.board.docs.auth;
 
 import com.board.api.auth.AuthController;
 import com.board.api.auth.request.LoginRequest;
+import com.board.api.auth.request.SingupRequest;
 import com.board.docs.RestDocsSupport;
 import com.board.service.auth.AuthService;
 import com.board.service.auth.response.LoginResponse;
+import com.board.service.auth.response.SignupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -29,14 +31,14 @@ public class AuthControllerDocsTest extends RestDocsSupport {
 
     @Test
     @DisplayName("로그인 API")
-    void postLogin() throws Exception {
+    void login() throws Exception {
         // given
         LoginRequest request = LoginRequest.builder()
                 .email("khghouse@daum.net")
                 .password("Khghouse12!@")
                 .build();
 
-        BDDMockito.given(authService.postLogin(any()))
+        BDDMockito.given(authService.login(any()))
                 .willReturn(LoginResponse.builder()
                         .accessToken("json.web.token")
                         .build());
@@ -63,6 +65,54 @@ public class AuthControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답 데이터")
                                         .optional(),
+                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
+                                        .description("액세스 토큰")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("회원 가입 API")
+    void signup() throws Exception {
+        // given
+        SingupRequest request = SingupRequest.builder()
+                .email("khghouse@daum.net")
+                .password("Khghouse12!@")
+                .build();
+
+        BDDMockito.given(authService.signup(any()))
+                .willReturn(SignupResponse.builder()
+                        .id(1L)
+                        .email("khghouse@daum.net")
+                        .accessToken("json.web.token")
+                        .build());
+
+        // when, then
+        mockMvc.perform(post("/api/v1/auth/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andExpect(status().isOk())
+                .andDo(print())
+                .andDo(document.document(
+                        requestFields(
+                                fieldWithPath("email").type(JsonFieldType.STRING)
+                                        .description("이메일"),
+                                fieldWithPath("password").type(JsonFieldType.STRING)
+                                        .description("비밀번호")
+                        ),
+                        responseFields(
+                                fieldWithPath("status").type(JsonFieldType.NUMBER)
+                                        .description("HTTP 상태 코드"),
+                                fieldWithPath("error").type(JsonFieldType.OBJECT)
+                                        .description("에러 정보")
+                                        .optional(),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("응답 데이터")
+                                        .optional(),
+                                fieldWithPath("data.id").type(JsonFieldType.NUMBER)
+                                        .description("회원 ID"),
+                                fieldWithPath("data.email").type(JsonFieldType.STRING)
+                                        .description("이메일"),
                                 fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
                                         .description("액세스 토큰")
                         )

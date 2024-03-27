@@ -1,6 +1,6 @@
 package com.board.domain.member;
 
-import com.board.component.Hashing;
+import com.board.component.SecurityEncoder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -128,7 +128,7 @@ class MemberTest {
         Member member = toEntityByPassword("Khghouse12!@");
 
         // then
-        assertThat(member.getPassword()).isEqualTo(Hashing.hash("Khghouse12!@", member.getSalt()));
+        assertThat(SecurityEncoder.passwordEncoder().matches("Khghouse12!@", member.getPassword())).isTrue();
     }
 
     private static Member toEntityByEmail(String email) {

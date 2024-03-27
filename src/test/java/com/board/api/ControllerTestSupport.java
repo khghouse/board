@@ -11,6 +11,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = {
@@ -18,6 +19,7 @@ import org.springframework.test.web.servlet.MockMvc;
         AuthController.class,
         MemberController.class
 })
+@WithMockUser
 public abstract class ControllerTestSupport {
 
     @Autowired
@@ -27,15 +29,15 @@ public abstract class ControllerTestSupport {
     protected ObjectMapper objectMapper;
 
     @MockBean
-    protected ArticleService articleService;
-
-    @MockBean
     protected JwtTokenProvider jwtTokenProvider;
 
     @MockBean
-    protected MemberService memberService;
+    protected ArticleService articleService;
 
     @MockBean
     protected AuthService authService;
+
+    @MockBean
+    protected MemberService memberService;
 
 }

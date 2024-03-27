@@ -1,11 +1,1 @@
-=== 회원 등록
 
-==== HTTP Request
-
-include::{snippets}/member-controller-docs-test/post-member/http-request.adoc[]
-include::{snippets}/member-controller-docs-test/post-member/request-fields.adoc[]
-
-==== HTTP Response
-
-include::{snippets}/member-controller-docs-test/post-member/http-response.adoc[]
-include::{snippets}/member-controller-docs-test/post-member/response-fields.adoc[]

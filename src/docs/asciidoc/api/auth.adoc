@@ -2,10 +2,24 @@
 
 ==== HTTP Request
 
-include::{snippets}/auth-controller-docs-test/post-login/http-request.adoc[]
-include::{snippets}/auth-controller-docs-test/post-login/request-fields.adoc[]
+include::{snippets}/auth-controller-docs-test/login/http-request.adoc[]
+include::{snippets}/auth-controller-docs-test/login/request-fields.adoc[]
 
 ==== HTTP Response
 
-include::{snippets}/auth-controller-docs-test/post-login/http-response.adoc[]
-include::{snippets}/auth-controller-docs-test/post-login/response-fields.adoc[]
+include::{snippets}/auth-controller-docs-test/login/http-response.adoc[]
+include::{snippets}/auth-controller-docs-test/login/response-fields.adoc[]
+
+''''
+
+=== 회원 가입
+
+==== HTTP Request
+
+include::{snippets}/auth-controller-docs-test/signup/http-request.adoc[]
+include::{snippets}/auth-controller-docs-test/signup/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/auth-controller-docs-test/signup/http-response.adoc[]
+include::{snippets}/auth-controller-docs-test/signup/response-fields.adoc[]
