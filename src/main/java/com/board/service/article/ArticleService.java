@@ -2,9 +2,9 @@ package com.board.service.article;
 
 import com.board.domain.article.Article;
 import com.board.domain.article.ArticleRepository;
-import com.board.exception.BusinessException;
 import com.board.dto.page.PageResponse;
 import com.board.dto.page.PageServiceRequest;
+import com.board.exception.BusinessException;
 import com.board.service.article.request.ArticleServiceRequest;
 import com.board.service.article.response.ArticleResponse;
 import lombok.RequiredArgsConstructor;
@@ -35,7 +35,7 @@ public class ArticleService {
      * 게시글 1건을 조회한다.
      */
     public ArticleResponse getArticle(Long id) {
-        Article article = findById(id);
+        Article article = findByIdAndDeletedFalse(id);
         return ArticleResponse.of(article);
     }
 
@@ -44,7 +44,7 @@ public class ArticleService {
      */
     @Transactional
     public ArticleResponse putArticle(ArticleServiceRequest request) {
-        Article article = findById(request.getId());
+        Article article = findByIdAndDeletedFalse(request.getId());
         article.update(request.getTitle(), request.getContent());
         return ArticleResponse.of(article);
     }
@@ -52,8 +52,9 @@ public class ArticleService {
     /**
      * 게시글을 삭제한다.
      */
+    @Transactional
     public void deleteArticle(Long id) {
-        Article article = findById(id);
+        Article article = findByIdAndDeletedFalse(id);
         article.delete();
     }
 
@@ -77,8 +78,8 @@ public class ArticleService {
         );
     }
 
-    private Article findById(Long id) {
-        return articleRepository.findById(id)
+    private Article findByIdAndDeletedFalse(Long id) {
+        return articleRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new NoSuchElementException("게시글 정보가 존재하지 않습니다."));
     }
 

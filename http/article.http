@@ -18,7 +18,7 @@ GET {{domain}}/api/v1/articles
 Authorization: Bearer {{accessToken}}
 
 ### 게시글 리스트 조회
-GET {{domain}}/api/v1/articles?pageNumber=0&pageSize=1&direction=asc&property=id
+GET {{domain}}/api/v1/articles?pageNumber=1&pageSize=1&direction=asc&property=id
 Authorization: Bearer {{accessToken}}
 
 ### 게시글 수정
