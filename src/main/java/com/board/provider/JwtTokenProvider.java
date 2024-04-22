@@ -1,21 +1,25 @@
 package com.board.provider;
 
-import com.board.exception.UnauthorizedException;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
+import com.board.dto.jwt.JwtToken;
+import com.board.dto.security.SecurityUser;
+import com.board.enumeration.JwtErrorCode;
+import com.board.exception.BusinessException;
+import com.board.exception.JwtException;
+import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
+import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 
 import javax.crypto.SecretKey;
 import java.util.Arrays;
@@ -27,92 +31,151 @@ import java.util.stream.Collectors;
 @Component
 public class JwtTokenProvider {
 
-    @Value("${jwt.secret}")
-    private String secret;
+    private static final String AUTHORIZATION_HEADER = "Authorization";
+    private static final String BEARER_TYPE = "Bearer";
 
-    @Value("${jwt.access-token.expiration-millisecord}")
-    private Long expirationMillisecord;
+    @Value("${jwt.secret.access-token}")
+    private String accessTokenSecret;
+
+    @Value("${jwt.secret.refresh-token}")
+    private String refreshTokenSecret;
+
+    @Getter
+    @Value("${jwt.expiration-seconds.access-token}")
+    private Long accessTokenExpirationSeconds;
+
+    @Getter
+    @Value("${jwt.expiration-seconds.refresh-token}")
+    private Long refreshTokenExpirationSeconds;
 
     private SecretKey accessKey;
+    private SecretKey refreshKey;
 
     @PostConstruct
     void init() {
-        this.accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(secret));
+        this.accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessTokenSecret));
+        this.refreshKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshTokenSecret));
     }
 
-    public String createAccessToken(Long memberId) {
-        return Jwts.builder()
-                .subject("accessToken")
-                .claim("memberId", memberId)
-                .signWith(accessKey)
-                .expiration(getExpiration())
-                .compact();
-    }
-
-    public String createAccessToken(Authentication authentication) {
+    /**
+     * 토큰을 생성한다.
+     */
+    public JwtToken generateToken(Authentication authentication) {
+        // 인증 객체에서 권한 정보를 추출
         String authorities = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        log.info(">>> {} " + authentication.getName());
+        SecurityUser securityUser = SecurityUser.of(authentication);
 
-        return Jwts.builder()
+        // 액세스 토큰 생성
+        String accessToken = Jwts.builder()
                 .subject(authentication.getName())
-                // .claim("memberId", memberId)
-                .claim("auth", authorities)
                 .signWith(accessKey)
-                .expiration(getExpiration())
+                .claim("memberId", securityUser.getMemberId())
+                .claim("email", securityUser.getEmail())
+                .claim("authorities", authorities)
+                .expiration(generateExpiration(accessTokenExpirationSeconds))
                 .compact();
+
+        // 리프레쉬 토큰 생성
+        String refreshToken = Jwts.builder()
+                .signWith(refreshKey)
+                .expiration(generateExpiration(refreshTokenExpirationSeconds))
+                .compact();
+
+        return JwtToken.builder()
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .build();
     }
 
     public Authentication getAuthentications(String accessToken) {
-        Claims claims = parseClaims(accessToken);
+        Claims claims = parseClaims(accessToken, accessKey);
 
-        if (claims.get("auth") == null) {
-            throw new RuntimeException("권한 정보가 없는 토큰입니다.");
+        if (claims.get("authorities") == null) {
+            throw new BusinessException("권한 정보가 없는 토큰입니다.");
         }
 
         // 클레임에서 권한 정보 가져오기
         Collection<? extends GrantedAuthority> authorities = Arrays.stream(
-                        claims.get("auth").toString().split(","))
+                        claims.get("authorities").toString().split(","))
                 .map(SimpleGrantedAuthority::new)
                 .collect(Collectors.toList());
 
-        UserDetails principal = new User(claims.getSubject(), "", authorities);
-        return new UsernamePasswordAuthenticationToken(principal, "", authorities);
+        UserDetails securityUser = new SecurityUser(claims.get("memberId", Long.class), claims.get("email", String.class), authorities);
+        return new UsernamePasswordAuthenticationToken(securityUser, null, authorities);
     }
 
-    private Claims parseClaims(String accessToken) {
+    public Long getMemberIdByAccessToken(String accessToken) {
         try {
-            return Jwts.parser()
+            Claims claims = Jwts.parser()
                     .verifyWith(accessKey)
                     .build()
                     .parseSignedClaims(accessToken)
                     .getPayload();
+            return claims.get("memberId", Long.class);
         } catch (ExpiredJwtException e) {
-            return e.getClaims();
+            return e.getClaims().get("memberId", Long.class);
         }
     }
 
-    public Claims getAuthentication(String accessToken) {
+    public boolean validateToken(String token) {
         try {
-            return Jwts.parser()
-                    .verifyWith(accessKey)
-                    .build()
-                    .parseSignedClaims(accessToken)
-                    .getPayload();
+            parseClaims(token, accessKey);
+        } catch (MalformedJwtException e) {
+            throw new JwtException(JwtErrorCode.MALFORMED);
         } catch (ExpiredJwtException e) {
-            throw new UnauthorizedException("인증 정보가 유효하지 않습니다.");
-        } catch (IllegalArgumentException e) {
-            throw new UnauthorizedException("인증 정보가 존재하지 않습니다.");
+            throw new JwtException(JwtErrorCode.EXPIRED);
+        } catch (UnsupportedJwtException e) {
+            throw new JwtException(JwtErrorCode.UNSUPPORTED);
         } catch (Exception e) {
-            throw new UnauthorizedException();
+            throw new JwtException(JwtErrorCode.INVALID);
+        }
+
+        return true;
+    }
+
+    public void validateTokenByRefreshToken(String token) {
+        try {
+            parseClaims(token, refreshKey);
+        } catch (MalformedJwtException e) {
+            throw new JwtException(JwtErrorCode.MALFORMED);
+        } catch (ExpiredJwtException e) {
+            throw new JwtException(JwtErrorCode.EXPIRED);
+        } catch (UnsupportedJwtException e) {
+            throw new JwtException(JwtErrorCode.UNSUPPORTED);
+        } catch (Exception e) {
+            throw new JwtException(JwtErrorCode.INVALID);
         }
     }
 
-    private Date getExpiration() {
-        return new Date(System.currentTimeMillis() + expirationMillisecord * 1000L);
+    /**
+     * 해더에서 인증 타입을 제외한 토큰 값만 추출
+     */
+    public String resolveToken(HttpServletRequest request) {
+        String token = request.getHeader(AUTHORIZATION_HEADER);
+        if (StringUtils.hasText(token) && token.startsWith(BEARER_TYPE)) {
+            return token.substring(BEARER_TYPE.length() + 1);
+        }
+
+        throw new JwtException(JwtErrorCode.UNAUTHORIZED);
+    }
+
+    private Claims parseClaims(String token, SecretKey key) {
+        return Jwts.parser()
+                .verifyWith(key)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload();
+    }
+
+    /**
+     * 토큰 만료 일시를 생성한다.
+     */
+    private Date generateExpiration(Long millisecond) {
+        return new Date(System.currentTimeMillis() + millisecond * 1000L);
     }
 
 }

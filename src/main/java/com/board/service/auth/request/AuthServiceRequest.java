@@ -7,12 +7,20 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class SignupServiceRequest {
+public class AuthServiceRequest {
 
     private String email;
     private String password;
 
     public Member toEntity() {
+        return Member.builder()
+                .email(email)
+                .password(password)
+                .deleted(false)
+                .build();
+    }
+
+    public Member toEntity(String password) {
         return Member.builder()
                 .email(email)
                 .password(password)

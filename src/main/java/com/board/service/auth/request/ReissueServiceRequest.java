@@ -6,9 +6,9 @@ import lombok.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class LoginServiceRequest {
+public class ReissueServiceRequest {
 
-    private String email;
-    private String password;
+    private String accessToken;
+    private String refreshToken;
 
 }

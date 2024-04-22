@@ -5,7 +5,6 @@ import com.board.provider.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
 import org.aspectj.lang.annotation.Pointcut;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -35,7 +34,7 @@ public class AuthenticationAspect {
 
     }
 
-    @Before("beforeApi() && !authApi() && !noAuthAnnotation()")
+    // @Before("beforeApi() && !authApi() && !noAuthAnnotation()")
     public void authentication() {
         HttpServletRequest request = ((ServletRequestAttributes) RequestContextHolder.currentRequestAttributes()).getRequest();
 
@@ -43,8 +42,6 @@ public class AuthenticationAspect {
         String accessToken = Optional.ofNullable(request.getHeader("Authorization"))
                 .map(token -> token.substring(TOKEN_TYPE.length()))
                 .orElseThrow(() -> new UnauthorizedException("인증 정보가 존재하지 않습니다."));
-
-        jwtTokenProvider.getAuthentication(accessToken);
 
         // TODO:: 회원 엔티티 설계 후 추가 구현
     }

@@ -1,12 +1,11 @@
 package com.board.docs.auth;
 
 import com.board.api.auth.AuthController;
-import com.board.api.auth.request.LoginRequest;
-import com.board.api.auth.request.SingupRequest;
+import com.board.api.auth.request.AuthRequest;
 import com.board.docs.RestDocsSupport;
+import com.board.dto.jwt.JwtToken;
+import com.board.provider.JwtTokenProvider;
 import com.board.service.auth.AuthService;
-import com.board.service.auth.response.LoginResponse;
-import com.board.service.auth.response.SignupResponse;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -23,24 +22,26 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 public class AuthControllerDocsTest extends RestDocsSupport {
 
     private final AuthService authService = mock(AuthService.class);
+    private final JwtTokenProvider jwtTokenProvider = mock(JwtTokenProvider.class);
 
     @Override
     protected Object initController() {
-        return new AuthController(authService);
+        return new AuthController(authService, jwtTokenProvider);
     }
 
     @Test
     @DisplayName("로그인 API")
     void login() throws Exception {
         // given
-        LoginRequest request = LoginRequest.builder()
+        AuthRequest request = AuthRequest.builder()
                 .email("khghouse@daum.net")
                 .password("Khghouse12!@")
                 .build();
 
         BDDMockito.given(authService.login(any()))
-                .willReturn(LoginResponse.builder()
-                        .accessToken("json.web.token")
+                .willReturn(JwtToken.builder()
+                        .accessToken("json.web.Accesstoken")
+                        .refreshToken("json.web.Refreshtoken")
                         .build());
 
         // when, then
@@ -66,7 +67,9 @@ public class AuthControllerDocsTest extends RestDocsSupport {
                                         .description("응답 데이터")
                                         .optional(),
                                 fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
-                                        .description("액세스 토큰")
+                                        .description("액세스 토큰"),
+                                fieldWithPath("data.refreshToken").type(JsonFieldType.STRING)
+                                        .description("리프레쉬 토큰")
                         )
                 ));
     }
@@ -75,17 +78,10 @@ public class AuthControllerDocsTest extends RestDocsSupport {
     @DisplayName("회원 가입 API")
     void signup() throws Exception {
         // given
-        SingupRequest request = SingupRequest.builder()
+        AuthRequest request = AuthRequest.builder()
                 .email("khghouse@daum.net")
                 .password("Khghouse12!@")
                 .build();
-
-        BDDMockito.given(authService.signup(any()))
-                .willReturn(SignupResponse.builder()
-                        .id(1L)
-                        .email("khghouse@daum.net")
-                        .accessToken("json.web.token")
-                        .build());
 
         // when, then
         mockMvc.perform(post("/api/v1/auth/signup")
@@ -108,13 +104,7 @@ public class AuthControllerDocsTest extends RestDocsSupport {
                                         .optional(),
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답 데이터")
-                                        .optional(),
-                                fieldWithPath("data.id").type(JsonFieldType.NUMBER)
-                                        .description("회원 ID"),
-                                fieldWithPath("data.email").type(JsonFieldType.STRING)
-                                        .description("이메일"),
-                                fieldWithPath("data.accessToken").type(JsonFieldType.STRING)
-                                        .description("액세스 토큰")
+                                        .optional()
                         )
                 ));
     }

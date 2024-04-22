@@ -24,9 +24,6 @@ public class Member extends BaseEntity {
     @Column(length = 100)
     private String password;
 
-    @Column(length = 50)
-    private String salt;
-
     private Boolean deleted;
 
     @Builder
@@ -36,6 +33,7 @@ public class Member extends BaseEntity {
         this.id = id;
         this.email = validateEmail(email);
         this.password = hashPassword(password);
+        //this.password = password;
         this.deleted = deleted;
     }
 

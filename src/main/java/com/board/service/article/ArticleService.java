@@ -54,7 +54,7 @@ public class ArticleService {
      */
     @Transactional
     public void deleteArticle(Long id) {
-        Article article = findByIdAndDeletedFalse(id);
+        Article article = findById(id);
         article.delete();
     }
 
@@ -80,6 +80,11 @@ public class ArticleService {
 
     private Article findByIdAndDeletedFalse(Long id) {
         return articleRepository.findByIdAndDeletedFalse(id)
+                .orElseThrow(() -> new NoSuchElementException("게시글 정보가 존재하지 않습니다."));
+    }
+
+    private Article findById(Long id) {
+        return articleRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("게시글 정보가 존재하지 않습니다."));
     }
 

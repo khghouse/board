@@ -1,8 +1,0 @@
-
-### 사용자
-GET {{domain}}/api/v1/members/user
-Authorization: Bearer {{accessToken}}
-
-### 어드민
-GET {{domain}}/api/v1/members/admin
-Authorization: Bearer {{accessToken}}

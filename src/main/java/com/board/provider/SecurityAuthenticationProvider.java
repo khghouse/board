@@ -1,7 +1,7 @@
 package com.board.provider;
 
 import com.board.dto.security.SecurityUser;
-import com.board.exception.UnauthorizedException;
+import com.board.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
@@ -19,13 +19,17 @@ public class SecurityAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         if (!supports(authentication.getClass())) {
-            throw new UnauthorizedException("인증 정보가 유효하지 않습니다.");
+            throw new ForbiddenException("인증 정보가 유효하지 않습니다.");
         }
 
+        // 초기 인증 토큰에서 Principal(접근 주체)의 아이디 추출
         String email = authentication.getPrincipal()
                 .toString();
+
+        // SecurityUserDetailsService의 loadUserByUsername 메서드 호출
         SecurityUser securityUser = (SecurityUser) userDetailsService.loadUserByUsername(email);
 
+        // 회원이 존재한다면 SecurityUser 객체를 생성하여 리턴 (권한 정보 포함)
         return new UsernamePasswordAuthenticationToken(securityUser, null, securityUser.getAuthorities());
     }
 

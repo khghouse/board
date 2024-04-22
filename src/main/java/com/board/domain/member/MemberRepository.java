@@ -12,4 +12,6 @@ public interface MemberRepository extends JpaRepository<Member, Long> {
 
     Optional<Member> findByEmailAndDeletedFalse(String email);
 
+    Optional<Member> findByIdAndDeletedFalse(Long id);
+
 }
