@@ -1,78 +1,109 @@
 package com.board.provider;
 
-import com.board.exception.UnauthorizedException;
-import io.jsonwebtoken.Claims;
+import com.board.IntegrationTestSupport;
+import com.board.domain.member.Member;
+import com.board.domain.member.MemberRepository;
+import com.board.dto.jwt.JwtToken;
+import com.board.dto.security.SecurityUser;
+import com.board.exception.ForbiddenException;
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.io.Encoders;
-import org.junit.jupiter.api.BeforeEach;
+import io.jsonwebtoken.io.Decoders;
+import io.jsonwebtoken.security.Keys;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.transaction.annotation.Transactional;
 
-import javax.crypto.SecretKey;
-import java.util.Base64;
-import java.util.concurrent.TimeUnit;
+import java.util.Date;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-@ExtendWith(MockitoExtension.class)
-class JwtTokenProviderTest {
+@Transactional
+class JwtTokenProviderTest extends IntegrationTestSupport {
 
-    @InjectMocks
+    @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    @BeforeEach
-    void setUp() {
-        ReflectionTestUtils.setField(jwtTokenProvider, "secret", "b1jU7YyAZqwCYI8KrMrJrUThs1yd3DkTc/FytboO/pk=");
-        ReflectionTestUtils.setField(jwtTokenProvider, "expirationMillisecord", 3600L);
-        jwtTokenProvider.init();
+    @Autowired
+    private AuthenticationProvider authenticationProvider;
+
+    @Autowired
+    private MemberRepository memberRepository;
+
+    @Test
+    @DisplayName("토큰을 생성하고 액세스, 리프레쉬 토큰을 확인한다.")
+    void generateToken() {
+        // given
+        Member member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Khghouse12!@")
+                .build();
+        memberRepository.save(member);
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("khghouse@daum.net", null);
+        Authentication authenticate = authenticationProvider.authenticate(authenticationToken);
+
+        // when
+        JwtToken result = jwtTokenProvider.generateToken(authenticate);
+
+        // then
+        assertThat(result).isNotNull();
+        jwtTokenProvider.validateToken(result.getAccessToken());
+        jwtTokenProvider.validateTokenByRefreshToken(result.getRefreshToken());
     }
 
-//    @Test
-//    @DisplayName("JWT key를 생성하고 Base64로 변환한다.")
-//    void createKey() {
-//        // given
-//        SecretKey key = Jwts.SIG.HS256.key()
-//                .build();
-//
-//        // when
-//        String result = Encoders.BASE64.encode(key.getEncoded());
-//
-//        // then
-//        assertThat(result).isNotNull();
-//        assertThat(Base64.getDecoder()
-//                .decode(result)
-//                .length).isEqualTo(32);
-//        System.out.println("created key : " + result);
-//    }
-//
-//    @Test
-//    @DisplayName("JWT 액세스 토큰을 생성한다.")
-//    void createAccessToken() {
-//        // when
-//        String result = jwtTokenProvider.createAccessToken(1L);
-//
-//        // then
-//        assertThat(result).isNotNull();
-//        System.out.println("created accessToken : " + result);
-//    }
-//
-//    @Test
-//    @DisplayName("생성된 액세스 토큰을 파싱힌다.")
-//    void getAuthentication() throws Exception {
-//        // given
-//        String accessToken = jwtTokenProvider.createAccessToken(1L);
-//
-//        // when
-//        Claims result = jwtTokenProvider.getAuthentication(accessToken);
-//
-//        // then
-//        assertThat(result.getSubject()).isEqualTo("accessToken");
-//    }
+
+    @Test
+    @DisplayName("액세스 토큰으로 인증 객체를 리턴하고 확인한다.")
+    void getAuthentication() {
+        // given
+        Member member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Khghouse12!@")
+                .build();
+        memberRepository.save(member);
+
+        UsernamePasswordAuthenticationToken authenticationToken = new UsernamePasswordAuthenticationToken("khghouse@daum.net", null);
+        Authentication authenticate = authenticationProvider.authenticate(authenticationToken);
+        JwtToken jwtToken = jwtTokenProvider.generateToken(authenticate);
+
+        // when
+        Authentication result = jwtTokenProvider.getAuthentication(jwtToken.getAccessToken());
+        SecurityUser user = (SecurityUser) result.getPrincipal();
+
+        // then
+        assertThat(result.getName()).isEqualTo("khghouse@daum.net");
+        assertThat(user.getEmail()).isEqualTo("khghouse@daum.net");
+        assertThat(user.getMemberId()).isEqualTo(1L);
+    }
+
+    @Test
+    @DisplayName("액세스 토큰으로 인증 객체를 리턴하지만 권한 정보가 없어서 예외가 발생한다.")
+    void getAuthenticationNotAuthorized() {
+        // given
+        Member member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Khghouse12!@")
+                .build();
+        memberRepository.save(member);
+
+        String accessToken = Jwts.builder()
+                .subject("khghouse@daum.net")
+                .signWith(Keys.hmacShaKeyFor(Decoders.BASE64.decode("2z6oNf/GwepEYumNk5rJSIyADL+WQ3YrArbVv+LTQJs=")))
+                .claim("memberId", 1L)
+                .claim("email", "khghouse@daum.net")
+                .expiration(new Date(System.currentTimeMillis() + 3600L * 1000L))
+                .compact();
+
+        // when, then
+        assertThatThrownBy(() -> jwtTokenProvider.getAuthentication(accessToken))
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage("권한 정보가 없는 토큰입니다.");
+    }
 //
 //    @Test
 //    @DisplayName("생성된 액세스 토큰을 파싱했지만, 유효기간 만료로 예외가 발생한다.")

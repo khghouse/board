@@ -3,7 +3,7 @@ package com.board.provider;
 import com.board.dto.jwt.JwtToken;
 import com.board.dto.security.SecurityUser;
 import com.board.enumeration.JwtErrorCode;
-import com.board.exception.BusinessException;
+import com.board.exception.ForbiddenException;
 import com.board.exception.JwtException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
@@ -91,11 +91,11 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    public Authentication getAuthentications(String accessToken) {
+    public Authentication getAuthentication(String accessToken) {
         Claims claims = parseClaims(accessToken, accessKey);
 
         if (claims.get("authorities") == null) {
-            throw new BusinessException("권한 정보가 없는 토큰입니다.");
+            throw new ForbiddenException("권한 정보가 없는 토큰입니다.");
         }
 
         // 클레임에서 권한 정보 가져오기
@@ -163,6 +163,9 @@ public class JwtTokenProvider {
         throw new JwtException(JwtErrorCode.UNAUTHORIZED);
     }
 
+    /**
+     * 토큰을 파싱한다.
+     */
     private Claims parseClaims(String token, SecretKey key) {
         return Jwts.parser()
                 .verifyWith(key)

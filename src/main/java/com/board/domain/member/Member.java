@@ -33,7 +33,6 @@ public class Member extends BaseEntity {
         this.id = id;
         this.email = validateEmail(email);
         this.password = hashPassword(password);
-        //this.password = password;
         this.deleted = deleted;
     }
 

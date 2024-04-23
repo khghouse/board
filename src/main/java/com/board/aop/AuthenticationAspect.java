@@ -15,6 +15,7 @@ import java.util.Optional;
 @Aspect
 @Component
 @RequiredArgsConstructor
+@Deprecated(since = "2024-04-23")
 public class AuthenticationAspect {
 
     private static final String TOKEN_TYPE = "Bearer ";

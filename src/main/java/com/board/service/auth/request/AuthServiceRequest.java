@@ -19,13 +19,5 @@ public class AuthServiceRequest {
                 .deleted(false)
                 .build();
     }
-
-    public Member toEntity(String password) {
-        return Member.builder()
-                .email(email)
-                .password(password)
-                .deleted(false)
-                .build();
-    }
-
+    
 }

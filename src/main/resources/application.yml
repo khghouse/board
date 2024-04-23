@@ -20,8 +20,8 @@ spring:
 #      password:
 
 jwt:
-  secret.access-token: 60VP+VFnf1cabbg8eVIv1JeVGjkPvVzk1fnHaKeUVqs=
-  secret.refresh-token: Yfz9ReJACNN7edAAQSLj6UQoz1MrjluvgQFSIoINOGlE=
+  secret.access-token: 2z6oNf/GwepEYumNk5rJSIyADL+WQ3YrArbVv+LTQJs=
+  secret.refresh-token: iRQMvddwE87VpLcGhbrt7QEfR9tN7x84Zkr+0ifOALM=
   expiration-seconds.access-token: 3600 # 1시간
   expiration-seconds.refresh-token: 2592000 # 30일
   # expiration-seconds.access-token: 30 # 테스트용 30초
