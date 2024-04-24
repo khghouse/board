@@ -1,6 +1,0 @@
-spring:
-  data:
-    redis:
-      host: redis-15860.c54.ap-northeast-1-2.ec2.cloud.redislabs.com
-      port: 15860
-      password: sKI9PByrUuTalTk42t3nEhF1XZy3iB29
