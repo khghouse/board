@@ -1,11 +1,11 @@
 package com.board.service.article;
 
-import com.board.IntegrationTestSupport;
+import com.board.support.IntegrationTestSupport;
 import com.board.domain.article.Article;
 import com.board.domain.article.ArticleRepository;
-import com.board.exception.BusinessException;
 import com.board.dto.page.PageResponse;
 import com.board.dto.page.PageServiceRequest;
+import com.board.exception.BusinessException;
 import com.board.service.article.request.ArticleServiceRequest;
 import com.board.service.article.response.ArticleResponse;
 import org.assertj.core.groups.Tuple;
@@ -35,10 +35,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글을 등록하고 검증한다.")
     void postArticle() {
         // given
-        ArticleServiceRequest request = ArticleServiceRequest.builder()
-                .title("안녕하세요.")
-                .content("반갑습니다.")
-                .build();
+        ArticleServiceRequest request = ArticleServiceRequest.of("안녕하세요.", "반갑습니다.");
 
         // when
         ArticleResponse result = articleService.postArticle(request);
@@ -80,11 +77,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
         Article article = toEntity("게시글 제목", "게시글 내용");
         articleRepository.save(article);
 
-        ArticleServiceRequest request = ArticleServiceRequest.builder()
-                .id(article.getId())
-                .title("안녕하세요.")
-                .content("반갑습니다.")
-                .build();
+        ArticleServiceRequest request = ArticleServiceRequest.of(article.getId(), "안녕하세요.", "반갑습니다.");
 
         // when
         ArticleResponse result = articleService.putArticle(request);
@@ -98,9 +91,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("수정하려는 게시글 정보가 없어서 예외가 발생한다.")
     void putArticleNotFind() {
         // given
-        ArticleServiceRequest request = ArticleServiceRequest.builder()
-                .id(1L)
-                .build();
+        ArticleServiceRequest request = ArticleServiceRequest.of(1L);
 
         // when, then
         assertThatThrownBy(() -> articleService.putArticle(request))

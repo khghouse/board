@@ -6,7 +6,7 @@ import lombok.*;
 
 @Getter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ArticleRequest {
 
@@ -19,11 +19,7 @@ public class ArticleRequest {
     private String content;
 
     public ArticleServiceRequest toServiceRequest() {
-        return ArticleServiceRequest.builder()
-                .id(id)
-                .title(title)
-                .content(content)
-                .build();
+        return ArticleServiceRequest.of(id, title, content);
     }
 
     public void setId(Long id) {

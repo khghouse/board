@@ -1,6 +1,6 @@
 package com.board.component;
 
-import com.board.IntegrationTestSupport;
+import com.board.support.IntegrationTestSupport;
 import com.board.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

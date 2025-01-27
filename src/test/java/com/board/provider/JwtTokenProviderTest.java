@@ -1,6 +1,6 @@
 package com.board.provider;
 
-import com.board.IntegrationTestSupport;
+import com.board.support.IntegrationTestSupport;
 import com.board.domain.member.Member;
 import com.board.domain.member.MemberRepository;
 import com.board.dto.jwt.JwtToken;
@@ -55,8 +55,8 @@ class JwtTokenProviderTest extends IntegrationTestSupport {
 
         // then
         assertThat(result).isNotNull();
-        jwtTokenProvider.validateToken(result.getAccessToken());
-        jwtTokenProvider.validateTokenByRefreshToken(result.getRefreshToken());
+        jwtTokenProvider.validateAccessToken(result.getAccessToken());
+        jwtTokenProvider.validateRefreshToken(result.getRefreshToken());
     }
 
 
@@ -154,7 +154,7 @@ class JwtTokenProviderTest extends IntegrationTestSupport {
                 .compact();
 
         // when
-        boolean result = jwtTokenProvider.validateToken(accessToken);
+        boolean result = jwtTokenProvider.validateAccessToken(accessToken);
 
         // then
         assertThat(result).isTrue();
@@ -164,7 +164,7 @@ class JwtTokenProviderTest extends IntegrationTestSupport {
     @DisplayName("액세스 토큰의 유효성 체크에서 손상된 토큰으로 예외가 발생한다.")
     void validateTokenMalformedJwtException() {
         // when, then
-        assertThatThrownBy(() -> jwtTokenProvider.validateToken("json.web.token"))
+        assertThatThrownBy(() -> jwtTokenProvider.validateAccessToken("json.web.token"))
                 .isInstanceOf(JwtException.class)
                 .satisfies(e -> {
                     JwtException jwtException = (JwtException) e;
@@ -184,7 +184,7 @@ class JwtTokenProviderTest extends IntegrationTestSupport {
         TimeUnit.SECONDS.sleep(1);
 
         // when, then
-        assertThatThrownBy(() -> jwtTokenProvider.validateToken(accessToken))
+        assertThatThrownBy(() -> jwtTokenProvider.validateAccessToken(accessToken))
                 .isInstanceOf(JwtException.class)
                 .satisfies(e -> {
                     JwtException jwtException = (JwtException) e;
@@ -202,7 +202,7 @@ class JwtTokenProviderTest extends IntegrationTestSupport {
                 .compact();
 
         // when, then
-        assertThatThrownBy(() -> jwtTokenProvider.validateToken(accessToken))
+        assertThatThrownBy(() -> jwtTokenProvider.validateAccessToken(accessToken))
                 .isInstanceOf(JwtException.class)
                 .satisfies(e -> {
                     JwtException jwtException = (JwtException) e;

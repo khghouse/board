@@ -1,6 +1,6 @@
 package com.board.service.auth;
 
-import com.board.IntegrationTestSupport;
+import com.board.support.IntegrationTestSupport;
 import com.board.component.Redis;
 import com.board.domain.member.Member;
 import com.board.domain.member.MemberRepository;
@@ -47,10 +47,7 @@ class AuthServiceTest extends IntegrationTestSupport {
     @DisplayName("회원 가입에 성공한다.")
     void signup() {
         // given
-        AuthServiceRequest request = AuthServiceRequest.builder()
-                .email("khghouse@daum.net")
-                .password("Password12#$")
-                .build();
+        AuthServiceRequest request = AuthServiceRequest.of("khghouse@daum.net", "Password12#$");
 
         // when
         authService.signup(request);
@@ -73,10 +70,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 
         memberRepository.save(member);
 
-        AuthServiceRequest request = AuthServiceRequest.builder()
-                .email("khghouse@daum.net")
-                .password("Password12#$")
-                .build();
+        AuthServiceRequest request = AuthServiceRequest.of("khghouse@daum.net", "Password12#$");
 
         // when, then
         assertThatThrownBy(() -> authService.signup(request))
@@ -96,10 +90,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 
         memberRepository.save(member);
 
-        AuthServiceRequest request = AuthServiceRequest.builder()
-                .email("khghouse@daum.net")
-                .password("Password12#$")
-                .build();
+        AuthServiceRequest request = AuthServiceRequest.of("khghouse@daum.net", "Password12#$");
 
         // when
         JwtToken result = authService.login(request);
@@ -112,10 +103,7 @@ class AuthServiceTest extends IntegrationTestSupport {
     @DisplayName("존재하지 않는 계정으로 로그인하면 예외가 발생한다.")
     void loginNotExistMember() {
         // given
-        AuthServiceRequest request = AuthServiceRequest.builder()
-                .email("khghouse@daum.net")
-                .password("Password12#$")
-                .build();
+        AuthServiceRequest request = AuthServiceRequest.of("khghouse@daum.net", "Password12#$");
 
         // when, then
         assertThatThrownBy(() -> authService.login(request))
@@ -135,10 +123,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 
         memberRepository.save(member);
 
-        AuthServiceRequest request = AuthServiceRequest.builder()
-                .email("khghouse@daum.net")
-                .password("password123#$")
-                .build();
+        AuthServiceRequest request = AuthServiceRequest.of("khghouse@daum.net", "password123#$");
 
         // when, then
         assertThatThrownBy(() -> authService.login(request))
@@ -164,10 +149,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 
         redis.setRefreshToken(member.getId(), jwtToken.getRefreshToken());
 
-        ReissueServiceRequest request = ReissueServiceRequest.builder()
-                .accessToken(jwtToken.getAccessToken())
-                .refreshToken(jwtToken.getRefreshToken())
-                .build();
+        ReissueServiceRequest request = ReissueServiceRequest.of(jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
         // when
         JwtToken result = authService.reissueToken(request);
@@ -200,10 +182,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 
         redis.setRefreshToken(member.getId(), jwtToken.getRefreshToken());
 
-        ReissueServiceRequest request = ReissueServiceRequest.builder()
-                .accessToken(jwtToken.getAccessToken())
-                .refreshToken(jwtToken.getRefreshToken())
-                .build();
+        ReissueServiceRequest request = ReissueServiceRequest.of(jwtToken.getAccessToken(), jwtToken.getRefreshToken());
 
         // when, Then
         assertThatThrownBy(() -> authService.reissueToken(request))
@@ -218,10 +197,7 @@ class AuthServiceTest extends IntegrationTestSupport {
     @DisplayName("토큰을 재발행하지만 유효하지 않은 토큰으로 예외가 발생한다.")
     void reissueTokenInvalid() {
         // given
-        ReissueServiceRequest request = ReissueServiceRequest.builder()
-                .accessToken("json.web.token")
-                .refreshToken("json.web.token")
-                .build();
+        ReissueServiceRequest request = ReissueServiceRequest.of("json.web.token", "json.web.token");
 
         // when, Then
         assertThatThrownBy(() -> authService.reissueToken(request))
@@ -230,7 +206,7 @@ class AuthServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("로그아웃하면 레디스에 저장된 액세스 토큰은 logout이 되고, 리프레쉬 토큰은 삭제된다.")
+    @DisplayName("로그아웃하면 레디스에 저장된 액세스 토큰은 logout 되고, 리프레쉬 토큰은 삭제된다.")
     void logout() {
         // given
         Member member = Member.builder()

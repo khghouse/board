@@ -70,7 +70,7 @@ public class AuthService {
 
         // 리프레쉬 토큰 JWT 유효성 체크
         try {
-            jwtTokenProvider.validateTokenByRefreshToken(refreshToken);
+            jwtTokenProvider.validateRefreshToken(refreshToken);
         } catch (JwtException e) {
             throw new JwtException(e.getJwtErrorCode().getMessage());
         }
@@ -100,7 +100,7 @@ public class AuthService {
     public void logout(String accessToken) {
         // 액세스 토큰 JWT 유효성 체크
         try {
-            jwtTokenProvider.validateToken(accessToken);
+            jwtTokenProvider.validateAccessToken(accessToken);
         } catch (JwtException e) {
             throw new JwtException(e.getJwtErrorCode().getMessage());
         }

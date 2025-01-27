@@ -2,7 +2,7 @@ package com.board.docs.article;
 
 import com.board.api.article.ArticleController;
 import com.board.api.article.request.ArticleRequest;
-import com.board.docs.RestDocsSupport;
+import com.board.support.RestDocsSupport;
 import com.board.dto.page.PageInfomation;
 import com.board.dto.page.PageResponse;
 import com.board.service.article.ArticleService;

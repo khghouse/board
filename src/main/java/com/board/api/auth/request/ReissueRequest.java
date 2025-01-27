@@ -6,7 +6,7 @@ import lombok.*;
 
 @Getter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class ReissueRequest {
 
@@ -17,10 +17,7 @@ public class ReissueRequest {
     private String refreshToken;
 
     public ReissueServiceRequest toServiceRequest() {
-        return ReissueServiceRequest.builder()
-                .accessToken(accessToken)
-                .refreshToken(refreshToken)
-                .build();
+        return ReissueServiceRequest.of(accessToken, refreshToken);
     }
 
 }

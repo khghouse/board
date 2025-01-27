@@ -1,6 +1,6 @@
 package com.board.study;
 
-import com.board.IntegrationTestSupport;
+import com.board.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

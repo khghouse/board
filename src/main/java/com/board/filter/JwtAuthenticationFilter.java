@@ -29,7 +29,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         String token = jwtTokenProvider.resolveToken((HttpServletRequest) request);
 
         // 2. JWT 유효성 체크
-        if (token != null && jwtTokenProvider.validateToken(token)) {
+        if (token != null && jwtTokenProvider.validateAccessToken(token)) {
             // 3. 해당 액세스 토큰으로 레디스를 조회하여 로그아웃된 토큰인지 체크
             String status = Optional.ofNullable(redis.get(token))
                     .map(String::valueOf)

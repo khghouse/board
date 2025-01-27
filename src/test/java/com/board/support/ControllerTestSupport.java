@@ -1,4 +1,4 @@
-package com.board.api;
+package com.board.support;
 
 import com.board.api.article.ArticleController;
 import com.board.api.auth.AuthController;

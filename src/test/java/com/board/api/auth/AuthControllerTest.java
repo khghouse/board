@@ -1,6 +1,6 @@
 package com.board.api.auth;
 
-import com.board.api.ControllerTestSupport;
+import com.board.support.ControllerTestSupport;
 import com.board.api.auth.request.AuthRequest;
 import com.board.api.auth.request.ReissueRequest;
 import org.junit.jupiter.api.DisplayName;

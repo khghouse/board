@@ -121,34 +121,13 @@ public class JwtTokenProvider {
         }
     }
 
-    public boolean validateToken(String token) {
-        try {
-            parseClaims(token, accessKey);
-        } catch (MalformedJwtException e) {
-            throw new JwtException(JwtErrorCode.MALFORMED);
-        } catch (ExpiredJwtException e) {
-            throw new JwtException(JwtErrorCode.EXPIRED);
-        } catch (UnsupportedJwtException e) {
-            throw new JwtException(JwtErrorCode.UNSUPPORTED);
-        } catch (Exception e) {
-            throw new JwtException(JwtErrorCode.INVALID);
-        }
-
+    public boolean validateAccessToken(String accessToken) {
+        validationToken(accessToken, accessKey);
         return true;
     }
 
-    public void validateTokenByRefreshToken(String token) {
-        try {
-            parseClaims(token, refreshKey);
-        } catch (MalformedJwtException e) {
-            throw new JwtException(JwtErrorCode.MALFORMED);
-        } catch (ExpiredJwtException e) {
-            throw new JwtException(JwtErrorCode.EXPIRED);
-        } catch (UnsupportedJwtException e) {
-            throw new JwtException(JwtErrorCode.UNSUPPORTED);
-        } catch (Exception e) {
-            throw new JwtException(JwtErrorCode.INVALID);
-        }
+    public void validateRefreshToken(String refreshToken) {
+        validationToken(refreshToken, refreshKey);
     }
 
     /**
@@ -161,6 +140,23 @@ public class JwtTokenProvider {
         }
 
         return null;
+    }
+
+    /**
+     * 토큰 유효성 체크
+     */
+    private void validationToken(String token, SecretKey secretKey) {
+        try {
+            parseClaims(token, secretKey);
+        } catch (MalformedJwtException e) {
+            throw new JwtException(JwtErrorCode.MALFORMED);
+        } catch (ExpiredJwtException e) {
+            throw new JwtException(JwtErrorCode.EXPIRED);
+        } catch (UnsupportedJwtException e) {
+            throw new JwtException(JwtErrorCode.UNSUPPORTED);
+        } catch (Exception e) {
+            throw new JwtException(JwtErrorCode.INVALID);
+        }
     }
 
     /**

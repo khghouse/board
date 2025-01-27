@@ -6,7 +6,7 @@ import lombok.*;
 
 @Getter
 @Builder
-@NoArgsConstructor
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
 public class AuthRequest {
 
@@ -17,10 +17,7 @@ public class AuthRequest {
     private String password;
 
     public AuthServiceRequest toServiceRequest() {
-        return AuthServiceRequest.builder()
-                .email(email)
-                .password(password)
-                .build();
+        return AuthServiceRequest.of(email, password);
     }
 
 }

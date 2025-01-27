@@ -1,5 +1,6 @@
-package com.board.api;
+package com.board.handler;
 
+import com.board.api.ApiResponse;
 import com.board.exception.BusinessException;
 import com.board.exception.ForbiddenException;
 import com.board.exception.JwtException;
@@ -39,7 +40,7 @@ public class ExceptionAdvice {
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
-    public ApiResponse methodArgumentTypeMismatchException(MethodArgumentTypeMismatchException e) {
+    public ApiResponse methodArgumentTypeMismatchException() {
         return ApiResponse.badRequest("요청 파라미터가 유효하지 않습니다.");
     }
 

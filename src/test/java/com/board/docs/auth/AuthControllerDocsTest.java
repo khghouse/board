@@ -2,7 +2,7 @@ package com.board.docs.auth;
 
 import com.board.api.auth.AuthController;
 import com.board.api.auth.request.AuthRequest;
-import com.board.docs.RestDocsSupport;
+import com.board.support.RestDocsSupport;
 import com.board.dto.jwt.JwtToken;
 import com.board.provider.JwtTokenProvider;
 import com.board.service.auth.AuthService;
