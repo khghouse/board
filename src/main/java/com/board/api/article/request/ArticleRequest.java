@@ -22,8 +22,8 @@ public class ArticleRequest {
         return ArticleServiceRequest.of(id, title, content);
     }
 
-    public void setId(Long id) {
-        this.id = id;
+    public ArticleServiceRequest toServiceRequest(Long id) {
+        return ArticleServiceRequest.of(id, title, content);
     }
 
 }

@@ -1,8 +1,8 @@
 package com.board.api.article;
 
 import com.board.api.ApiResponse;
-import com.board.dto.page.PageRequest;
 import com.board.api.article.request.ArticleRequest;
+import com.board.dto.page.PageRequest;
 import com.board.service.article.ArticleService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
@@ -27,8 +27,7 @@ public class ArticleController {
 
     @PutMapping("/{id}")
     public ApiResponse putArticle(@PathVariable Long id, @RequestBody @Validated ArticleRequest request) {
-        request.setId(id);
-        return ApiResponse.ok(articleService.putArticle(request.toServiceRequest()));
+        return ApiResponse.ok(articleService.putArticle(request.toServiceRequest(id)));
     }
 
     @DeleteMapping("/{id}")

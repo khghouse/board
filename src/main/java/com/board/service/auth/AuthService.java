@@ -5,12 +5,14 @@ import com.board.domain.member.Member;
 import com.board.domain.member.MemberRepository;
 import com.board.dto.jwt.JwtToken;
 import com.board.dto.security.SecurityUser;
+import com.board.event.SignupCompletionMailEvent;
 import com.board.exception.BusinessException;
 import com.board.exception.JwtException;
 import com.board.provider.JwtTokenProvider;
 import com.board.service.auth.request.AuthServiceRequest;
 import com.board.service.auth.request.ReissueServiceRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -30,6 +32,7 @@ public class AuthService {
     private final AuthenticationProvider authenticationProvider;
     private final PasswordEncoder passwordEncoder;
     private final Redis redis;
+    private final ApplicationEventPublisher eventPublisher;
 
     /**
      * 회원 가입
@@ -38,6 +41,7 @@ public class AuthService {
     public void signup(AuthServiceRequest request) {
         validateAlreadyJoinedMember(request.getEmail());
         memberRepository.save(request.toEntity());
+        eventPublisher.publishEvent(SignupCompletionMailEvent.create(request.getEmail()));
     }
 
     /**
