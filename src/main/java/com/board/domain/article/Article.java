@@ -1,6 +1,7 @@
 package com.board.domain.article;
 
 import com.board.domain.BaseEntity;
+import com.board.domain.member.Member;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -16,6 +17,10 @@ public class Article extends BaseEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id")
+    private Member member;
+
     @Column(length = 50)
     private String title;
 
@@ -25,8 +30,9 @@ public class Article extends BaseEntity {
     private Boolean deleted;
 
     @Builder
-    private Article(Long id, String title, String content, Boolean deleted) {
+    private Article(Long id, Member member, String title, String content, Boolean deleted) {
         this.id = id;
+        this.member = member;
         this.title = validateTitle(title);
         this.content = validateContent(content);
         this.deleted = deleted;
