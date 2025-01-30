@@ -1,12 +1,17 @@
 package com.board.api.article;
 
-import com.board.support.ControllerTestSupport;
 import com.board.api.article.request.ArticleRequest;
+import com.board.dto.security.SecurityUser;
+import com.board.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+
+import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -16,8 +21,10 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 등록하고 정상 응답한다.")
-    void postArticle() throws Exception {
+    void createArticle() throws Exception {
         // given
+        SecurityUser securityUser = new SecurityUser(1L, "khghouse@naver.com", List.of(new SimpleGrantedAuthority("ROLE_USER")));
+
         ArticleRequest request = ArticleRequest.builder()
                 .title("게시글 제목입니다.")
                 .content("게시글 내용입니다.")
@@ -26,6 +33,7 @@ class ArticleControllerTest extends ControllerTestSupport {
         // when, then
         mockMvc.perform(post("/api/v1/articles")
                         .with(csrf())
+                        .with(user(securityUser))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
@@ -34,7 +42,7 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 등록할 때 제목은 필수입니다.")
-    void postArticleWithoutTitle() throws Exception {
+    void createArticleWithoutTitle() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()
                 .content("게시글 내용입니다.")
@@ -54,7 +62,7 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 등록할 때 제목이 공백이면 클라이언트 에러를 응답한다.")
-    void postArticleBlankTitle() throws Exception {
+    void createArticleBlankTitle() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()
                 .title("     ")
@@ -75,7 +83,7 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 등록할 때 내용은 필수입니다.")
-    void postArticleWithoutContent() throws Exception {
+    void createArticleWithoutContent() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()
                 .title("게시글 제목입니다.")
@@ -95,7 +103,7 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 등록할 때 내용이 공백이면 클라이언트 에러를 응답한다.")
-    void postArticleBlankContent() throws Exception {
+    void createArticleBlankContent() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()
                 .title("게시글 제목입니다.")
@@ -139,7 +147,7 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 수정하고 정상 응답한다.")
-    void putArticle() throws Exception {
+    void updateArticle() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()
                 .title("게시글 제목입니다.")
@@ -157,7 +165,7 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 수정할 때 제목은 필수입니다.")
-    void putArticleWithoutTitle() throws Exception {
+    void updateArticleWithoutTitle() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()
                 .content("게시글 내용입니다.")
@@ -177,7 +185,7 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 수정할 때 제목이 공백이면 클라이언트 에러를 응답한다.")
-    void putArticleBlankTitle() throws Exception {
+    void updateArticleBlankTitle() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()
                 .title("     ")
@@ -198,7 +206,7 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 수정할 때 내용은 필수입니다.")
-    void putArticleWithoutContent() throws Exception {
+    void updateArticleWithoutContent() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()
                 .title("게시글 제목입니다.")
@@ -218,7 +226,7 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 수정할 때 내용이 공백이면 클라이언트 에러를 응답한다.")
-    void putArticleBlankContent() throws Exception {
+    void updateArticleBlankContent() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()
                 .title("게시글 제목입니다.")
@@ -239,7 +247,7 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 수정할 때 ID값이 숫자 타입이 아니면 클라이언트 에러를 응답한다.")
-    void putArticleIdTypeMismatch() throws Exception {
+    void updateArticleIdTypeMismatch() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()
                 .title("게시글 제목입니다.")

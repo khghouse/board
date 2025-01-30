@@ -3,8 +3,10 @@ package com.board.api.article;
 import com.board.api.ApiResponse;
 import com.board.api.article.request.ArticleRequest;
 import com.board.dto.page.PageRequest;
+import com.board.dto.security.SecurityUser;
 import com.board.service.article.ArticleService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,8 +18,8 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping
-    public ApiResponse postArticle(@Validated @RequestBody ArticleRequest request) {
-        return ApiResponse.ok(articleService.postArticle(request.toServiceRequest()));
+    public ApiResponse createArticle(@Validated @RequestBody ArticleRequest request, @AuthenticationPrincipal SecurityUser securityUser) {
+        return ApiResponse.ok(articleService.createArticle(request.toServiceRequest(), securityUser.getMemberId()));
     }
 
     @GetMapping("/{id}")
@@ -26,8 +28,8 @@ public class ArticleController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse putArticle(@PathVariable Long id, @RequestBody @Validated ArticleRequest request) {
-        return ApiResponse.ok(articleService.putArticle(request.toServiceRequest(id)));
+    public ApiResponse updateArticle(@PathVariable Long id, @RequestBody @Validated ArticleRequest request) {
+        return ApiResponse.ok(articleService.updateArticle(request.toServiceRequest(id)));
     }
 
     @DeleteMapping("/{id}")

@@ -2,6 +2,8 @@ package com.board.service.article;
 
 import com.board.domain.article.Article;
 import com.board.domain.article.ArticleRepository;
+import com.board.domain.member.Member;
+import com.board.domain.member.MemberRepository;
 import com.board.dto.page.PageResponse;
 import com.board.dto.page.PageServiceRequest;
 import com.board.exception.BusinessException;
@@ -21,13 +23,15 @@ import java.util.stream.Collectors;
 public class ArticleService {
 
     private final ArticleRepository articleRepository;
+    private final MemberRepository memberRepository;
 
     /**
      * 게시글을 등록한다.
      */
     @Transactional
-    public ArticleResponse postArticle(ArticleServiceRequest request) {
-        Article article = articleRepository.save(request.toEntity());
+    public ArticleResponse createArticle(ArticleServiceRequest request, Long memberId) {
+        Member memberProxy = memberRepository.getReferenceById(memberId);
+        Article article = articleRepository.save(request.toEntity(memberProxy));
         return ArticleResponse.of(article);
     }
 
@@ -35,7 +39,7 @@ public class ArticleService {
      * 게시글 1건을 조회한다.
      */
     public ArticleResponse getArticle(Long id) {
-        Article article = findByIdAndDeletedFalse(id);
+        Article article = findValidArticle(id);
         return ArticleResponse.of(article);
     }
 
@@ -43,8 +47,8 @@ public class ArticleService {
      * 게시글을 수정한다.
      */
     @Transactional
-    public ArticleResponse putArticle(ArticleServiceRequest request) {
-        Article article = findByIdAndDeletedFalse(request.getId());
+    public ArticleResponse updateArticle(ArticleServiceRequest request) {
+        Article article = findValidArticle(request.getId());
         article.update(request.getTitle(), request.getContent());
         return ArticleResponse.of(article);
     }
@@ -54,7 +58,7 @@ public class ArticleService {
      */
     @Transactional
     public void deleteArticle(Long id) {
-        Article article = findById(id);
+        Article article = findArticle(id);
         article.delete();
     }
 
@@ -78,12 +82,12 @@ public class ArticleService {
         );
     }
 
-    private Article findByIdAndDeletedFalse(Long id) {
+    private Article findValidArticle(Long id) {
         return articleRepository.findByIdAndDeletedFalse(id)
                 .orElseThrow(() -> new NoSuchElementException("게시글 정보가 존재하지 않습니다."));
     }
 
-    private Article findById(Long id) {
+    private Article findArticle(Long id) {
         return articleRepository.findById(id)
                 .orElseThrow(() -> new NoSuchElementException("게시글 정보가 존재하지 않습니다."));
     }

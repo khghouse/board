@@ -1,13 +1,15 @@
 package com.board.service.article;
 
-import com.board.support.IntegrationTestSupport;
 import com.board.domain.article.Article;
 import com.board.domain.article.ArticleRepository;
+import com.board.domain.member.Member;
+import com.board.domain.member.MemberRepository;
 import com.board.dto.page.PageResponse;
 import com.board.dto.page.PageServiceRequest;
 import com.board.exception.BusinessException;
 import com.board.service.article.request.ArticleServiceRequest;
 import com.board.service.article.response.ArticleResponse;
+import com.board.support.IntegrationTestSupport;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -31,14 +33,24 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @Autowired
     private ArticleRepository articleRepository;
 
+    @Autowired
+    private MemberRepository memberRepository;
+
     @Test
     @DisplayName("게시글을 등록하고 검증한다.")
-    void postArticle() {
+    void createArticle() {
         // given
+        Member member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Password12#$")
+                .build();
+
+        memberRepository.save(member);
+
         ArticleServiceRequest request = ArticleServiceRequest.of("안녕하세요.", "반갑습니다.");
 
         // when
-        ArticleResponse result = articleService.postArticle(request);
+        ArticleResponse result = articleService.createArticle(request, member.getId());
 
         // then
         assertThat(result).extracting("title", "content")
@@ -72,7 +84,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("게시글을 수정하고 검증한다.")
-    void putArticle() {
+    void updateArticle() {
         // given
         Article article = toEntity("게시글 제목", "게시글 내용");
         articleRepository.save(article);
@@ -80,7 +92,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
         ArticleServiceRequest request = ArticleServiceRequest.of(article.getId(), "안녕하세요.", "반갑습니다.");
 
         // when
-        ArticleResponse result = articleService.putArticle(request);
+        ArticleResponse result = articleService.updateArticle(request);
 
         // then
         assertThat(result).extracting("title", "content")
@@ -89,12 +101,12 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("수정하려는 게시글 정보가 없어서 예외가 발생한다.")
-    void putArticleNotFind() {
+    void updateArticleNotFind() {
         // given
         ArticleServiceRequest request = ArticleServiceRequest.of(1L);
 
         // when, then
-        assertThatThrownBy(() -> articleService.putArticle(request))
+        assertThatThrownBy(() -> articleService.updateArticle(request))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessage("게시글 정보가 존재하지 않습니다.");
     }

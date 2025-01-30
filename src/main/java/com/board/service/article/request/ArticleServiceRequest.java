@@ -1,6 +1,7 @@
 package com.board.service.article.request;
 
 import com.board.domain.article.Article;
+import com.board.domain.member.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -43,8 +44,9 @@ public class ArticleServiceRequest {
                 .build();
     }
 
-    public Article toEntity() {
+    public Article toEntity(Member member) {
         return Article.builder()
+                .member(member)
                 .title(title)
                 .content(content)
                 .deleted(false)
