@@ -5,18 +5,18 @@ import com.board.api.auth.AuthController;
 import com.board.provider.JwtTokenProvider;
 import com.board.service.article.ArticleService;
 import com.board.service.auth.AuthService;
+import com.board.support.security.WithCustomSecurityUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.web.servlet.MockMvc;
 
 @WebMvcTest(controllers = {
         ArticleController.class,
         AuthController.class
 })
-@WithMockUser
+@WithCustomSecurityUser
 public abstract class ControllerTestSupport {
 
     @Autowired

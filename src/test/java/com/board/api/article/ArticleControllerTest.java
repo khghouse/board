@@ -1,17 +1,13 @@
 package com.board.api.article;
 
 import com.board.api.article.request.ArticleRequest;
-import com.board.dto.security.SecurityUser;
 import com.board.support.ControllerTestSupport;
+import com.board.support.security.WithCustomSecurityUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-
-import java.util.List;
 
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -21,10 +17,9 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 등록하고 정상 응답한다.")
+    @WithCustomSecurityUser
     void createArticle() throws Exception {
         // given
-        SecurityUser securityUser = new SecurityUser(1L, "khghouse@naver.com", List.of(new SimpleGrantedAuthority("ROLE_USER")));
-
         ArticleRequest request = ArticleRequest.builder()
                 .title("게시글 제목입니다.")
                 .content("게시글 내용입니다.")
@@ -33,7 +28,6 @@ class ArticleControllerTest extends ControllerTestSupport {
         // when, then
         mockMvc.perform(post("/api/v1/articles")
                         .with(csrf())
-                        .with(user(securityUser))
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(print())
