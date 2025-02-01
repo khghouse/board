@@ -1,5 +1,6 @@
 package com.board.support;
 
+import com.board.support.security.SecurityUserArgumentResolver;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,6 +29,7 @@ public abstract class RestDocsSupport {
                 preprocessResponse(prettyPrint()));
 
         this.mockMvc = MockMvcBuilders.standaloneSetup(initController())
+                .setCustomArgumentResolvers(new SecurityUserArgumentResolver())
                 .addFilters(new CharacterEncodingFilter("UTF-8", true)) // 한글 처리
                 .apply(documentationConfiguration(provider))
                 .alwaysDo(document)

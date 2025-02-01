@@ -2,11 +2,11 @@ package com.board.docs.article;
 
 import com.board.api.article.ArticleController;
 import com.board.api.article.request.ArticleRequest;
-import com.board.support.RestDocsSupport;
 import com.board.dto.page.PageInfomation;
 import com.board.dto.page.PageResponse;
 import com.board.service.article.ArticleService;
 import com.board.service.article.response.ArticleResponse;
+import com.board.support.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
@@ -35,14 +35,14 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
 
     @Test
     @DisplayName("게시글 등록 API")
-    void postArticle() throws Exception {
+    void createArticle() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()
                 .title("게시글 제목입니다.")
                 .content("게시글 내용입니다.")
                 .build();
 
-        BDDMockito.given(articleService.postArticle(any()))
+        BDDMockito.given(articleService.createArticle(any(), anyLong()))
                 .willReturn(toResponse(1L, "게시글 제목입니다.", "게시글 내용입니다."));
 
         // when, then
@@ -116,14 +116,14 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
 
     @Test
     @DisplayName("게시글 수정 API")
-    void putArticle() throws Exception {
+    void updateArticle() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()
                 .title("게시글 제목")
                 .content("게시글 내용.")
                 .build();
 
-        BDDMockito.given(articleService.putArticle(any()))
+        BDDMockito.given(articleService.updateArticle(any()))
                 .willReturn(toResponse(1L, "게시글 제목", "게시글 내용"));
 
         // when, then
