@@ -8,6 +8,7 @@ import com.board.dto.page.PageResponse;
 import com.board.dto.page.PageServiceRequest;
 import com.board.exception.BusinessException;
 import com.board.service.article.request.ArticleServiceRequest;
+import com.board.service.article.response.ArticleDetailResponse;
 import com.board.service.article.response.ArticleResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -38,9 +39,9 @@ public class ArticleService {
     /**
      * 게시글 1건을 조회한다.
      */
-    public ArticleResponse getArticle(Long id) {
+    public ArticleDetailResponse getArticle(Long id) {
         Article article = findValidArticle(id);
-        return ArticleResponse.of(article);
+        return ArticleDetailResponse.of(article);
     }
 
     /**

@@ -23,6 +23,7 @@ public class SecurityUserArgumentResolver implements HandlerMethodArgumentResolv
 
     @Override
     public Object resolveArgument(MethodParameter parameter, ModelAndViewContainer mavContainer, NativeWebRequest webRequest, WebDataBinderFactory binderFactory) {
+        // 실제로 주입할 객체를 반환
         return new SecurityUser(1L, "khghouse@naver.com", List.of(new SimpleGrantedAuthority("ROLE_USER")));
     }
 

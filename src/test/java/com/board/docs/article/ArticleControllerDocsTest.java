@@ -5,7 +5,9 @@ import com.board.api.article.request.ArticleRequest;
 import com.board.dto.page.PageInfomation;
 import com.board.dto.page.PageResponse;
 import com.board.service.article.ArticleService;
+import com.board.service.article.response.ArticleDetailResponse;
 import com.board.service.article.response.ArticleResponse;
+import com.board.service.member.response.MemberResponse;
 import com.board.support.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -13,6 +15,7 @@ import org.mockito.BDDMockito;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.payload.JsonFieldType;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -84,8 +87,22 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
     @DisplayName("게시글 1건 조회 API")
     void getArticle() throws Exception {
         // given
+        MemberResponse memberResponse = MemberResponse.builder()
+                .id(1L)
+                .email("khghouse@naver.com")
+                .build();
+
+        ArticleDetailResponse resonse = ArticleDetailResponse.builder()
+                .id(1L)
+                .title("게시글 제목입니다.")
+                .content("게시글 내용입니다.")
+                .createdDateTime(LocalDateTime.now())
+                .modifiedDateTime(LocalDateTime.now())
+                .member(memberResponse)
+                .build();
+
         BDDMockito.given(articleService.getArticle(anyLong()))
-                .willReturn(toResponse(1L, "게시글 제목입니다.", "게시글 내용입니다."));
+                .willReturn(resonse);
 
         // when, then
         mockMvc.perform(get("/api/v1/articles/{id}", 1L))
@@ -109,7 +126,17 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.title").type(JsonFieldType.STRING)
                                         .description("게시글 제목"),
                                 fieldWithPath("data.content").type(JsonFieldType.STRING)
-                                        .description("게시글 내용")
+                                        .description("게시글 내용"),
+                                fieldWithPath("data.createdDateTime").type(JsonFieldType.STRING)
+                                        .description("등록일시 [yyyy-MM-dd HH:mm:ss]"),
+                                fieldWithPath("data.modifiedDateTime").type(JsonFieldType.STRING)
+                                        .description("수정일시 [yyyy-MM-dd HH:mm:ss]"),
+                                fieldWithPath("data.member").type(JsonFieldType.OBJECT)
+                                        .description("회원 정보"),
+                                fieldWithPath("data.member.id").type(JsonFieldType.NUMBER)
+                                        .description("회원 ID"),
+                                fieldWithPath("data.member.email").type(JsonFieldType.STRING)
+                                        .description("회원 이메일")
                         )
                 ));
     }

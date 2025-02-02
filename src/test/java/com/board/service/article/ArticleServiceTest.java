@@ -8,6 +8,7 @@ import com.board.dto.page.PageResponse;
 import com.board.dto.page.PageServiceRequest;
 import com.board.exception.BusinessException;
 import com.board.service.article.request.ArticleServiceRequest;
+import com.board.service.article.response.ArticleDetailResponse;
 import com.board.service.article.response.ArticleResponse;
 import com.board.support.IntegrationTestSupport;
 import org.assertj.core.groups.Tuple;
@@ -61,16 +62,30 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글 1건을 조회하고 검증한다.")
     void getArticle() {
         // given
-        Article article = toEntity("게시글 제목", "게시글 내용");
+        Member member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Password12#$")
+                .build();
+
+        Member dbMember = memberRepository.save(member);
+
+        Article article = Article.builder()
+                .title("게시글 제목")
+                .content("게시글 내용")
+                .deleted(false)
+                .member(dbMember)
+                .build();
+
         articleRepository.save(article);
 
         // when
-        ArticleResponse result = articleService.getArticle(article.getId());
+        ArticleDetailResponse result = articleService.getArticle(article.getId());
 
         // then
         assertThat(result.getId()).isEqualTo(article.getId());
         assertThat(result.getTitle()).isEqualTo("게시글 제목");
         assertThat(result.getContent()).isEqualTo("게시글 내용");
+        assertThat(result.getMember().getEmail()).isEqualTo("khghouse@daum.net");
     }
 
     @Test
