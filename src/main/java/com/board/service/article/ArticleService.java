@@ -48,8 +48,9 @@ public class ArticleService {
      * 게시글을 수정한다.
      */
     @Transactional
-    public ArticleResponse updateArticle(ArticleServiceRequest request) {
+    public ArticleResponse updateArticle(ArticleServiceRequest request, Long memberId) {
         Article article = findValidArticle(request.getId());
+        article.validateAuthor(memberId);
         article.update(request.getTitle(), request.getContent());
         return ArticleResponse.of(article);
     }

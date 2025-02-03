@@ -150,7 +150,7 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                 .content("게시글 내용.")
                 .build();
 
-        BDDMockito.given(articleService.updateArticle(any()))
+        BDDMockito.given(articleService.updateArticle(any(), anyLong()))
                 .willReturn(toResponse(1L, "게시글 제목", "게시글 내용"));
 
         // when, then

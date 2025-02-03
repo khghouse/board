@@ -64,4 +64,10 @@ public class Article extends BaseEntity {
         this.deleted = true;
     }
 
+    public void validateAuthor(Long requestMemberId) {
+        if (!this.getMember().getId().equals(requestMemberId)) {
+            throw new IllegalArgumentException("게시글 작성자가 아닙니다.");
+        }
+    }
+
 }

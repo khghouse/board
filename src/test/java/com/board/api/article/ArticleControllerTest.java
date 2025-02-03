@@ -17,7 +17,6 @@ class ArticleControllerTest extends ControllerTestSupport {
 
     @Test
     @DisplayName("게시글을 등록하고 정상 응답한다.")
-    @WithCustomSecurityUser
     void createArticle() throws Exception {
         // given
         ArticleRequest request = ArticleRequest.builder()

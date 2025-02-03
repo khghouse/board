@@ -1,5 +1,6 @@
 package com.board.domain.article;
 
+import com.board.domain.member.Member;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -93,6 +94,48 @@ class ArticleTest {
         assertThatThrownBy(() -> article.delete())
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 삭제된 게시글입니다.");
+    }
+
+    @Test
+    @DisplayName("요청 회원 ID가 실제 게시글의 작성자인지 확인한다.")
+    void validateAuthor() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .email("khghouse@daum.net")
+                .password("Password12#$")
+                .build();
+
+        Article article = Article.builder()
+                .title("제목")
+                .content("내용")
+                .member(member)
+                .build();
+
+        // when, then
+        article.validateAuthor(1L);
+    }
+
+    @Test
+    @DisplayName("요청 회원 ID가 실제 게시글의 작성자가 아니라면 예외가 발생한다.")
+    void validateAuthorNotMatch() {
+        // given
+        Member member = Member.builder()
+                .id(1L)
+                .email("khghouse@daum.net")
+                .password("Password12#$")
+                .build();
+
+        Article article = Article.builder()
+                .title("제목")
+                .content("내용")
+                .member(member)
+                .build();
+
+        // when, then
+        assertThatThrownBy(() -> article.validateAuthor(2L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("게시글 작성자가 아닙니다.");
     }
 
     private static Article toEntityByTitle(String title) {

@@ -101,13 +101,24 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글을 수정하고 검증한다.")
     void updateArticle() {
         // given
-        Article article = toEntity("게시글 제목", "게시글 내용");
+        Member member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Password12#$")
+                .build();
+        memberRepository.save(member);
+
+        Article article = Article.builder()
+                .title("안녕하세요.")
+                .content("반갑습니다.")
+                .member(member)
+                .deleted(false)
+                .build();
         articleRepository.save(article);
 
         ArticleServiceRequest request = ArticleServiceRequest.of(article.getId(), "안녕하세요.", "반갑습니다.");
 
         // when
-        ArticleResponse result = articleService.updateArticle(request);
+        ArticleResponse result = articleService.updateArticle(request, member.getId());
 
         // then
         assertThat(result).extracting("title", "content")
@@ -121,9 +132,35 @@ class ArticleServiceTest extends IntegrationTestSupport {
         ArticleServiceRequest request = ArticleServiceRequest.of(1L);
 
         // when, then
-        assertThatThrownBy(() -> articleService.updateArticle(request))
+        assertThatThrownBy(() -> articleService.updateArticle(request, 1L))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessage("게시글 정보가 존재하지 않습니다.");
+    }
+
+    @Test
+    @DisplayName("본인이 작성하지 않은 게시글을 수정하려고 한다면 예외가 발생한다.")
+    void updateArticleNotAuthor() {
+        // given
+        Member member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Password12#$")
+                .build();
+        memberRepository.save(member);
+
+        Article article = Article.builder()
+                .title("안녕하세요.")
+                .content("반갑습니다.")
+                .member(member)
+                .deleted(false)
+                .build();
+        articleRepository.save(article);
+
+        ArticleServiceRequest request = ArticleServiceRequest.of(article.getId(), "안녕하세요.", "반갑습니다.");
+
+        // when, then
+        assertThatThrownBy(() -> articleService.updateArticle(request, 2L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("게시글 작성자가 아닙니다.");
     }
 
     @Test

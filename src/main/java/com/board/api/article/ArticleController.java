@@ -28,8 +28,8 @@ public class ArticleController {
     }
 
     @PutMapping("/{id}")
-    public ApiResponse updateArticle(@PathVariable Long id, @RequestBody @Validated ArticleRequest request) {
-        return ApiResponse.ok(articleService.updateArticle(request.toServiceRequest(id)));
+    public ApiResponse updateArticle(@PathVariable Long id, @RequestBody @Validated ArticleRequest request, @AuthenticationPrincipal SecurityUser securityUser) {
+        return ApiResponse.ok(articleService.updateArticle(request.toServiceRequest(id), securityUser.getMemberId()));
     }
 
     @DeleteMapping("/{id}")
