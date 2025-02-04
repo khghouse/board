@@ -33,8 +33,8 @@ public class ArticleController {
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse deleteArticle(@PathVariable Long id) {
-        articleService.deleteArticle(id);
+    public ApiResponse deleteArticle(@PathVariable Long id, @AuthenticationPrincipal SecurityUser securityUser) {
+        articleService.deleteArticle(id, securityUser.getMemberId());
         return ApiResponse.ok();
     }
 

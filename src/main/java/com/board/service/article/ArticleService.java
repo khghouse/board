@@ -59,8 +59,9 @@ public class ArticleService {
      * 게시글을 삭제한다.
      */
     @Transactional
-    public void deleteArticle(Long id) {
+    public void deleteArticle(Long id, Long memberId) {
         Article article = findArticle(id);
+        article.validateAuthor(memberId);
         article.delete();
     }
 

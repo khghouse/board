@@ -11,7 +11,10 @@ import com.board.service.article.request.ArticleServiceRequest;
 import com.board.service.article.response.ArticleDetailResponse;
 import com.board.service.article.response.ArticleResponse;
 import com.board.support.IntegrationTestSupport;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.PersistenceContext;
 import org.assertj.core.groups.Tuple;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,14 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @BeforeEach
+    void setUp() {
+        entityManager.createNativeQuery("ALTER TABLE member ALTER COLUMN id RESTART WITH 1").executeUpdate();
+    }
 
     @Test
     @DisplayName("게시글을 등록하고 검증한다.")
@@ -157,6 +168,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
         ArticleServiceRequest request = ArticleServiceRequest.of(article.getId(), "안녕하세요.", "반갑습니다.");
 
+        System.out.println(member.getId());
         // when, then
         assertThatThrownBy(() -> articleService.updateArticle(request, 2L))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -167,11 +179,22 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("등록된 게시글을 삭제하고 검증한다.")
     void deleteArticle() {
         // given
-        Article article = toEntity("게시글 제목", "게시글 내용", false);
+        Member member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Password12#$")
+                .build();
+        memberRepository.save(member);
+
+        Article article = Article.builder()
+                .title("안녕하세요.")
+                .content("반갑습니다.")
+                .member(member)
+                .deleted(false)
+                .build();
         articleRepository.save(article);
 
         // when
-        articleService.deleteArticle(article.getId());
+        articleService.deleteArticle(article.getId(), member.getId());
 
         // then
         Article result = articleRepository.findById(article.getId()).get();
@@ -182,11 +205,22 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("등록된 게시글을 삭제하려고 했는데 이미 삭제된 게시글이라 예외가 발생한다.")
     void deleteArticleAlreadyDeleted() {
         // given
-        Article article = toEntity("게시글 제목", "게시글 내용", true);
+        Member member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Password12#$")
+                .build();
+        memberRepository.save(member);
+
+        Article article = Article.builder()
+                .title("안녕하세요.")
+                .content("반갑습니다.")
+                .member(member)
+                .deleted(true)
+                .build();
         articleRepository.save(article);
 
         // when, then
-        assertThatThrownBy(() -> articleService.deleteArticle(article.getId()))
+        assertThatThrownBy(() -> articleService.deleteArticle(article.getId(), member.getId()))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("이미 삭제된 게시글입니다.");
     }
@@ -195,10 +229,35 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("삭제하려는 게시글 정보가 없어서 예외가 발생한다.")
     void deleteArticleNotFind() {
         // when, then
-        assertThatThrownBy(() -> articleService.deleteArticle(1L))
+        assertThatThrownBy(() -> articleService.deleteArticle(1L, 1L))
                 .isInstanceOf(NoSuchElementException.class)
                 .hasMessage("게시글 정보가 존재하지 않습니다.");
     }
+
+    @Test
+    @DisplayName("본인이 작성하지 않은 게시글을 수정하려고 한다면 예외가 발생한다.")
+    void deleteArticleNotAuthor() {
+        // given
+        Member member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Password12#$")
+                .build();
+        memberRepository.save(member);
+
+        Article article = Article.builder()
+                .title("안녕하세요.")
+                .content("반갑습니다.")
+                .member(member)
+                .deleted(false)
+                .build();
+        articleRepository.save(article);
+
+        // when, then
+        assertThatThrownBy(() -> articleService.deleteArticle(article.getId(), 2L))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("게시글 작성자가 아닙니다.");
+    }
+
 
     @Test
     @DisplayName("게시글 리스트를 조회하고 검증한다.")
@@ -396,14 +455,6 @@ class ArticleServiceTest extends IntegrationTestSupport {
                 .title(title)
                 .content(content)
                 .deleted(deleted)
-                .build();
-    }
-
-    private static Article toEntity(String title, String content) {
-        return Article.builder()
-                .title(title)
-                .content(content)
-                .deleted(false)
                 .build();
     }
 
