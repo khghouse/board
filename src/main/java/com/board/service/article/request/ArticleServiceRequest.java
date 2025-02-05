@@ -23,22 +23,22 @@ public class ArticleServiceRequest {
         this.content = content;
     }
 
-    public static ArticleServiceRequest of(Long id) {
+    public static ArticleServiceRequest of(Long id, String title, String content) {
         return ArticleServiceRequest.builder()
                 .id(id)
-                .build();
-    }
-
-    public static ArticleServiceRequest of(String title, String content) {
-        return ArticleServiceRequest.builder()
                 .title(title)
                 .content(content)
                 .build();
     }
-
-    public static ArticleServiceRequest of(Long id, String title, String content) {
+    
+    public static ArticleServiceRequest withId(Long id) {
         return ArticleServiceRequest.builder()
                 .id(id)
+                .build();
+    }
+
+    public static ArticleServiceRequest withTitleAndContent(String title, String content) {
+        return ArticleServiceRequest.builder()
                 .title(title)
                 .content(content)
                 .build();

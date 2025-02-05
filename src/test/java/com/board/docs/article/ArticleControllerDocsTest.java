@@ -235,8 +235,8 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
         mockMvc.perform(get("/api/v1/articles")
                         .param("pageNumber", "1")
                         .param("pageSize", "20")
-                        .param("direction", "desc")
-                        .param("property", "id"))
+                        .param("sortDirection", "desc")
+                        .param("sortByColumn", "id"))
                 .andExpect(status().isOk())
                 .andDo(print())
                 .andDo(document.document(
@@ -245,9 +245,9 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                                         .optional(),
                                 parameterWithName("pageSize").description("한 페이지당 데이터 수 - default = 20")
                                         .optional(),
-                                parameterWithName("direction").description("정렬 순서 [asc|desc] - default = desc")
+                                parameterWithName("sortDirection").description("정렬 순서 [asc|desc] - default = desc")
                                         .optional(),
-                                parameterWithName("property").description("정렬 기준 컬럼 - default = id")
+                                parameterWithName("sortByColumn").description("정렬 기준 컬럼 - default = id")
                                         .optional()
                         ),
                         responseFields(

@@ -52,14 +52,9 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글을 등록하고 검증한다.")
     void createArticle() {
         // given
-        Member member = Member.builder()
-                .email("khghouse@daum.net")
-                .password("Password12#$")
-                .build();
+        Member member = createMember();
 
-        memberRepository.save(member);
-
-        ArticleServiceRequest request = ArticleServiceRequest.of("안녕하세요.", "반갑습니다.");
+        ArticleServiceRequest request = ArticleServiceRequest.withTitleAndContent("안녕하세요.", "반갑습니다.");
 
         // when
         ArticleResponse result = articleService.createArticle(request, member.getId());
@@ -73,21 +68,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글 1건을 조회하고 검증한다.")
     void getArticle() {
         // given
-        Member member = Member.builder()
-                .email("khghouse@daum.net")
-                .password("Password12#$")
-                .build();
-
-        Member dbMember = memberRepository.save(member);
-
-        Article article = Article.builder()
-                .title("게시글 제목")
-                .content("게시글 내용")
-                .deleted(false)
-                .member(dbMember)
-                .build();
-
-        articleRepository.save(article);
+        Member member = createMember();
+        Article article = createArticle("게시글 제목", "게시글 내용", false, member);
 
         // when
         ArticleDetailResponse result = articleService.getArticle(article.getId());
@@ -112,11 +94,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글을 수정하고 검증한다.")
     void updateArticle() {
         // given
-        Member member = Member.builder()
-                .email("khghouse@daum.net")
-                .password("Password12#$")
-                .build();
-        memberRepository.save(member);
+        Member member = createMember();
 
         Article article = Article.builder()
                 .title("안녕하세요.")
@@ -140,7 +118,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("수정하려는 게시글 정보가 없어서 예외가 발생한다.")
     void updateArticleNotFind() {
         // given
-        ArticleServiceRequest request = ArticleServiceRequest.of(1L);
+        ArticleServiceRequest request = ArticleServiceRequest.withId(1L);
 
         // when, then
         assertThatThrownBy(() -> articleService.updateArticle(request, 1L))
@@ -152,23 +130,11 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("본인이 작성하지 않은 게시글을 수정하려고 한다면 예외가 발생한다.")
     void updateArticleNotAuthor() {
         // given
-        Member member = Member.builder()
-                .email("khghouse@daum.net")
-                .password("Password12#$")
-                .build();
-        memberRepository.save(member);
-
-        Article article = Article.builder()
-                .title("안녕하세요.")
-                .content("반갑습니다.")
-                .member(member)
-                .deleted(false)
-                .build();
-        articleRepository.save(article);
+        Member member = createMember();
+        Article article = createArticle("안녕하세요.", "반갑습니다.", false, member);
 
         ArticleServiceRequest request = ArticleServiceRequest.of(article.getId(), "안녕하세요.", "반갑습니다.");
 
-        System.out.println(member.getId());
         // when, then
         assertThatThrownBy(() -> articleService.updateArticle(request, 2L))
                 .isInstanceOf(IllegalArgumentException.class)
@@ -179,19 +145,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("등록된 게시글을 삭제하고 검증한다.")
     void deleteArticle() {
         // given
-        Member member = Member.builder()
-                .email("khghouse@daum.net")
-                .password("Password12#$")
-                .build();
-        memberRepository.save(member);
-
-        Article article = Article.builder()
-                .title("안녕하세요.")
-                .content("반갑습니다.")
-                .member(member)
-                .deleted(false)
-                .build();
-        articleRepository.save(article);
+        Member member = createMember();
+        Article article = createArticle("안녕하세요.", "반갑습니다.", false, member);
 
         // when
         articleService.deleteArticle(article.getId(), member.getId());
@@ -205,19 +160,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("등록된 게시글을 삭제하려고 했는데 이미 삭제된 게시글이라 예외가 발생한다.")
     void deleteArticleAlreadyDeleted() {
         // given
-        Member member = Member.builder()
-                .email("khghouse@daum.net")
-                .password("Password12#$")
-                .build();
-        memberRepository.save(member);
-
-        Article article = Article.builder()
-                .title("안녕하세요.")
-                .content("반갑습니다.")
-                .member(member)
-                .deleted(true)
-                .build();
-        articleRepository.save(article);
+        Member member = createMember();
+        Article article = createArticle("안녕하세요.", "반갑습니다.", true, member);
 
         // when, then
         assertThatThrownBy(() -> articleService.deleteArticle(article.getId(), member.getId()))
@@ -238,19 +182,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("본인이 작성하지 않은 게시글을 수정하려고 한다면 예외가 발생한다.")
     void deleteArticleNotAuthor() {
         // given
-        Member member = Member.builder()
-                .email("khghouse@daum.net")
-                .password("Password12#$")
-                .build();
-        memberRepository.save(member);
-
-        Article article = Article.builder()
-                .title("안녕하세요.")
-                .content("반갑습니다.")
-                .member(member)
-                .deleted(false)
-                .build();
-        articleRepository.save(article);
+        Member member = createMember();
+        Article article = createArticle("안녕하세요.", "반갑습니다.", false, member);
 
         // when, then
         assertThatThrownBy(() -> articleService.deleteArticle(article.getId(), 2L))
@@ -258,19 +191,19 @@ class ArticleServiceTest extends IntegrationTestSupport {
                 .hasMessage("게시글 작성자가 아닙니다.");
     }
 
-
     @Test
     @DisplayName("게시글 리스트를 조회하고 검증한다.")
     void getArticleList() {
         // given
-        Article article1 = toEntity("게시글 제목 1", "게시글 내용 1", false);
-        Article article2 = toEntity("게시글 제목 2", "게시글 내용 2", true);
-        Article article3 = toEntity("게시글 제목 3", "게시글 내용 3", false);
-        Article article4 = toEntity("게시글 제목 4", "게시글 내용 4", false);
+        Member member = createMember();
+
+        Article article1 = toEntity("게시글 제목 1", "게시글 내용 1", false, member);
+        Article article2 = toEntity("게시글 제목 2", "게시글 내용 2", true, member);
+        Article article3 = toEntity("게시글 제목 3", "게시글 내용 3", false, member);
+        Article article4 = toEntity("게시글 제목 4", "게시글 내용 4", false, member);
         articleRepository.saveAll(List.of(article1, article2, article3, article4));
 
-        PageServiceRequest request = PageServiceRequest.builder()
-                .build();
+        PageServiceRequest request = PageServiceRequest.withDefault();
 
         // when
         PageResponse result = articleService.getArticleList(request);
@@ -280,15 +213,20 @@ class ArticleServiceTest extends IntegrationTestSupport {
         assertThat(result.getPageInfomation().getTotalPages()).isEqualTo(1);
         assertThat(result.getPageInfomation().getTotalElements()).isEqualTo(3);
         assertThat(result.getPageInfomation().getIsLast()).isTrue();
-        assertThat(result.getContents()).hasSize(3);
+        assertThat(result.getContents()).hasSize(3)
+                .extracting("title", "content")
+                .containsExactly(
+                        Tuple.tuple("게시글 제목 4", "게시글 내용 4"),
+                        Tuple.tuple("게시글 제목 3", "게시글 내용 3"),
+                        Tuple.tuple("게시글 제목 1", "게시글 내용 1")
+                );
     }
 
     @Test
     @DisplayName("게시글 리스트 사이즈가 0이면 빈 배열을 응답한다.")
     void getArticleListSizeZero() {
         // given
-        PageServiceRequest request = PageServiceRequest.builder()
-                .build();
+        PageServiceRequest request = PageServiceRequest.withDefault();
 
         // when
         PageResponse result = articleService.getArticleList(request);
@@ -305,17 +243,14 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("페이징 처리된 게시글 리스트를 조회하고 검증한다.")
     void getArticleListPageable() {
         // given
+        Member member = createMember();
+
         List<Article> articles = IntStream.range(1, 21)
-                .mapToObj(i -> toEntity("게시글 제목 " + i, "게시글 내용 " + i, false))
+                .mapToObj(i -> toEntity("게시글 제목 " + i, "게시글 내용 " + i, false, member))
                 .collect(Collectors.toList());
         articleRepository.saveAll(articles);
 
-        PageServiceRequest request = PageServiceRequest.builder()
-                .pageNumber(1)
-                .pageSize(5)
-                .direction("desc")
-                .property("id")
-                .build();
+        PageServiceRequest request = PageServiceRequest.of(1, 5, "desc", "id");
 
         // when
         PageResponse result = articleService.getArticleList(request);
@@ -340,17 +275,14 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("페이징 처리된 게시글 리스트의 마지막 페이지 조회하고 검증한다.")
     void getArticleListPageableLastPage() {
         // given
+        Member member = createMember();
+
         List<Article> articles = IntStream.range(1, 21)
-                .mapToObj(i -> toEntity("게시글 제목 " + i, "게시글 내용 " + i, false))
+                .mapToObj(i -> toEntity("게시글 제목 " + i, "게시글 내용 " + i, false, member))
                 .collect(Collectors.toList());
         articleRepository.saveAll(articles);
 
-        PageServiceRequest request = PageServiceRequest.builder()
-                .pageNumber(5)
-                .pageSize(4)
-                .direction("desc")
-                .property("id")
-                .build();
+        PageServiceRequest request = PageServiceRequest.of(5, 4, "desc", "id");
 
         // when
         PageResponse result = articleService.getArticleList(request);
@@ -374,16 +306,14 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("ID 오름차순 정렬된 게시글 리스트의 조회하고 검증한다.")
     void getArticleListPageablOrderByIdAsc() {
         // given
+        Member member = createMember();
+
         List<Article> articles = IntStream.range(1, 21)
-                .mapToObj(i -> toEntity("게시글 제목 " + i, "게시글 내용 " + i, false))
+                .mapToObj(i -> toEntity("게시글 제목 " + i, "게시글 내용 " + i, false, member))
                 .collect(Collectors.toList());
         articleRepository.saveAll(articles);
 
-        PageServiceRequest request = PageServiceRequest.builder()
-                .pageNumber(2)
-                .pageSize(10)
-                .direction("asc")
-                .build();
+        PageServiceRequest request = PageServiceRequest.withPageAndSortDirection(2, 10, "asc");
 
         // when
         PageResponse result = articleService.getArticleList(request);
@@ -413,9 +343,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글 리스트 조회 시, 페이지 번호가 1 미만이어서 예외가 발생한다.")
     void getArticleListPageableExceptionPageNumber() {
         // given
-        PageServiceRequest request = PageServiceRequest.builder()
-                .pageNumber(0)
-                .build();
+        PageServiceRequest request = PageServiceRequest.withPageNumber(0);
 
         // when, then
         assertThatThrownBy(() -> articleService.getArticleList(request))
@@ -426,10 +354,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글 리스트 조회 시, 정렬 기준 값이 존재하지 않는 컬럼이라 예외가 발생한다.")
     void getArticleListPageableExceptionProperty() {
         // given
-        PageServiceRequest request = PageServiceRequest.builder()
-                .pageNumber(1)
-                .property("idd")
-                .build();
+        PageServiceRequest request = PageServiceRequest.withPageNumberAndSortByColumn(1, "idd");
 
         // when, then
         assertThatThrownBy(() -> articleService.getArticleList(request))
@@ -440,21 +365,41 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글 리스트 조회 시, 정렬 순서 값이 asc 또는 desc가 아니어서 예외가 발생한다.")
     void getArticleListPageableExceptionDirection() {
         // given
-        PageServiceRequest request = PageServiceRequest.builder()
-                .pageNumber(1)
-                .direction("descc")
-                .build();
+        PageServiceRequest request = PageServiceRequest.withPageNumberAndSortDirection(1, "descc");
 
         // when, then
         assertThatThrownBy(() -> articleService.getArticleList(request))
                 .isInstanceOf(BusinessException.class);
     }
 
-    private static Article toEntity(String title, String content, boolean deleted) {
+    private Member createMember() {
+        Member member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Password12#$")
+                .build();
+
+        memberRepository.save(member);
+        return member;
+    }
+
+    private Article createArticle(String title, String content, boolean deleted, Member member) {
+        Article article = Article.builder()
+                .title(title)
+                .content(content)
+                .deleted(deleted)
+                .member(member)
+                .build();
+
+        articleRepository.save(article);
+        return article;
+    }
+
+    private static Article toEntity(String title, String content, boolean deleted, Member member) {
         return Article.builder()
                 .title(title)
                 .content(content)
                 .deleted(deleted)
+                .member(member)
                 .build();
     }
 
