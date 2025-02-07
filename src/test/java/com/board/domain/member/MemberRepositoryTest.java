@@ -1,7 +1,7 @@
 package com.board.domain.member;
 
 import com.board.component.SecurityEncoder;
-import com.board.domain.RepositoryTestSupport;
+import com.board.support.RepositoryTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

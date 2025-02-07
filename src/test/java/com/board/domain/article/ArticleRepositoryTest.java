@@ -1,6 +1,6 @@
 package com.board.domain.article;
 
-import com.board.domain.RepositoryTestSupport;
+import com.board.support.RepositoryTestSupport;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,9 +23,6 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
 
     @Autowired
     private ArticleRepository articleRepository;
-
-    @Autowired
-    private TestEntityManager testEntityManager;
 
     @Test
     @DisplayName("게시글을 등록하고 검증한다.")
