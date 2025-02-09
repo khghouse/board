@@ -195,15 +195,21 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글 리스트를 조회하고 검증한다.")
     void getArticleList() {
         // given
-        Member member = createMember();
+        List<Member> members = IntStream.range(1, 5)
+                .mapToObj(i -> Member.builder().email("khghouse" + i + "@daum.net").password("Password12#$").build())
+                .collect(Collectors.toList());
+        memberRepository.saveAll(members);
 
-        Article article1 = toEntity("게시글 제목 1", "게시글 내용 1", false, member);
-        Article article2 = toEntity("게시글 제목 2", "게시글 내용 2", true, member);
-        Article article3 = toEntity("게시글 제목 3", "게시글 내용 3", false, member);
-        Article article4 = toEntity("게시글 제목 4", "게시글 내용 4", false, member);
+        Article article1 = toEntity("게시글 제목 1", "게시글 내용 1", false, members.get(0));
+        Article article2 = toEntity("게시글 제목 2", "게시글 내용 2", true, members.get(1));
+        Article article3 = toEntity("게시글 제목 3", "게시글 내용 3", false, members.get(2));
+        Article article4 = toEntity("게시글 제목 4", "게시글 내용 4", false, members.get(3));
         articleRepository.saveAll(List.of(article1, article2, article3, article4));
 
         PageServiceRequest request = PageServiceRequest.withDefault();
+
+        entityManager.flush();
+        entityManager.clear();
 
         // when
         PageResponse result = articleService.getArticleList(request);
@@ -214,11 +220,11 @@ class ArticleServiceTest extends IntegrationTestSupport {
         assertThat(result.getPageInfomation().getTotalElements()).isEqualTo(3);
         assertThat(result.getPageInfomation().getIsLast()).isTrue();
         assertThat(result.getContents()).hasSize(3)
-                .extracting("title", "content")
+                .extracting("title", "content", "member.email")
                 .containsExactly(
-                        Tuple.tuple("게시글 제목 4", "게시글 내용 4"),
-                        Tuple.tuple("게시글 제목 3", "게시글 내용 3"),
-                        Tuple.tuple("게시글 제목 1", "게시글 내용 1")
+                        Tuple.tuple("게시글 제목 4", "게시글 내용 4", "khghouse4@daum.net"),
+                        Tuple.tuple("게시글 제목 3", "게시글 내용 3", "khghouse3@daum.net"),
+                        Tuple.tuple("게시글 제목 1", "게시글 내용 1", "khghouse1@daum.net")
                 );
     }
 
@@ -243,10 +249,13 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("페이징 처리된 게시글 리스트를 조회하고 검증한다.")
     void getArticleListPageable() {
         // given
-        Member member = createMember();
+        List<Member> members = IntStream.range(1, 21)
+                .mapToObj(i -> Member.builder().email("khghouse" + i + "@daum.net").password("Password12#$").build())
+                .collect(Collectors.toList());
+        memberRepository.saveAll(members);
 
         List<Article> articles = IntStream.range(1, 21)
-                .mapToObj(i -> toEntity("게시글 제목 " + i, "게시글 내용 " + i, false, member))
+                .mapToObj(i -> toEntity("게시글 제목 " + i, "게시글 내용 " + i, false, members.get(i - 1)))
                 .collect(Collectors.toList());
         articleRepository.saveAll(articles);
 
@@ -261,13 +270,13 @@ class ArticleServiceTest extends IntegrationTestSupport {
         assertThat(result.getPageInfomation().getTotalElements()).isEqualTo(20);
         assertThat(result.getPageInfomation().getIsLast()).isFalse();
         assertThat(result.getContents()).hasSize(5)
-                .extracting("title", "content")
+                .extracting("title", "content", "member.email")
                 .containsExactly(
-                        Tuple.tuple("게시글 제목 20", "게시글 내용 20"),
-                        Tuple.tuple("게시글 제목 19", "게시글 내용 19"),
-                        Tuple.tuple("게시글 제목 18", "게시글 내용 18"),
-                        Tuple.tuple("게시글 제목 17", "게시글 내용 17"),
-                        Tuple.tuple("게시글 제목 16", "게시글 내용 16")
+                        Tuple.tuple("게시글 제목 20", "게시글 내용 20", "khghouse20@daum.net"),
+                        Tuple.tuple("게시글 제목 19", "게시글 내용 19", "khghouse19@daum.net"),
+                        Tuple.tuple("게시글 제목 18", "게시글 내용 18", "khghouse18@daum.net"),
+                        Tuple.tuple("게시글 제목 17", "게시글 내용 17", "khghouse17@daum.net"),
+                        Tuple.tuple("게시글 제목 16", "게시글 내용 16", "khghouse16@daum.net")
                 );
     }
 
@@ -275,10 +284,13 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("페이징 처리된 게시글 리스트의 마지막 페이지 조회하고 검증한다.")
     void getArticleListPageableLastPage() {
         // given
-        Member member = createMember();
+        List<Member> members = IntStream.range(1, 21)
+                .mapToObj(i -> Member.builder().email("khghouse" + i + "@daum.net").password("Password12#$").build())
+                .collect(Collectors.toList());
+        memberRepository.saveAll(members);
 
         List<Article> articles = IntStream.range(1, 21)
-                .mapToObj(i -> toEntity("게시글 제목 " + i, "게시글 내용 " + i, false, member))
+                .mapToObj(i -> toEntity("게시글 제목 " + i, "게시글 내용 " + i, false, members.get(i - 1)))
                 .collect(Collectors.toList());
         articleRepository.saveAll(articles);
 
@@ -293,12 +305,12 @@ class ArticleServiceTest extends IntegrationTestSupport {
         assertThat(result.getPageInfomation().getTotalElements()).isEqualTo(20);
         assertThat(result.getPageInfomation().getIsLast()).isTrue();
         assertThat(result.getContents()).hasSize(4)
-                .extracting("title", "content")
+                .extracting("title", "content", "member.email")
                 .containsExactly(
-                        Tuple.tuple("게시글 제목 4", "게시글 내용 4"),
-                        Tuple.tuple("게시글 제목 3", "게시글 내용 3"),
-                        Tuple.tuple("게시글 제목 2", "게시글 내용 2"),
-                        Tuple.tuple("게시글 제목 1", "게시글 내용 1")
+                        Tuple.tuple("게시글 제목 4", "게시글 내용 4", "khghouse4@daum.net"),
+                        Tuple.tuple("게시글 제목 3", "게시글 내용 3", "khghouse3@daum.net"),
+                        Tuple.tuple("게시글 제목 2", "게시글 내용 2", "khghouse2@daum.net"),
+                        Tuple.tuple("게시글 제목 1", "게시글 내용 1", "khghouse1@daum.net")
                 );
     }
 
@@ -306,10 +318,13 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("ID 오름차순 정렬된 게시글 리스트의 조회하고 검증한다.")
     void getArticleListPageablOrderByIdAsc() {
         // given
-        Member member = createMember();
+        List<Member> members = IntStream.range(1, 21)
+                .mapToObj(i -> Member.builder().email("khghouse" + i + "@daum.net").password("Password12#$").build())
+                .collect(Collectors.toList());
+        memberRepository.saveAll(members);
 
         List<Article> articles = IntStream.range(1, 21)
-                .mapToObj(i -> toEntity("게시글 제목 " + i, "게시글 내용 " + i, false, member))
+                .mapToObj(i -> toEntity("게시글 제목 " + i, "게시글 내용 " + i, false, members.get(i - 1)))
                 .collect(Collectors.toList());
         articleRepository.saveAll(articles);
 
@@ -324,18 +339,18 @@ class ArticleServiceTest extends IntegrationTestSupport {
         assertThat(result.getPageInfomation().getTotalElements()).isEqualTo(20);
         assertThat(result.getPageInfomation().getIsLast()).isTrue();
         assertThat(result.getContents()).hasSize(10)
-                .extracting("title", "content")
+                .extracting("title", "content", "member.email")
                 .containsExactly(
-                        Tuple.tuple("게시글 제목 11", "게시글 내용 11"),
-                        Tuple.tuple("게시글 제목 12", "게시글 내용 12"),
-                        Tuple.tuple("게시글 제목 13", "게시글 내용 13"),
-                        Tuple.tuple("게시글 제목 14", "게시글 내용 14"),
-                        Tuple.tuple("게시글 제목 15", "게시글 내용 15"),
-                        Tuple.tuple("게시글 제목 16", "게시글 내용 16"),
-                        Tuple.tuple("게시글 제목 17", "게시글 내용 17"),
-                        Tuple.tuple("게시글 제목 18", "게시글 내용 18"),
-                        Tuple.tuple("게시글 제목 19", "게시글 내용 19"),
-                        Tuple.tuple("게시글 제목 20", "게시글 내용 20")
+                        Tuple.tuple("게시글 제목 11", "게시글 내용 11", "khghouse11@daum.net"),
+                        Tuple.tuple("게시글 제목 12", "게시글 내용 12", "khghouse12@daum.net"),
+                        Tuple.tuple("게시글 제목 13", "게시글 내용 13", "khghouse13@daum.net"),
+                        Tuple.tuple("게시글 제목 14", "게시글 내용 14", "khghouse14@daum.net"),
+                        Tuple.tuple("게시글 제목 15", "게시글 내용 15", "khghouse15@daum.net"),
+                        Tuple.tuple("게시글 제목 16", "게시글 내용 16", "khghouse16@daum.net"),
+                        Tuple.tuple("게시글 제목 17", "게시글 내용 17", "khghouse17@daum.net"),
+                        Tuple.tuple("게시글 제목 18", "게시글 내용 18", "khghouse18@daum.net"),
+                        Tuple.tuple("게시글 제목 19", "게시글 내용 19", "khghouse19@daum.net"),
+                        Tuple.tuple("게시글 제목 20", "게시글 내용 20", "khghouse20@daum.net")
                 );
     }
 

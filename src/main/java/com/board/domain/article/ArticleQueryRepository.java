@@ -1,18 +1,17 @@
 package com.board.domain.article;
 
 import com.board.domain.member.QMember;
-import com.querydsl.core.types.Order;
-import com.querydsl.core.types.OrderSpecifier;
-import com.querydsl.core.types.dsl.ComparableExpressionBase;
-import com.querydsl.core.types.dsl.PathBuilder;
+import com.board.util.QuerydslUtil;
+import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
@@ -22,44 +21,23 @@ public class ArticleQueryRepository {
     private final QArticle article = QArticle.article;
     private final QMember member = QMember.member;
 
-    public List<Article> findAllWithMember() {
-        return queryFactory.selectFrom(article)
+    public Page<Article> findActiveArticles(Pageable pageable) {
+        JPAQuery<Article> query = queryFactory.selectFrom(article)
                 .innerJoin(article.member, member)
-                .where(article.deleted.isFalse())
                 .fetchJoin()
-                .fetch();
-    }
-
-    public List<Article> findActiveArticles(Pageable pageable) {
-        List<OrderSpecifier<?>> orderSpecifiers = getOrderSpecifiers(pageable, article);
-
-        return queryFactory.selectFrom(article)
-                .innerJoin(article.member, member)
                 .where(article.deleted.isFalse())
-                .orderBy(orderSpecifiers.get(0))
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .fetch();
-    }
+                .orderBy(QuerydslUtil.createOrderSpecifiers(pageable, article));
+        QuerydslUtil.applyPage(query, pageable);
+        List<Article> articles = query.fetch();
 
-    private List<OrderSpecifier<?>> getOrderSpecifiers(Pageable pageable, QArticle article) {
-        List<OrderSpecifier<?>> orderSpecifiers = new ArrayList<>();
+        long count = pageable.isUnpaged() ? articles.size() :
+                Optional.ofNullable(queryFactory.select(article.count())
+                                .from(article)
+                                .where(article.deleted.isFalse())
+                                .fetchOne())
+                        .orElse(0L);
 
-        for (Sort.Order order : pageable.getSort()) {
-            PathBuilder<Article> path = new PathBuilder<>(Article.class, "article");
-            ComparableExpressionBase<?> fieldPath = path.getComparable(order.getProperty(), Comparable.class);
-
-            // 오름차순 정렬
-            if (order.getDirection().isAscending()) {
-                orderSpecifiers.add(new OrderSpecifier<>(Order.ASC, fieldPath));
-            }
-            // 내림차순 정렬
-            else {
-                orderSpecifiers.add(new OrderSpecifier<>(Order.DESC, fieldPath));
-            }
-        }
-
-        return orderSpecifiers;
+        return new PageImpl<>(articles, pageable, count);
     }
 
 }

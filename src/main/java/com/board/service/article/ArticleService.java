@@ -1,6 +1,7 @@
 package com.board.service.article;
 
 import com.board.domain.article.Article;
+import com.board.domain.article.ArticleQueryRepository;
 import com.board.domain.article.ArticleRepository;
 import com.board.domain.member.Member;
 import com.board.domain.member.MemberRepository;
@@ -25,6 +26,8 @@ public class ArticleService {
 
     private final ArticleRepository articleRepository;
     private final MemberRepository memberRepository;
+
+    private final ArticleQueryRepository articleQueryRepository;
 
     /**
      * 게시글을 등록한다.
@@ -71,7 +74,7 @@ public class ArticleService {
     public PageResponse getArticleList(PageServiceRequest request) {
         Page<Article> pageArticles;
         try {
-            pageArticles = articleRepository.findAllByDeletedFalse(request.toPageable());
+            pageArticles = articleQueryRepository.findActiveArticles(request.toPageable());
         } catch (Exception e) {
             throw new BusinessException(e.getMessage());
         }
@@ -80,7 +83,7 @@ public class ArticleService {
                 pageArticles,
                 pageArticles.getContent()
                         .stream()
-                        .map(ArticleResponse::of)
+                        .map(ArticleDetailResponse::of)
                         .collect(Collectors.toList())
         );
     }

@@ -92,14 +92,7 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                 .email("khghouse@naver.com")
                 .build();
 
-        ArticleDetailResponse resonse = ArticleDetailResponse.builder()
-                .id(1L)
-                .title("게시글 제목입니다.")
-                .content("게시글 내용입니다.")
-                .createdDateTime(LocalDateTime.now())
-                .modifiedDateTime(LocalDateTime.now())
-                .member(memberResponse)
-                .build();
+        ArticleDetailResponse resonse = toResponse(1L, "게시글 제목입니다.", "게시글 내용입니다.", memberResponse);
 
         BDDMockito.given(articleService.getArticle(anyLong()))
                 .willReturn(resonse);
@@ -219,13 +212,18 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
     @DisplayName("게시글 리스트 조회 API")
     void getArticleList() throws Exception {
         // given
-        ArticleResponse articleResponse1 = toResponse(1L, "게시글 제목입니다. 1", "게시글 내용입니다. 1");
-        ArticleResponse articleResponse2 = toResponse(2L, "게시글 제목입니다. 2", "게시글 내용입니다. 2");
-        ArticleResponse articleResponse3 = toResponse(3L, "게시글 제목입니다. 3", "게시글 내용입니다. 3");
+        MemberResponse memberResponse = MemberResponse.builder()
+                .id(1L)
+                .email("khghouse@naver.com")
+                .build();
+
+        ArticleDetailResponse articleResponse1 = toResponse(1L, "게시글 제목입니다. 1", "게시글 내용입니다. 1", memberResponse);
+        ArticleDetailResponse articleResponse2 = toResponse(2L, "게시글 제목입니다. 2", "게시글 내용입니다. 2", memberResponse);
+        ArticleDetailResponse articleResponse3 = toResponse(3L, "게시글 제목입니다. 3", "게시글 내용입니다. 3", memberResponse);
 
         PageResponse response = PageResponse.builder()
                 .pageInfomation(PageInfomation.of(1, 1, 3, true))
-                .contents(List.of(articleResponse1, articleResponse2, articleResponse3))
+                .contents(List.of(articleResponse3, articleResponse2, articleResponse1))
                 .build();
 
         BDDMockito.given(articleService.getArticleList(any()))
@@ -277,9 +275,30 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data.contents[].title").type(JsonFieldType.STRING)
                                         .description("게시글 제목"),
                                 fieldWithPath("data.contents[].content").type(JsonFieldType.STRING)
-                                        .description("게시글 내용")
+                                        .description("게시글 내용"),
+                                fieldWithPath("data.contents[].createdDateTime").type(JsonFieldType.STRING)
+                                        .description("등록일시 [yyyy-MM-dd HH:mm:ss]"),
+                                fieldWithPath("data.contents[].modifiedDateTime").type(JsonFieldType.STRING)
+                                        .description("수정일시 [yyyy-MM-dd HH:mm:ss]"),
+                                fieldWithPath("data.contents[].member").type(JsonFieldType.OBJECT)
+                                        .description("회원 정보"),
+                                fieldWithPath("data.contents[].member.id").type(JsonFieldType.NUMBER)
+                                        .description("회원 ID"),
+                                fieldWithPath("data.contents[].member.email").type(JsonFieldType.STRING)
+                                        .description("회원 이메일")
                         )
                 ));
+    }
+
+    private static ArticleDetailResponse toResponse(long id, String title, String content, MemberResponse memberResponse) {
+        return ArticleDetailResponse.builder()
+                .id(id)
+                .title(title)
+                .content(content)
+                .createdDateTime(LocalDateTime.now())
+                .modifiedDateTime(LocalDateTime.now())
+                .member(memberResponse)
+                .build();
     }
 
     private static ArticleResponse toResponse(Long id, String title, String content) {
