@@ -2,13 +2,13 @@
 
 ==== HTTP Request
 
-include::{snippets}/article-controller-docs-test/post-article/http-request.adoc[]
-include::{snippets}/article-controller-docs-test/post-article/request-fields.adoc[]
+include::{snippets}/article-controller-docs-test/create-article/http-request.adoc[]
+include::{snippets}/article-controller-docs-test/create-article/request-fields.adoc[]
 
 ==== HTTP Response
 
-include::{snippets}/article-controller-docs-test/post-article/http-response.adoc[]
-include::{snippets}/article-controller-docs-test/post-article/response-fields.adoc[]
+include::{snippets}/article-controller-docs-test/create-article/http-response.adoc[]
+include::{snippets}/article-controller-docs-test/create-article/response-fields.adoc[]
 
 ''''
 
@@ -30,14 +30,14 @@ include::{snippets}/article-controller-docs-test/get-article/response-fields.ado
 
 ==== HTTP Request
 
-include::{snippets}/article-controller-docs-test/put-article/http-request.adoc[]
-include::{snippets}/article-controller-docs-test/put-article/path-parameters.adoc[]
-include::{snippets}/article-controller-docs-test/put-article/request-fields.adoc[]
+include::{snippets}/article-controller-docs-test/update-article/http-request.adoc[]
+include::{snippets}/article-controller-docs-test/update-article/path-parameters.adoc[]
+include::{snippets}/article-controller-docs-test/update-article/request-fields.adoc[]
 
 ==== HTTP Response
 
-include::{snippets}/article-controller-docs-test/put-article/http-response.adoc[]
-include::{snippets}/article-controller-docs-test/put-article/response-fields.adoc[]
+include::{snippets}/article-controller-docs-test/update-article/http-response.adoc[]
+include::{snippets}/article-controller-docs-test/update-article/response-fields.adoc[]
 
 ''''
 
