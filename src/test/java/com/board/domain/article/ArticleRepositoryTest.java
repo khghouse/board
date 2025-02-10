@@ -1,11 +1,12 @@
 package com.board.domain.article;
 
+import com.board.domain.member.Member;
+import com.board.domain.member.MemberRepository;
 import com.board.support.RepositoryTestSupport;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -23,6 +24,9 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
 
     @Autowired
     private ArticleRepository articleRepository;
+
+    @Autowired
+    private MemberRepository memberRepository;
 
     @Test
     @DisplayName("게시글을 등록하고 검증한다.")
@@ -196,20 +200,32 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
         assertThat(result.getContent()).hasSize(20);
     }
 
-    private static Article toEntity(String title, String content, Boolean deleted) {
+    private Article toEntity(String title, String content, Boolean deleted) {
         return Article.builder()
+                .member(createMember())
                 .title(title)
                 .content(content)
                 .deleted(deleted)
                 .build();
     }
 
-    private static Article toEntity(String title, String content) {
+    private Article toEntity(String title, String content) {
         return Article.builder()
+                .member(createMember())
                 .title(title)
                 .content(content)
                 .deleted(false)
                 .build();
+    }
+
+    private Member createMember() {
+        Member member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Password12#$")
+                .build();
+
+        memberRepository.save(member);
+        return member;
     }
 
 }
