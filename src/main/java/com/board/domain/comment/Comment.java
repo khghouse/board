@@ -24,7 +24,7 @@ public class Comment extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id", nullable = false)
-    private Member member_id;
+    private Member member;
 
     @Column(length = 300, nullable = false)
     private String content;
@@ -32,10 +32,10 @@ public class Comment extends BaseEntity {
     private Boolean deleted;
 
     @Builder
-    public Comment(Long id, Article article, Member member_id, String content, Boolean deleted) {
+    public Comment(Long id, Article article, Member member, String content, Boolean deleted) {
         this.id = id;
         this.article = article;
-        this.member_id = member_id;
+        this.member = member;
         this.content = validateContent(content);
         this.deleted = deleted;
     }
