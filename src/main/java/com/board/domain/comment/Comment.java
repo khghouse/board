@@ -1,0 +1,50 @@
+package com.board.domain.comment;
+
+import com.board.domain.BaseEntity;
+import com.board.domain.article.Article;
+import com.board.domain.member.Member;
+import jakarta.persistence.*;
+import lombok.AccessLevel;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+
+@Entity
+@Getter
+@NoArgsConstructor(access = AccessLevel.PROTECTED)
+public class Comment extends BaseEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "article_id", nullable = false)
+    private Article article;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "member_id", nullable = false)
+    private Member member_id;
+
+    @Column(length = 300, nullable = false)
+    private String content;
+
+    private Boolean deleted;
+
+    @Builder
+    public Comment(Long id, Article article, Member member_id, String content, Boolean deleted) {
+        this.id = id;
+        this.article = article;
+        this.member_id = member_id;
+        this.content = validateContent(content);
+        this.deleted = deleted;
+    }
+
+    private String validateContent(String content) {
+        if (content.length() > 300) {
+            throw new IllegalArgumentException("댓글은 300자를 초과할 수 없습니다.");
+        }
+        return content;
+    }
+
+}
