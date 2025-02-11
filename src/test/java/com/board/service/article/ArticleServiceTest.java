@@ -69,15 +69,15 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void getArticle() {
         // given
         Member member = createMember();
-        Article article = createArticle("게시글 제목", "게시글 내용", false, member);
+        Article article = createArticle("안녕하세요.", "반갑습니다.", false, member);
 
         // when
         ArticleDetailResponse result = articleService.getArticle(article.getId());
 
         // then
         assertThat(result.getId()).isEqualTo(article.getId());
-        assertThat(result.getTitle()).isEqualTo("게시글 제목");
-        assertThat(result.getContent()).isEqualTo("게시글 내용");
+        assertThat(result.getTitle()).isEqualTo("안녕하세요.");
+        assertThat(result.getContent()).isEqualTo("반갑습니다.");
         assertThat(result.getMember().getEmail()).isEqualTo("khghouse@daum.net");
     }
 

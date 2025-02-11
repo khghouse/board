@@ -4,6 +4,7 @@ import com.board.domain.member.Member;
 import com.board.domain.member.MemberRepository;
 import com.board.support.RepositoryTestSupport;
 import org.assertj.core.groups.Tuple;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,21 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
     @Autowired
     private MemberRepository memberRepository;
 
+    private Member member;
+
+    @BeforeEach
+    void setUp() {
+        member = Member.builder()
+                .email("khghouse@daum.net")
+                .password("Password12#$")
+                .build();
+
+        memberRepository.save(member);
+    }
+
     @Test
-    @DisplayName("게시글을 등록하고 검증한다.")
-    void save() {
+    @DisplayName("게시글을 등록, 조회하고 검증한다.")
+    void saveAndfindById() {
         // given
         Article article = toEntity("게시글 제목", "게시글 내용");
 
@@ -38,33 +51,15 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
         Article result = articleRepository.save(article);
 
         // then
-        assertThat(result).extracting("title", "content")
-                .contains("게시글 제목", "게시글 내용");
-    }
-
-    @Test
-    @DisplayName("게시글 1건을 조회하고 검증한다.")
-    void findById() {
-        // given
-        Article article = toEntity("게시글 제목", "게시글 내용");
-
-        articleRepository.save(article);
-
-        // when
-        Article result = articleRepository.findById(article.getId())
-                .get();
-
-        // then
-        assertThat(result.getId()).isEqualTo(article.getId());
-        assertThat(result.getTitle()).isEqualTo("게시글 제목");
-        assertThat(result.getContent()).isEqualTo("게시글 내용");
+        assertThat(result).extracting("id", "title", "content", "member.email")
+                .contains(1L, "게시글 제목", "게시글 내용", "khghouse@daum.net");
     }
 
     @Test
     @DisplayName("게시글 1건의 조회 결과가 없어서 에러가 발생한다.")
     void notFindById() {
         // when, then
-        assertThatThrownBy(() -> articleRepository.findById(1L).get())
+        assertThatThrownBy(() -> articleRepository.findById(1L).orElseThrow())
                 .isInstanceOf(NoSuchElementException.class);
     }
 
@@ -75,13 +70,16 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
         Article article = toEntity("게시글 제목", "게시글 내용");
 
         articleRepository.save(article);
-        Article dbArticle = testEntityManager.find(Article.class, article.getId());
+        testEntityManager.flush();
+        testEntityManager.clear();
+
+        Article dbArticle = articleRepository.findById(article.getId()).orElseThrow();
         dbArticle.update("제목", "내용");
         testEntityManager.flush();
+        testEntityManager.clear();
 
         // when
-        Article result = articleRepository.findById(article.getId())
-                .get();
+        Article result = articleRepository.findById(article.getId()).orElseThrow();
 
         // then
         assertThat(result.getId()).isEqualTo(article.getId());
@@ -202,7 +200,7 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
 
     private Article toEntity(String title, String content, Boolean deleted) {
         return Article.builder()
-                .member(createMember())
+                .member(member)
                 .title(title)
                 .content(content)
                 .deleted(deleted)
@@ -211,21 +209,11 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
 
     private Article toEntity(String title, String content) {
         return Article.builder()
-                .member(createMember())
+                .member(member)
                 .title(title)
                 .content(content)
                 .deleted(false)
                 .build();
-    }
-
-    private Member createMember() {
-        Member member = Member.builder()
-                .email("khghouse@daum.net")
-                .password("Password12#$")
-                .build();
-
-        memberRepository.save(member);
-        return member;
     }
 
 }
