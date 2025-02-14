@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
+import static com.board.enumeration.ErrorCode.*;
+
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -50,11 +52,11 @@ public class AuthService {
     public JwtToken login(AuthServiceRequest request) {
         // 회원 인증 : 아이디에 해당하는 회원이 존재하는지 체크
         Member member = memberRepository.findByEmailAndDeletedFalse(request.getEmail())
-                .orElseThrow(() -> new BusinessException("존재하지 않는 계정입니다."));
+                .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
 
         // 회원 인증 : 비밀번호가 일치하는지 체크
         if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
-            throw new BusinessException("아이디와 비밀번호를 다시 확인해 주세요.");
+            throw new BusinessException(INVALID_CREDENTIALS);
         }
 
         // JWT 생성
@@ -84,7 +86,7 @@ public class AuthService {
 
         // 회원 정보 조회
         Member member = memberRepository.findByIdAndDeletedFalse(memberId)
-                .orElseThrow(() -> new BusinessException("존재하지 않는 계정입니다."));
+                .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
 
         // 리프레쉬 토큰 비교
         redis.compareRefreshToken(memberId, refreshToken);
@@ -143,7 +145,7 @@ public class AuthService {
         Optional<Member> optMember = memberRepository.findByEmailAndDeletedFalse(email);
 
         if (optMember.isPresent()) {
-            throw new BusinessException("이미 가입된 이메일입니다.");
+            throw new BusinessException(EMAIL_ALREADY_REGISTERED);
         }
     }
 

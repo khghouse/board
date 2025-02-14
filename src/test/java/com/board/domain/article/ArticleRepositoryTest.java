@@ -52,7 +52,7 @@ class ArticleRepositoryTest extends RepositoryTestSupport {
 
         // then
         assertThat(result).extracting("id", "title", "content", "member.email")
-                .contains(1L, "게시글 제목", "게시글 내용", "khghouse@daum.net");
+                .contains(article.getId(), "게시글 제목", "게시글 내용", "khghouse@daum.net");
     }
 
     @Test

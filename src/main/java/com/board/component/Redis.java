@@ -8,6 +8,8 @@ import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.board.enumeration.ErrorCode.INVALID_AUTHENTICATION;
+
 @Component
 @RequiredArgsConstructor
 public class Redis {
@@ -33,7 +35,7 @@ public class Redis {
 
         // 클라이언트로 전달받은 리프레쉬 토큰과 비교
         if (!refreshToken.equals(redisRefreshToken)) {
-            throw new BusinessException("인증 정보가 유효하지 않습니다.");
+            throw new BusinessException(INVALID_AUTHENTICATION);
         }
     }
 

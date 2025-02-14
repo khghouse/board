@@ -76,7 +76,7 @@ class CommentHierarchyRepositoryTest extends RepositoryTestSupport {
 
         // then
         assertThat(result).extracting("id", "ancestor.id", "descendant.id", "depth")
-                .contains(1L, 1L, 1L, 0);
+                .contains(rootComment.getId(), rootComment.getId(), rootComment.getId(), 0);
 
     }
 
@@ -119,10 +119,10 @@ class CommentHierarchyRepositoryTest extends RepositoryTestSupport {
         // then
         List<CommentHierarchy> commentHierarchies = commentHierarchyRepository.findAllByDescendant(comment);
 
-        assertThat(commentHierarchies).extracting("id", "ancestor.id", "descendant.id", "depth")
+        assertThat(commentHierarchies).extracting("ancestor.id", "descendant.id", "depth")
                 .containsExactly(
-                        Tuple.tuple(2L, 2L, 2L, 0),
-                        Tuple.tuple(3L, 1L, 2L, 1)
+                        Tuple.tuple(comment.getId(), comment.getId(), 0),
+                        Tuple.tuple(rootComment.getId(), comment.getId(), 1)
                 );
 
     }

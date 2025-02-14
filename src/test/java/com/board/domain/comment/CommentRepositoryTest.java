@@ -26,8 +26,8 @@ class CommentRepositoryTest extends RepositoryTestSupport {
     @Autowired
     private MemberRepository memberRepository;
 
-    private Article article;
     private Member member;
+    private Article article;
 
     @BeforeEach
     void setUp() {
@@ -64,7 +64,7 @@ class CommentRepositoryTest extends RepositoryTestSupport {
 
         // then
         assertThat(result).extracting("id", "content", "article.title", "article.content", "member.email")
-                .contains(1L, "댓글입니다.", "안녕하세요.", "반갑습니다.", "khghouse@daum.net");
+                .contains(comment.getId(), "댓글입니다.", "안녕하세요.", "반갑습니다.", "khghouse@daum.net");
     }
 
     @Test

@@ -1,6 +1,5 @@
 package com.board.service.auth;
 
-import com.board.support.IntegrationTestSupport;
 import com.board.component.Redis;
 import com.board.domain.member.Member;
 import com.board.domain.member.MemberRepository;
@@ -10,6 +9,7 @@ import com.board.exception.JwtException;
 import com.board.provider.JwtTokenProvider;
 import com.board.service.auth.request.AuthServiceRequest;
 import com.board.service.auth.request.ReissueServiceRequest;
+import com.board.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +19,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
+import static com.board.enumeration.ErrorCode.MEMBER_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -54,7 +55,7 @@ class AuthServiceTest extends IntegrationTestSupport {
 
         // then
         Member result = memberRepository.findByEmail("khghouse@daum.net")
-                .orElseThrow(() -> new BusinessException("존재하지 않는 계정입니다."));
+                .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
         assertThat(result).isNotNull();
     }
 

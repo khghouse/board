@@ -1,11 +1,11 @@
 package com.board.exception;
 
+import com.board.enumeration.ErrorCode;
+
 public class BusinessException extends RuntimeException {
 
-    private String message;
-
-    public BusinessException() {
-        super();
+    public BusinessException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
     }
 
     public BusinessException(String message) {
