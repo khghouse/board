@@ -35,4 +35,12 @@ public class CommentHierarchy extends BaseEntity {
         this.depth = depth;
     }
 
+    public static CommentHierarchy of(Comment ancestor, Comment descendant, int depth) {
+        return CommentHierarchy.builder()
+                .ancestor(ancestor)
+                .descendant(descendant)
+                .depth(depth)
+                .build();
+    }
+    
 }

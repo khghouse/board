@@ -40,6 +40,15 @@ public class Comment extends BaseEntity {
         this.deleted = deleted;
     }
 
+    public static Comment of(Article article, Member member, String content) {
+        return Comment.builder()
+                .article(article)
+                .member(member)
+                .content(content)
+                .deleted(false)
+                .build();
+    }
+
     private String validateContent(String content) {
         if (content.length() > 300) {
             throw new IllegalArgumentException("댓글은 300자를 초과할 수 없습니다.");
@@ -49,6 +58,10 @@ public class Comment extends BaseEntity {
 
     public void update(String content) {
         this.content = validateContent(content);
+    }
+
+    public Long getArticleId() {
+        return this.article.getId();
     }
 
 }
