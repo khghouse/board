@@ -21,10 +21,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
+import static com.board.enumeration.ErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -86,8 +86,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void getArticleNotFind() {
         // when, then
         assertThatThrownBy(() -> articleService.getArticle(1L))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessage("게시글 정보가 존재하지 않습니다.");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(ARTICLE_NOT_FOUND.getMessage());
     }
 
     @Test
@@ -122,8 +122,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleService.updateArticle(request, 1L))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessage("게시글 정보가 존재하지 않습니다.");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(ARTICLE_NOT_FOUND.getMessage());
     }
 
     @Test
@@ -137,8 +137,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleService.updateArticle(request, 2L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("게시글 작성자가 아닙니다.");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(INVALID_WRITER.getMessage());
     }
 
     @Test
@@ -165,8 +165,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleService.deleteArticle(article.getId(), member.getId()))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 삭제된 게시글입니다.");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(ARTICLE_ALREADY_DELETED.getMessage());
     }
 
     @Test
@@ -174,8 +174,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void deleteArticleNotFind() {
         // when, then
         assertThatThrownBy(() -> articleService.deleteArticle(1L, 1L))
-                .isInstanceOf(NoSuchElementException.class)
-                .hasMessage("게시글 정보가 존재하지 않습니다.");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(ARTICLE_NOT_FOUND.getMessage());
     }
 
     @Test
@@ -187,8 +187,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleService.deleteArticle(article.getId(), 2L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("게시글 작성자가 아닙니다.");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(INVALID_WRITER.getMessage());
     }
 
     @Test

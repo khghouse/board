@@ -8,6 +8,10 @@ public class BusinessException extends RuntimeException {
         super(errorCode.getMessage());
     }
 
+    public BusinessException(ErrorCode errorCode, int maxLength) {
+        super(String.format("%s [최대 %d자]", errorCode.getMessage(), maxLength));
+    }
+
     public BusinessException(String message) {
         super(message);
     }

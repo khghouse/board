@@ -2,11 +2,14 @@ package com.board.domain.article;
 
 import com.board.domain.BaseEntity;
 import com.board.domain.member.Member;
+import com.board.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.board.enumeration.ErrorCode.*;
 
 @Entity
 @Getter
@@ -39,15 +42,17 @@ public class Article extends BaseEntity {
     }
 
     private String validateTitle(String title) {
-        if (title.length() > 50) {
-            throw new IllegalArgumentException("게시글 제목은 50자를 초과할 수 없습니다.");
+        int maxLength = 50;
+        if (title.length() > maxLength) {
+            throw new BusinessException(LENGTH_EXCEEDED, maxLength);
         }
         return title;
     }
 
     private String validateContent(String content) {
-        if (content.length() > 500) {
-            throw new IllegalArgumentException("게시글 내용은 500자를 초과할 수 없습니다.");
+        int maxLength = 500;
+        if (content.length() > maxLength) {
+            throw new BusinessException(LENGTH_EXCEEDED, maxLength);
         }
         return content;
     }
@@ -59,14 +64,14 @@ public class Article extends BaseEntity {
 
     public void delete() {
         if (this.deleted) {
-            throw new IllegalArgumentException("이미 삭제된 게시글입니다.");
+            throw new BusinessException(ARTICLE_ALREADY_DELETED);
         }
         this.deleted = true;
     }
 
-    public void validateAuthor(Long requestMemberId) {
+    public void validateWriter(Long requestMemberId) {
         if (!this.getMember().getId().equals(requestMemberId)) {
-            throw new IllegalArgumentException("게시글 작성자가 아닙니다.");
+            throw new BusinessException(INVALID_WRITER);
         }
     }
 

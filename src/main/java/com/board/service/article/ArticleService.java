@@ -16,8 +16,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.NoSuchElementException;
 import java.util.stream.Collectors;
+
+import static com.board.enumeration.ErrorCode.ARTICLE_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
@@ -53,7 +54,7 @@ public class ArticleService {
     @Transactional
     public ArticleResponse updateArticle(ArticleServiceRequest request, Long memberId) {
         Article article = findValidArticle(request.getId());
-        article.validateAuthor(memberId);
+        article.validateWriter(memberId);
         article.update(request.getTitle(), request.getContent());
         return ArticleResponse.of(article);
     }
@@ -64,7 +65,7 @@ public class ArticleService {
     @Transactional
     public void deleteArticle(Long id, Long memberId) {
         Article article = findArticle(id);
-        article.validateAuthor(memberId);
+        article.validateWriter(memberId);
         article.delete();
     }
 
@@ -90,12 +91,12 @@ public class ArticleService {
 
     private Article findValidArticle(Long id) {
         return articleRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new NoSuchElementException("게시글 정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ARTICLE_NOT_FOUND));
     }
 
     private Article findArticle(Long id) {
         return articleRepository.findById(id)
-                .orElseThrow(() -> new NoSuchElementException("게시글 정보가 존재하지 않습니다."));
+                .orElseThrow(() -> new BusinessException(ARTICLE_NOT_FOUND));
     }
 
 }

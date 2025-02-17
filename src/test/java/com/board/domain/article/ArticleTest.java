@@ -1,9 +1,11 @@
 package com.board.domain.article;
 
 import com.board.domain.member.Member;
+import com.board.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.board.enumeration.ErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -24,8 +26,8 @@ class ArticleTest {
     void validateTitleOverLength() {
         // when, then
         assertThatThrownBy(() -> toEntityByTitle("안녕하세요. 50자를 한번 넘겨보겠습니다. 아직 부족한가요?? 제목은 50자를 초과하며 안됩니다."))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("게시글 제목은 50자를 초과할 수 없습니다.");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(String.format("%s [최대 %d자]", LENGTH_EXCEEDED.getMessage(), 50));
     }
 
     @Test
@@ -42,8 +44,8 @@ class ArticleTest {
                 "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
                 "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
                 "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!"))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("게시글 내용은 500자를 초과할 수 없습니다.");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(String.format("%s [최대 %d자]", LENGTH_EXCEEDED.getMessage(), 500));
     }
 
     @Test
@@ -91,9 +93,9 @@ class ArticleTest {
                 .build();
 
         // when, then
-        assertThatThrownBy(() -> article.delete())
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("이미 삭제된 게시글입니다.");
+        assertThatThrownBy(article::delete)
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(ARTICLE_ALREADY_DELETED.getMessage());
     }
 
     @Test
@@ -113,7 +115,7 @@ class ArticleTest {
                 .build();
 
         // when, then
-        article.validateAuthor(1L);
+        article.validateWriter(1L);
     }
 
     @Test
@@ -133,9 +135,9 @@ class ArticleTest {
                 .build();
 
         // when, then
-        assertThatThrownBy(() -> article.validateAuthor(2L))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("게시글 작성자가 아닙니다.");
+        assertThatThrownBy(() -> article.validateWriter(2L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(INVALID_WRITER.getMessage());
     }
 
     private static Article toEntityByTitle(String title) {
