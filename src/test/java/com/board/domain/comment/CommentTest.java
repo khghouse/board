@@ -1,8 +1,10 @@
 package com.board.domain.comment;
 
+import com.board.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.board.enumeration.ErrorCode.LENGTH_EXCEEDED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -33,8 +35,8 @@ class CommentTest {
 
         // when, then
         assertThatThrownBy(() -> toEntityByContent(content))
-                .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("댓글은 300자를 초과할 수 없습니다.");
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(String.format("%s [최대 %d자]", LENGTH_EXCEEDED.getMessage(), 300));
     }
 
     private static Comment toEntityByContent(String content) {

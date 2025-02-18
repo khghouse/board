@@ -3,11 +3,15 @@ package com.board.domain.comment;
 import com.board.domain.BaseEntity;
 import com.board.domain.article.Article;
 import com.board.domain.member.Member;
+import com.board.exception.BusinessException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import static com.board.enumeration.ErrorCode.INVALID_WRITER;
+import static com.board.enumeration.ErrorCode.LENGTH_EXCEEDED;
 
 @Entity
 @Getter
@@ -50,10 +54,17 @@ public class Comment extends BaseEntity {
     }
 
     private String validateContent(String content) {
-        if (content.length() > 300) {
-            throw new IllegalArgumentException("댓글은 300자를 초과할 수 없습니다.");
+        int maxLength = 300;
+        if (content.length() > maxLength) {
+            throw new BusinessException(LENGTH_EXCEEDED, maxLength);
         }
         return content;
+    }
+
+    public void validateWriter(Long requestMemberId) {
+        if (!this.getMember().getId().equals(requestMemberId)) {
+            throw new BusinessException(INVALID_WRITER);
+        }
     }
 
     public void update(String content) {

@@ -10,14 +10,14 @@ import com.board.exception.BusinessException;
 import com.board.service.comment.request.ChildCommentServiceRequest;
 import com.board.service.comment.request.CommentServiceRequest;
 import com.board.support.IntegrationTestSupport;
+import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.board.enumeration.ErrorCode.ARTICLE_NOT_FOUND;
-import static com.board.enumeration.ErrorCode.COMMENT_NOT_FOUND;
+import static com.board.enumeration.ErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -35,6 +35,9 @@ class CommentServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private EntityManager entityManager;
 
     private Article article;
     private Member member;
@@ -146,6 +149,65 @@ class CommentServiceTest extends IntegrationTestSupport {
         assertThatThrownBy(() -> commentService.createChildComment(request, member.getId()))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(COMMENT_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("댓글을 수정하고 검증한다.")
+    void updateComment() {
+        // given
+        Comment comment = Comment.builder()
+                .article(article)
+                .member(member)
+                .content("댓글입니다.")
+                .deleted(false)
+                .build();
+        commentRepository.save(comment);
+        entityManager.flush();
+        entityManager.clear();
+
+        CommentServiceRequest request = CommentServiceRequest.withIdAndContent(comment.getId(), "댓글 수정");
+
+        // when
+        commentService.updateComment(request, member.getId());
+        entityManager.flush();
+        entityManager.clear();
+
+        // then
+        Comment result = commentRepository.findById(comment.getId()).orElseThrow();
+
+        assertThat(result.getContent()).isEqualTo("댓글 수정");
+    }
+
+    @Test
+    @DisplayName("수정하려는 댓글 정보가 없어서 예외가 발생한다.")
+    void updateCommentNotFound() {
+        // given
+        CommentServiceRequest request = CommentServiceRequest.withIdAndContent(1L, "수정할 댓글이 없음");
+
+        // when, then1
+        assertThatThrownBy(() -> commentService.updateComment(request, 1L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(COMMENT_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("본인이 작성하지 않은 댓글을 수정하려고 한다면 예외가 발생한다.")
+    void updateCommentInvalidWriter() {
+        // given
+        Comment comment = Comment.builder()
+                .article(article)
+                .member(member)
+                .content("댓글입니다.")
+                .deleted(false)
+                .build();
+        commentRepository.save(comment);
+
+        CommentServiceRequest request = CommentServiceRequest.withIdAndContent(comment.getId(), "댓글 수정");
+
+        // when, then
+        assertThatThrownBy(() -> commentService.updateComment(request, 2L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(INVALID_WRITER.getMessage());
     }
 
 }

@@ -43,21 +43,30 @@ public class CommentService {
      */
     @Transactional
     public void createChildComment(ChildCommentServiceRequest request, Long memberId) {
-        Comment parentComment = commentRepository.findById(request.getParentCommentId())
-                .orElseThrow(() -> new BusinessException(COMMENT_NOT_FOUND));
-
+        Comment parentComment = findValidComment(request.getParentCommentId());
         Comment comment = saveComment(request.getContent(), memberId, parentComment.getArticleId());
         commentHierarchySerivce.createCommentHierarchy(CommentHierarchyServiceRequest.of(comment, parentComment));
+    }
+
+    @Transactional
+    public void updateComment(CommentServiceRequest request, Long memberId) {
+        Comment comment = findValidComment(request.getId());
+        comment.validateWriter(memberId);
+        comment.update(request.getContent());
     }
 
     private Comment saveComment(String content, Long memberId, Long articleId) {
         Article article = articleRepository.findByIdAndDeletedFalse(articleId)
                 .orElseThrow(() -> new BusinessException(ARTICLE_NOT_FOUND));
-        
+
         Member memberProxy = memberRepository.getReferenceById(memberId);
 
         return commentRepository.save(Comment.of(article, memberProxy, content));
     }
 
+    private Comment findValidComment(Long commentId) {
+        return commentRepository.findByIdAndDeletedFalse(commentId)
+                .orElseThrow(() -> new BusinessException(COMMENT_NOT_FOUND));
+    }
 
 }

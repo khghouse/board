@@ -12,7 +12,6 @@ import com.board.service.article.response.ArticleDetailResponse;
 import com.board.service.article.response.ArticleResponse;
 import com.board.support.IntegrationTestSupport;
 import jakarta.persistence.EntityManager;
-import jakarta.persistence.PersistenceContext;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -40,7 +39,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @Autowired
     private MemberRepository memberRepository;
 
-    @PersistenceContext
+    @Autowired
     private EntityManager entityManager;
 
     @BeforeEach
@@ -83,7 +82,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("게시글 1건의 조회 결과가 없어서 예외가 발생한다.")
-    void getArticleNotFind() {
+    void getArticleNotFound() {
         // when, then
         assertThatThrownBy(() -> articleService.getArticle(1L))
                 .isInstanceOf(BusinessException.class)
@@ -103,22 +102,28 @@ class ArticleServiceTest extends IntegrationTestSupport {
                 .deleted(false)
                 .build();
         articleRepository.save(article);
+        entityManager.flush();
+        entityManager.clear();
 
-        ArticleServiceRequest request = ArticleServiceRequest.of(article.getId(), "안녕하세요.", "반갑습니다.");
+        ArticleServiceRequest request = ArticleServiceRequest.of(article.getId(), "안녕하세요!", "반갑습니다!");
 
         // when
-        ArticleResponse result = articleService.updateArticle(request, member.getId());
+        articleService.updateArticle(request, member.getId());
+        entityManager.flush();
+        entityManager.clear();
 
         // then
+        Article result = articleRepository.findById(article.getId()).orElseThrow();
+
         assertThat(result).extracting("title", "content")
-                .contains("안녕하세요.", "반갑습니다.");
+                .contains("안녕하세요!", "반갑습니다!");
     }
 
     @Test
     @DisplayName("수정하려는 게시글 정보가 없어서 예외가 발생한다.")
-    void updateArticleNotFind() {
+    void updateArticleNotFound() {
         // given
-        ArticleServiceRequest request = ArticleServiceRequest.withId(1L);
+        ArticleServiceRequest request = ArticleServiceRequest.of(1L, "수정할 게시글", "없음");
 
         // when, then
         assertThatThrownBy(() -> articleService.updateArticle(request, 1L))
@@ -128,12 +133,12 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("본인이 작성하지 않은 게시글을 수정하려고 한다면 예외가 발생한다.")
-    void updateArticleNotAuthor() {
+    void updateArticleInvalidWriter() {
         // given
         Member member = createMember();
         Article article = createArticle("안녕하세요.", "반갑습니다.", false, member);
 
-        ArticleServiceRequest request = ArticleServiceRequest.of(article.getId(), "안녕하세요.", "반갑습니다.");
+        ArticleServiceRequest request = ArticleServiceRequest.of(article.getId(), "안녕하세요!", "반갑습니다!");
 
         // when, then
         assertThatThrownBy(() -> articleService.updateArticle(request, 2L))
@@ -171,7 +176,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("삭제하려는 게시글 정보가 없어서 예외가 발생한다.")
-    void deleteArticleNotFind() {
+    void deleteArticleNotFound() {
         // when, then
         assertThatThrownBy(() -> articleService.deleteArticle(1L, 1L))
                 .isInstanceOf(BusinessException.class)
@@ -180,7 +185,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
     @Test
     @DisplayName("본인이 작성하지 않은 게시글을 수정하려고 한다면 예외가 발생한다.")
-    void deleteArticleNotAuthor() {
+    void deleteArticleInvalidWriter() {
         // given
         Member member = createMember();
         Article article = createArticle("안녕하세요.", "반갑습니다.", false, member);

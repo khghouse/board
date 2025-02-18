@@ -30,12 +30,6 @@ public class ArticleServiceRequest {
                 .content(content)
                 .build();
     }
-    
-    public static ArticleServiceRequest withId(Long id) {
-        return ArticleServiceRequest.builder()
-                .id(id)
-                .build();
-    }
 
     public static ArticleServiceRequest withTitleAndContent(String title, String content) {
         return ArticleServiceRequest.builder()

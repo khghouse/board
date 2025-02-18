@@ -23,13 +23,20 @@ public class CommentServiceRequest {
         this.articleId = articleId;
     }
 
-    public static CommentServiceRequest of(String content, Long articleId) {
+    public static CommentServiceRequest withContentAndArticle(String content, Long articleId) {
         return CommentServiceRequest.builder()
                 .content(content)
                 .articleId(articleId)
                 .build();
     }
 
+    public static CommentServiceRequest withIdAndContent(Long id, String content) {
+        return CommentServiceRequest.builder()
+                .id(id)
+                .content(content)
+                .build();
+    }
+    
     public Comment toEntity(Article article, Member member) {
         return Comment.builder()
                 .article(article)
