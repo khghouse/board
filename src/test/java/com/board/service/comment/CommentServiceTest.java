@@ -210,4 +210,69 @@ class CommentServiceTest extends IntegrationTestSupport {
                 .hasMessage(INVALID_WRITER.getMessage());
     }
 
+    @Test
+    @DisplayName("등록된 댓글을 삭제하고 검증한다.")
+    void deleteComment() {
+        // given
+        Comment comment = Comment.builder()
+                .article(article)
+                .member(member)
+                .content("댓글입니다.")
+                .deleted(false)
+                .build();
+        commentRepository.save(comment);
+
+        // when
+        commentService.deleteComment(comment.getId(), member.getId());
+
+        // then
+        Comment result = commentRepository.findById(comment.getId()).orElseThrow();
+        assertThat(result.getDeleted()).isTrue();
+    }
+
+    @Test
+    @DisplayName("등록된 댓글을 삭제하려고 했는데 이미 삭제된 댓글이라 예외가 발생한다.")
+    void deleteCommentAlreadyDeleted() {
+        // given
+        Comment comment = Comment.builder()
+                .article(article)
+                .member(member)
+                .content("댓글입니다.")
+                .deleted(true)
+                .build();
+        commentRepository.save(comment);
+
+        // when, then
+        assertThatThrownBy(() -> commentService.deleteComment(comment.getId(), member.getId()))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(ALREADY_DELETED.getMessage());
+    }
+
+    @Test
+    @DisplayName("삭제하려는 댓글 정보가 없어서 예외가 발생한다.")
+    void deleteCommentNotFound() {
+        // when, then
+        assertThatThrownBy(() -> commentService.deleteComment(1L, 1L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(COMMENT_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("본인이 작성하지 않은 댓글삭제 하려고 한다면 예외가 발생한다.")
+    void deleteCommentInvalidWriter() {
+        // given
+        Comment comment = Comment.builder()
+                .article(article)
+                .member(member)
+                .content("댓글입니다.")
+                .deleted(false)
+                .build();
+        commentRepository.save(comment);
+
+        // when, then
+        assertThatThrownBy(() -> commentService.deleteComment(comment.getId(), 2L))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(INVALID_WRITER.getMessage());
+    }
+
 }

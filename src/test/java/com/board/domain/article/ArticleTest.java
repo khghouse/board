@@ -95,7 +95,7 @@ class ArticleTest {
         // when, then
         assertThatThrownBy(article::delete)
                 .isInstanceOf(BusinessException.class)
-                .hasMessage(ARTICLE_ALREADY_DELETED.getMessage());
+                .hasMessage(ALREADY_DELETED.getMessage());
     }
 
     @Test

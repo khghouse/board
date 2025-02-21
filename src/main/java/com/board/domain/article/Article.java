@@ -64,7 +64,7 @@ public class Article extends BaseEntity {
 
     public void delete() {
         if (this.deleted) {
-            throw new BusinessException(ARTICLE_ALREADY_DELETED);
+            throw new BusinessException(ALREADY_DELETED);
         }
         this.deleted = true;
     }

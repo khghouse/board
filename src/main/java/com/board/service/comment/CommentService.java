@@ -55,6 +55,14 @@ public class CommentService {
         comment.update(request.getContent());
     }
 
+    @Transactional
+    public void deleteComment(Long commentId, Long memberId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new BusinessException(COMMENT_NOT_FOUND));
+        comment.validateWriter(memberId);
+        comment.delete();
+    }
+
     private Comment saveComment(String content, Long memberId, Long articleId) {
         Article article = articleRepository.findByIdAndDeletedFalse(articleId)
                 .orElseThrow(() -> new BusinessException(ARTICLE_NOT_FOUND));

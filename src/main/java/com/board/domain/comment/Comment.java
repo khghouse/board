@@ -10,8 +10,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import static com.board.enumeration.ErrorCode.INVALID_WRITER;
-import static com.board.enumeration.ErrorCode.LENGTH_EXCEEDED;
+import static com.board.enumeration.ErrorCode.*;
 
 @Entity
 @Getter
@@ -73,6 +72,13 @@ public class Comment extends BaseEntity {
 
     public Long getArticleId() {
         return this.article.getId();
+    }
+
+    public void delete() {
+        if (this.deleted) {
+            throw new BusinessException(ALREADY_DELETED);
+        }
+        this.deleted = true;
     }
 
 }

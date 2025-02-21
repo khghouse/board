@@ -68,7 +68,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void getArticle() {
         // given
         Member member = createMember();
-        Article article = createArticle("안녕하세요.", "반갑습니다.", false, member);
+        Article article = createArticle(false, member);
 
         // when
         ArticleDetailResponse result = articleService.getArticle(article.getId());
@@ -136,7 +136,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void updateArticleInvalidWriter() {
         // given
         Member member = createMember();
-        Article article = createArticle("안녕하세요.", "반갑습니다.", false, member);
+        Article article = createArticle(false, member);
 
         ArticleServiceRequest request = ArticleServiceRequest.of(article.getId(), "안녕하세요!", "반갑습니다!");
 
@@ -151,13 +151,13 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void deleteArticle() {
         // given
         Member member = createMember();
-        Article article = createArticle("안녕하세요.", "반갑습니다.", false, member);
+        Article article = createArticle(false, member);
 
         // when
         articleService.deleteArticle(article.getId(), member.getId());
 
         // then
-        Article result = articleRepository.findById(article.getId()).get();
+        Article result = articleRepository.findById(article.getId()).orElseThrow();
         assertThat(result.getDeleted()).isTrue();
     }
 
@@ -166,12 +166,12 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void deleteArticleAlreadyDeleted() {
         // given
         Member member = createMember();
-        Article article = createArticle("안녕하세요.", "반갑습니다.", true, member);
+        Article article = createArticle(true, member);
 
         // when, then
         assertThatThrownBy(() -> articleService.deleteArticle(article.getId(), member.getId()))
                 .isInstanceOf(BusinessException.class)
-                .hasMessage(ARTICLE_ALREADY_DELETED.getMessage());
+                .hasMessage(ALREADY_DELETED.getMessage());
     }
 
     @Test
@@ -184,11 +184,11 @@ class ArticleServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("본인이 작성하지 않은 게시글을 수정하려고 한다면 예외가 발생한다.")
+    @DisplayName("본인이 작성하지 않은 게시글을 삭제하려고 한다면 예외가 발생한다.")
     void deleteArticleInvalidWriter() {
         // given
         Member member = createMember();
-        Article article = createArticle("안녕하세요.", "반갑습니다.", false, member);
+        Article article = createArticle(false, member);
 
         // when, then
         assertThatThrownBy(() -> articleService.deleteArticle(article.getId(), 2L))
@@ -402,10 +402,10 @@ class ArticleServiceTest extends IntegrationTestSupport {
         return member;
     }
 
-    private Article createArticle(String title, String content, boolean deleted, Member member) {
+    private Article createArticle(boolean deleted, Member member) {
         Article article = Article.builder()
-                .title(title)
-                .content(content)
+                .title("안녕하세요.")
+                .content("반갑습니다.")
                 .deleted(deleted)
                 .member(member)
                 .build();

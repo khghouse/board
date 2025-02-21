@@ -15,7 +15,7 @@ public enum ErrorCode {
     INVALID_WRITER("작성자가 아닙니다."),
 
     EMAIL_ALREADY_REGISTERED("이미 가입된 이메일입니다."),
-    ARTICLE_ALREADY_DELETED("이미 삭제된 게시글입니다."),
+    ALREADY_DELETED("이미 삭제되었습니다."),
     LENGTH_EXCEEDED("글자 수 제한을 초과하였습니다.");
 
     private final String message;
