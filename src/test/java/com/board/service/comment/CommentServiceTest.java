@@ -9,6 +9,7 @@ import com.board.domain.member.MemberRepository;
 import com.board.exception.BusinessException;
 import com.board.service.comment.request.ChildCommentServiceRequest;
 import com.board.service.comment.request.CommentServiceRequest;
+import com.board.service.comment.response.CommentResponse;
 import com.board.support.IntegrationTestSupport;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -147,6 +148,36 @@ class CommentServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> commentService.createChildComment(request, member.getId()))
+                .isInstanceOf(BusinessException.class)
+                .hasMessage(COMMENT_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("댓글 1건을 조회하고 검증한다.")
+    void getComment() {
+        // given
+        Comment comment = Comment.builder()
+                .article(article)
+                .member(member)
+                .content("댓글입니다.")
+                .deleted(false)
+                .build();
+        commentRepository.save(comment);
+
+        // when
+        CommentResponse result = commentService.getComment(comment.getId());
+
+        // then
+        assertThat(result.getId()).isEqualTo(comment.getId());
+        assertThat(result.getContent()).isEqualTo(comment.getContent());
+        assertThat(result.getMember().getEmail()).isEqualTo("khghouse@daum.net");
+    }
+
+    @Test
+    @DisplayName("댓글 1건의 조회 결과가 없어서 예외가 발생한다.")
+    void getCommentNotFound() {
+        // when, then
+        assertThatThrownBy(() -> commentService.getComment(1L))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(COMMENT_NOT_FOUND.getMessage());
     }

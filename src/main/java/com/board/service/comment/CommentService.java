@@ -11,6 +11,7 @@ import com.board.exception.BusinessException;
 import com.board.service.comment.request.ChildCommentServiceRequest;
 import com.board.service.comment.request.CommentHierarchyServiceRequest;
 import com.board.service.comment.request.CommentServiceRequest;
+import com.board.service.comment.response.CommentResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -46,6 +47,11 @@ public class CommentService {
         Comment parentComment = findValidComment(request.getParentCommentId());
         Comment comment = saveComment(request.getContent(), memberId, parentComment.getArticleId());
         commentHierarchySerivce.createCommentHierarchy(CommentHierarchyServiceRequest.of(comment, parentComment));
+    }
+
+    public CommentResponse getComment(Long id) {
+        Comment comment = findValidComment(id);
+        return CommentResponse.of(comment);
     }
 
     @Transactional
