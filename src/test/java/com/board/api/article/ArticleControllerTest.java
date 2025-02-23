@@ -2,7 +2,6 @@ package com.board.api.article;
 
 import com.board.api.article.request.ArticleRequest;
 import com.board.support.ControllerTestSupport;
-import com.board.support.security.WithCustomSecurityUser;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
