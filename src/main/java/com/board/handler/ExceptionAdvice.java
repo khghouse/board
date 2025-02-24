@@ -38,10 +38,16 @@ public class ExceptionAdvice {
         return ApiResponse.businessException(e.getMessage());
     }
 
+    /**
+     * PathVariable 변수의 값을 전달 받을 때, 데이터 타입이 일치하지 않는 경우 <br />
+     * - /articles/10 -> o <br />
+     * - /articles/abc -> x <br />
+     * - /articles/1.2 -> x <br />
+     */
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler(MethodArgumentTypeMismatchException.class)
     public ApiResponse methodArgumentTypeMismatchException() {
-        return ApiResponse.badRequest("요청 파라미터가 유효하지 않습니다.");
+        return ApiResponse.badRequest("요청 파라미터 타입이 올바르지 않습니다.");
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)

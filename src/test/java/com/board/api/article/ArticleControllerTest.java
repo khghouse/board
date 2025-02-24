@@ -134,7 +134,7 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.error").value("요청 파라미터가 유효하지 않습니다."));
+                .andExpect(jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
 
     @Test
@@ -255,7 +255,7 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.error").value("요청 파라미터가 유효하지 않습니다."));
+                .andExpect(jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
 
     @Test
@@ -278,7 +278,7 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.error").value("요청 파라미터가 유효하지 않습니다."));
+                .andExpect(jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
 
     @Test
