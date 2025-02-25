@@ -4,6 +4,7 @@ import com.board.api.ApiResponse;
 import com.board.api.comment.request.CommentRequest;
 import com.board.dto.security.SecurityUser;
 import com.board.service.comment.CommentService;
+import com.board.validation.OnCreate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -11,15 +12,20 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/comments")
 public class CommentController {
 
     private final CommentService commentService;
 
-    @PostMapping("/articles/{articleId}/comments")
-    public ApiResponse createComment(@PathVariable Long articleId, @Validated @RequestBody CommentRequest request, @AuthenticationPrincipal SecurityUser securityUser) {
-        commentService.createComment(request.toServiceRequest(articleId), securityUser.getMemberId());
+    @PostMapping
+    public ApiResponse createComment(@Validated(OnCreate.class) @RequestBody CommentRequest request, @AuthenticationPrincipal SecurityUser securityUser) {
+        commentService.createComment(request.toServiceRequest(), securityUser.getMemberId());
         return ApiResponse.ok();
+    }
+
+    @GetMapping("/{id}")
+    public ApiResponse getComment(@PathVariable Long id) {
+        return ApiResponse.ok(commentService.getComment(id));
     }
 
 }
