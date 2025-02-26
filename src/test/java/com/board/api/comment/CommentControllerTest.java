@@ -6,9 +6,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
+
+import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 
 class CommentControllerTest extends ControllerTestSupport {
 
@@ -25,7 +26,7 @@ class CommentControllerTest extends ControllerTestSupport {
 
         // when, then
         mockMvc.perform(RestDocumentationRequestBuilders.post(PATH)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(MockMvcResultHandlers.print())
@@ -42,7 +43,7 @@ class CommentControllerTest extends ControllerTestSupport {
 
         // when, then
         mockMvc.perform(RestDocumentationRequestBuilders.post(PATH)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(MockMvcResultHandlers.print())
@@ -63,7 +64,7 @@ class CommentControllerTest extends ControllerTestSupport {
 
         // when, then
         mockMvc.perform(RestDocumentationRequestBuilders.post(PATH)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(MockMvcResultHandlers.print())
@@ -83,7 +84,7 @@ class CommentControllerTest extends ControllerTestSupport {
 
         // when, then
         mockMvc.perform(RestDocumentationRequestBuilders.post(PATH)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(MockMvcResultHandlers.print())
@@ -104,7 +105,7 @@ class CommentControllerTest extends ControllerTestSupport {
 
         // when, then
         mockMvc.perform(RestDocumentationRequestBuilders.post(PATH)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(MockMvcResultHandlers.print())
@@ -125,7 +126,7 @@ class CommentControllerTest extends ControllerTestSupport {
 
         // when, then
         mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/comments")
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
                 .andDo(MockMvcResultHandlers.print())
@@ -140,7 +141,7 @@ class CommentControllerTest extends ControllerTestSupport {
     void getComment() throws Exception {
         // when, then
         mockMvc.perform(RestDocumentationRequestBuilders.get(PATH + "/{id}", 1L)
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isOk());
@@ -151,8 +152,84 @@ class CommentControllerTest extends ControllerTestSupport {
     void getCommentIdTypeMismatch() throws Exception {
         // when, then
         mockMvc.perform(RestDocumentationRequestBuilders.get(PATH + "/{id}", "1L")
-                        .with(SecurityMockMvcRequestPostProcessors.csrf())
+                        .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
+    }
+
+    @Test
+    @DisplayName("댓글을 수정하고 정상 응답한다.")
+    void updateComment() throws Exception {
+        // given
+        CommentRequest request = CommentRequest.builder()
+                .content("수정 댓글입니다.")
+                .build();
+
+        // when, then
+        mockMvc.perform(RestDocumentationRequestBuilders.put(PATH + "/{id}", 1L)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+    }
+
+    @Test
+    @DisplayName("댓글을 수정할 때 내용은 필수입니다.")
+    void updateCommentWithoutContent() throws Exception {
+        // given
+        CommentRequest request = CommentRequest.builder()
+                .build();
+
+        // when, then
+        mockMvc.perform(RestDocumentationRequestBuilders.put(PATH + "/{id}", 1L)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("댓글 내용을 입력해 주세요."));
+    }
+
+    @Test
+    @DisplayName("댓글을 수정할 때 내용이 공백이면 에러를 응답한다.")
+    void updateCommentBlankContent() throws Exception {
+        // given
+        CommentRequest request = CommentRequest.builder()
+                .content("     ")
+                .build();
+
+        // when, then
+        mockMvc.perform(RestDocumentationRequestBuilders.put(PATH + "/{id}", 1L)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("댓글 내용을 입력해 주세요."));
+    }
+
+    @Test
+    @DisplayName("댓글을 수정할 때 ID값이 숫자 타입이 아니면 에러를 응답한다.")
+    void updateCommentIdTypeMismatch() throws Exception {
+        // given
+        CommentRequest request = CommentRequest.builder()
+                .content("수정 댓글입니다.")
+                .build();
+
+        // when, then
+        mockMvc.perform(RestDocumentationRequestBuilders.put(PATH + "/{id}", "1L")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(request)))
                 .andDo(MockMvcResultHandlers.print())
                 .andExpect(MockMvcResultMatchers.status().isBadRequest())
                 .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))

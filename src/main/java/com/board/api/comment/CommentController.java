@@ -5,6 +5,7 @@ import com.board.api.comment.request.CommentRequest;
 import com.board.dto.security.SecurityUser;
 import com.board.service.comment.CommentService;
 import com.board.validation.OnCreate;
+import com.board.validation.OnUpdate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -26,6 +27,12 @@ public class CommentController {
     @GetMapping("/{id}")
     public ApiResponse getComment(@PathVariable Long id) {
         return ApiResponse.ok(commentService.getComment(id));
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse updateComment(@PathVariable Long id, @Validated(OnUpdate.class) @RequestBody CommentRequest request, @AuthenticationPrincipal SecurityUser securityUser) {
+        commentService.updateComment(request.toServiceRequest(id), securityUser.getMemberId());
+        return ApiResponse.ok();
     }
 
 }
