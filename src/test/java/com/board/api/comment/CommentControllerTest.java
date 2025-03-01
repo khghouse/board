@@ -237,4 +237,30 @@ class CommentControllerTest extends ControllerTestSupport {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
 
+    @Test
+    @DisplayName("댓글을 삭제할 때 ID값이 숫자 타입이 아니면 에러를 응답한다.")
+    void deleteComment() throws Exception {
+        // when, then
+        mockMvc.perform(RestDocumentationRequestBuilders.delete(PATH + "/{id}", 1L)
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+    }
+
+    @Test
+    @DisplayName("댓글을 삭제할 때 ID값이 숫자 타입이 아니면 에러를 응답한다.")
+    void deleteCommentIdTypeMismatch() throws Exception {
+        // when, then
+        mockMvc.perform(RestDocumentationRequestBuilders.delete(PATH + "/{id}", "1L")
+                        .with(csrf())
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(MockMvcResultHandlers.print())
+                .andExpect(MockMvcResultMatchers.status().isBadRequest())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
+                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
+    }
+
 }

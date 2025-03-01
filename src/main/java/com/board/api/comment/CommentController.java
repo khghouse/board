@@ -35,4 +35,10 @@ public class CommentController {
         return ApiResponse.ok();
     }
 
+    @DeleteMapping("/{id}")
+    public ApiResponse deleteComment(@PathVariable Long id, @AuthenticationPrincipal SecurityUser securityUser) {
+        commentService.deleteComment(id, securityUser.getMemberId());
+        return ApiResponse.ok();
+    }
+
 }
