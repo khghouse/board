@@ -1,0 +1,54 @@
+=== 댓글 등록
+
+==== HTTP Request
+
+include::{snippets}/comment-controller-docs-test/create-comment/http-request.adoc[]
+include::{snippets}/comment-controller-docs-test/create-comment/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/comment-controller-docs-test/create-comment/http-response.adoc[]
+include::{snippets}/comment-controller-docs-test/create-comment/response-fields.adoc[]
+
+''''
+
+=== 댓글 1건 조회
+
+==== HTTP Request
+
+include::{snippets}/comment-controller-docs-test/get-comment/http-request.adoc[]
+include::{snippets}/comment-controller-docs-test/get-comment/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/comment-controller-docs-test/get-comment/http-response.adoc[]
+include::{snippets}/comment-controller-docs-test/get-comment/response-fields.adoc[]
+
+''''
+
+=== 댓글 수정
+
+==== HTTP Request
+
+include::{snippets}/comment-controller-docs-test/update-comment/http-request.adoc[]
+include::{snippets}/comment-controller-docs-test/update-comment/path-parameters.adoc[]
+include::{snippets}/comment-controller-docs-test/update-comment/request-fields.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/comment-controller-docs-test/update-comment/http-response.adoc[]
+include::{snippets}/comment-controller-docs-test/update-comment/response-fields.adoc[]
+
+''''
+
+=== 댓글 삭제
+
+==== HTTP Request
+
+include::{snippets}/comment-controller-docs-test/delete-comment/http-request.adoc[]
+include::{snippets}/comment-controller-docs-test/delete-comment/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/comment-controller-docs-test/delete-comment/http-response.adoc[]
+include::{snippets}/comment-controller-docs-test/delete-comment/response-fields.adoc[]

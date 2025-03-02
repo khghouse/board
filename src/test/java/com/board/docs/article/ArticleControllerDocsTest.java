@@ -92,10 +92,10 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                 .email("khghouse@naver.com")
                 .build();
 
-        ArticleDetailResponse resonse = toResponse(1L, "게시글 제목입니다.", "게시글 내용입니다.", memberResponse);
+        ArticleDetailResponse response = toResponse(1L, "게시글 제목입니다.", "게시글 내용입니다.", memberResponse);
 
         BDDMockito.given(articleService.getArticle(anyLong()))
-                .willReturn(resonse);
+                .willReturn(response);
 
         // when, then
         mockMvc.perform(get("/api/v1/articles/{id}", 1L))
