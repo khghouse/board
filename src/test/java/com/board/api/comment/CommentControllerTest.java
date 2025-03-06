@@ -5,11 +5,12 @@ import com.board.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.http.MediaType;
-import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
+import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 class CommentControllerTest extends ControllerTestSupport {
 
@@ -25,12 +26,12 @@ class CommentControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.post(PATH)
+        mockMvc.perform(post(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -42,15 +43,15 @@ class CommentControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.post(PATH)
+        mockMvc.perform(post(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("댓글 내용을 입력해 주세요."));
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("댓글 내용을 입력해 주세요."));
     }
 
     @Test
@@ -63,15 +64,15 @@ class CommentControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.post(PATH)
+        mockMvc.perform(post(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("댓글 내용을 입력해 주세요."));
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("댓글 내용을 입력해 주세요."));
     }
 
     @Test
@@ -83,15 +84,15 @@ class CommentControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.post(PATH)
+        mockMvc.perform(post(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("게시글 ID는 필수입니다."));
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("게시글 ID는 필수입니다."));
     }
 
     @Test
@@ -104,15 +105,15 @@ class CommentControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.post(PATH)
+        mockMvc.perform(post(PATH)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("게시글 ID는 0보다 큰 숫자여야 합니다."));
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("게시글 ID는 0보다 큰 숫자여야 합니다."));
     }
 
     @Test
@@ -125,40 +126,40 @@ class CommentControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.post("/api/v1/comments")
+        mockMvc.perform(post("/api/v1/comments")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("게시글 ID는 0보다 큰 숫자여야 합니다."));
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("게시글 ID는 0보다 큰 숫자여야 합니다."));
     }
 
     @Test
     @DisplayName("댓글 1건을 조회하고 정상 응답한다.")
     void getComment() throws Exception {
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.get(PATH + "/{id}", 1L)
+        mockMvc.perform(get(PATH + "/{id}", 1L)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
     @DisplayName("댓글 1건을 조회할 때 ID값이 숫자 타입이 아니면 에러를 응답한다.")
     void getCommentIdTypeMismatch() throws Exception {
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.get(PATH + "/{id}", "1L")
+        mockMvc.perform(get(PATH + "/{id}", "1L")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
 
     @Test
@@ -170,12 +171,12 @@ class CommentControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.put(PATH + "/{id}", 1L)
+        mockMvc.perform(put(PATH + "/{id}", 1L)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andDo(print())
+                .andExpect(status().isOk());
     }
 
     @Test
@@ -186,15 +187,15 @@ class CommentControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.put(PATH + "/{id}", 1L)
+        mockMvc.perform(put(PATH + "/{id}", 1L)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("댓글 내용을 입력해 주세요."));
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("댓글 내용을 입력해 주세요."));
     }
 
     @Test
@@ -206,15 +207,15 @@ class CommentControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.put(PATH + "/{id}", 1L)
+        mockMvc.perform(put(PATH + "/{id}", 1L)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("댓글 내용을 입력해 주세요."));
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("댓글 내용을 입력해 주세요."));
     }
 
     @Test
@@ -226,26 +227,26 @@ class CommentControllerTest extends ControllerTestSupport {
                 .build();
 
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.put(PATH + "/{id}", "1L")
+        mockMvc.perform(put(PATH + "/{id}", "1L")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
 
     @Test
     @DisplayName("댓글을 삭제할 때 ID값이 숫자 타입이 아니면 에러를 응답한다.")
     void deleteComment() throws Exception {
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.delete(PATH + "/{id}", 1L)
+        mockMvc.perform(delete(PATH + "/{id}", 1L)
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isOk());
+                .andDo(print())
+                .andExpect(status().isOk());
 
     }
 
@@ -253,14 +254,14 @@ class CommentControllerTest extends ControllerTestSupport {
     @DisplayName("댓글을 삭제할 때 ID값이 숫자 타입이 아니면 에러를 응답한다.")
     void deleteCommentIdTypeMismatch() throws Exception {
         // when, then
-        mockMvc.perform(RestDocumentationRequestBuilders.delete(PATH + "/{id}", "1L")
+        mockMvc.perform(delete(PATH + "/{id}", "1L")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
-                .andDo(MockMvcResultHandlers.print())
-                .andExpect(MockMvcResultMatchers.status().isBadRequest())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.status").value("400"))
-                .andExpect(MockMvcResultMatchers.jsonPath("$.data").isEmpty())
-                .andExpect(MockMvcResultMatchers.jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
 
 }

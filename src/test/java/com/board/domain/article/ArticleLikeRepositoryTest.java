@@ -43,7 +43,7 @@ class ArticleLikeRepositoryTest extends RepositoryTestSupport {
     }
 
     @Test
-    @DisplayName("게시글 좋아요를 등록, 조회하고 검증한다.")
+    @DisplayName("게시글 좋아요를 추가, 조회하고 검증한다.")
     void saveAndFindById() {
         // given
         Member member = Member.builder()
@@ -67,7 +67,7 @@ class ArticleLikeRepositoryTest extends RepositoryTestSupport {
     }
 
     @Test
-    @DisplayName("(물리 삭제) 게시글 좋아요를 삭제하고 검증한다.")
+    @DisplayName("(물리 삭제) 게시글 좋아요를 취소하고 검증한다.")
     void delete() {
         // given
         Member member = Member.builder()

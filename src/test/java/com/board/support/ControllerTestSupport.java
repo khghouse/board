@@ -1,9 +1,11 @@
 package com.board.support;
 
 import com.board.api.article.ArticleController;
+import com.board.api.article.ArticleLikeController;
 import com.board.api.auth.AuthController;
 import com.board.api.comment.CommentController;
 import com.board.provider.JwtTokenProvider;
+import com.board.service.article.ArticleLikeService;
 import com.board.service.article.ArticleService;
 import com.board.service.auth.AuthService;
 import com.board.service.comment.CommentService;
@@ -17,7 +19,8 @@ import org.springframework.test.web.servlet.MockMvc;
 @WebMvcTest(controllers = {
         ArticleController.class,
         AuthController.class,
-        CommentController.class
+        CommentController.class,
+        ArticleLikeController.class
 })
 @WithCustomSecurityUser
 public abstract class ControllerTestSupport {
@@ -39,5 +42,8 @@ public abstract class ControllerTestSupport {
 
     @MockBean
     protected CommentService commentService;
+
+    @MockBean
+    protected ArticleLikeService articleLikeService;
 
 }

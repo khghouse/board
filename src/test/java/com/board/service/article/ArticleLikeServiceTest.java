@@ -58,7 +58,7 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("게시글 좋아요를 등록하고 검증한다.")
+    @DisplayName("게시글 좋아요를 추가하고 검증한다.")
     void like() {
         // given
         ArticleLikeServiceRequest request = ArticleLikeServiceRequest.of(article.getId(), member.getId());
@@ -72,7 +72,7 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("이미 좋아요를 등록한 케이스를 검증한다.")
+    @DisplayName("이미 좋아요를 추가한 케이스를 검증한다.")
     void alreadyLiked() {
         // given
         ArticleLike articleLike = ArticleLike.builder()
@@ -94,7 +94,7 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("게시글 좋아요를 등록할 때 게시글이 존재하지 않는다면 에러를 응답한다.")
+    @DisplayName("게시글 좋아요를 추가할 때 게시글이 존재하지 않는다면 에러를 응답한다.")
     void likeNotFoundArticle() {
         // given
         ArticleLikeServiceRequest request = ArticleLikeServiceRequest.of(-1L, member.getId());
@@ -106,7 +106,7 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("게시글 좋아요를 등록할 때 회원 정보가 존재하지 않는다면 에러를 응답한다.")
+    @DisplayName("게시글 좋아요를 추가할 때 회원 정보가 존재하지 않는다면 에러를 응답한다.")
     void likeNotFoundMember() {
         // given
         ArticleLikeServiceRequest request = ArticleLikeServiceRequest.of(article.getId(), -1L);
