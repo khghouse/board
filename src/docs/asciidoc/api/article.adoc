@@ -66,3 +66,31 @@ include::{snippets}/article-controller-docs-test/get-article-list/query-paramete
 
 include::{snippets}/article-controller-docs-test/get-article-list/http-response.adoc[]
 include::{snippets}/article-controller-docs-test/get-article-list/response-fields.adoc[]
+
+''''
+
+=== 게시글 좋아요 추가
+
+==== HTTP Request
+
+include::{snippets}/article-like-controller-docs-test/like/http-request.adoc[]
+include::{snippets}/article-like-controller-docs-test/like/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/article-like-controller-docs-test/like/http-response.adoc[]
+include::{snippets}/article-like-controller-docs-test/like/response-fields.adoc[]
+
+''''
+
+=== 게시글 좋아요 취소
+
+==== HTTP Request
+
+include::{snippets}/article-like-controller-docs-test/unlike/http-request.adoc[]
+include::{snippets}/article-like-controller-docs-test/unlike/path-parameters.adoc[]
+
+==== HTTP Response
+
+include::{snippets}/article-like-controller-docs-test/unlike/http-response.adoc[]
+include::{snippets}/article-like-controller-docs-test/unlike/response-fields.adoc[]
