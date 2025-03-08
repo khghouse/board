@@ -15,25 +15,27 @@ import java.util.Optional;
 
 @Repository
 @RequiredArgsConstructor
-public class ArticleQueryRepository {
+public class ArticleLikeQueryRepository {
 
     private final JPAQueryFactory queryFactory;
-    private final QArticle article = QArticle.article;
+    private final QArticleLike articleLike = QArticleLike.articleLike;
     private final QMember member = QMember.member;
 
-    public Page<Article> findActiveArticles(Pageable pageable) {
-        JPAQuery<Article> query = queryFactory.selectFrom(article)
-                .innerJoin(article.member, member)
+    public Page<ArticleLike> findLikedMembers(Long articleId, Pageable pageable) {
+        JPAQuery<ArticleLike> query = queryFactory.selectFrom(articleLike)
+                .innerJoin(articleLike.member, member)
                 .fetchJoin()
-                .where(article.deleted.isFalse())
-                .orderBy(QuerydslUtil.createOrderSpecifiers(pageable, article));
+                .where(articleLike.article.id.eq(articleId)
+                        .and(member.deleted.isFalse()))
+                .orderBy(QuerydslUtil.createOrderSpecifiers(pageable, articleLike));
         QuerydslUtil.applyPage(query, pageable);
-        List<Article> dataList = query.fetch();
+        List<ArticleLike> dataList = query.fetch();
 
         long count = pageable.isUnpaged() ? dataList.size() :
-                Optional.ofNullable(queryFactory.select(article.count())
-                                .from(article)
-                                .where(article.deleted.isFalse())
+                Optional.ofNullable(queryFactory.select(articleLike.count())
+                                .from(articleLike)
+                                .innerJoin(articleLike.member, member)
+                                .where(member.deleted.isFalse())
                                 .fetchOne())
                         .orElse(0L);
 

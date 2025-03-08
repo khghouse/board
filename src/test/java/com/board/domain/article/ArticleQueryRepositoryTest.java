@@ -39,7 +39,7 @@ class ArticleQueryRepositoryTest extends RepositoryTestSupport {
     void findActiveArticles() {
         // given
         List<Member> members = IntStream.range(1, 5)
-                .mapToObj(i -> Member.builder().email("khghouse" + i + "@daum.net").password("Password12#$").build())
+                .mapToObj(i -> toEntity("khghouse" + i + "@daum.net"))
                 .collect(Collectors.toList());
         memberRepository.saveAll(members);
 
@@ -73,7 +73,7 @@ class ArticleQueryRepositoryTest extends RepositoryTestSupport {
     void findActiveArticlesWithPaging() {
         // given
         List<Member> members = IntStream.range(1, 21)
-                .mapToObj(i -> Member.builder().email("khghouse" + i + "@daum.net").password("Password12#$").build())
+                .mapToObj(i -> toEntity("khghouse" + i + "@daum.net"))
                 .collect(Collectors.toList());
         memberRepository.saveAll(members);
 
@@ -103,7 +103,7 @@ class ArticleQueryRepositoryTest extends RepositoryTestSupport {
 
     @Test
     @DisplayName("페이징 처리된 게시글 리스트를 조회하지만 결과 값이 없다.")
-    void findActiveArticlesWithPageableSizeZero() {
+    void findActiveArticlesEmptyList() {
         // given
         Pageable pageable = PageRequest.of(0, 5, Sort.Direction.DESC, "id");
 
@@ -115,11 +115,11 @@ class ArticleQueryRepositoryTest extends RepositoryTestSupport {
     }
 
     @Test
-    @DisplayName("페이징 처리 매개변수를 갖는 메서드를 호출하지만 페이징 기능을 사용하지 않는다.")
-    void findActiveArticlesWithPageableNotUsed() {
+    @DisplayName("페이징 기능을 사용하지 않고 현재 유효한 게시글 리스트를 조회한다.")
+    void findActiveArticlesNotUsedPaging() {
         // given
         List<Member> members = IntStream.range(1, 21)
-                .mapToObj(i -> Member.builder().email("khghouse" + i + "@daum.net").password("Password12#$").build())
+                .mapToObj(i -> toEntity("khghouse" + i + "@daum.net"))
                 .collect(Collectors.toList());
         memberRepository.saveAll(members);
 
@@ -135,12 +135,19 @@ class ArticleQueryRepositoryTest extends RepositoryTestSupport {
         assertThat(result.getContent()).hasSize(20);
     }
 
-    private static Article toEntity(String title, String content, boolean deleted, Member member) {
+    private Article toEntity(String title, String content, boolean deleted, Member member) {
         return Article.builder()
                 .title(title)
                 .content(content)
                 .deleted(deleted)
                 .member(member)
+                .build();
+    }
+
+    private Member toEntity(String email) {
+        return Member.builder()
+                .email(email)
+                .password("Password12#$")
                 .build();
     }
 

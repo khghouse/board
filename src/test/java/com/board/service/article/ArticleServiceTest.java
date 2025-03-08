@@ -201,7 +201,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void getArticleList() {
         // given
         List<Member> members = IntStream.range(1, 5)
-                .mapToObj(i -> Member.builder().email("khghouse" + i + "@daum.net").password("Password12#$").build())
+                .mapToObj(i -> toEntity("khghouse" + i + "@daum.net"))
                 .collect(Collectors.toList());
         memberRepository.saveAll(members);
 
@@ -255,7 +255,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void getArticleListPageable() {
         // given
         List<Member> members = IntStream.range(1, 21)
-                .mapToObj(i -> Member.builder().email("khghouse" + i + "@daum.net").password("Password12#$").build())
+                .mapToObj(i -> toEntity("khghouse" + i + "@daum.net"))
                 .collect(Collectors.toList());
         memberRepository.saveAll(members);
 
@@ -290,7 +290,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void getArticleListPageableLastPage() {
         // given
         List<Member> members = IntStream.range(1, 21)
-                .mapToObj(i -> Member.builder().email("khghouse" + i + "@daum.net").password("Password12#$").build())
+                .mapToObj(i -> toEntity("khghouse" + i + "@daum.net"))
                 .collect(Collectors.toList());
         memberRepository.saveAll(members);
 
@@ -324,7 +324,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void getArticleListPageablOrderByIdAsc() {
         // given
         List<Member> members = IntStream.range(1, 21)
-                .mapToObj(i -> Member.builder().email("khghouse" + i + "@daum.net").password("Password12#$").build())
+                .mapToObj(i -> toEntity("khghouse" + i + "@daum.net"))
                 .collect(Collectors.toList());
         memberRepository.saveAll(members);
 
@@ -414,12 +414,19 @@ class ArticleServiceTest extends IntegrationTestSupport {
         return article;
     }
 
-    private static Article toEntity(String title, String content, boolean deleted, Member member) {
+    private Article toEntity(String title, String content, boolean deleted, Member member) {
         return Article.builder()
                 .title(title)
                 .content(content)
                 .deleted(deleted)
                 .member(member)
+                .build();
+    }
+
+    private Member toEntity(String email) {
+        return Member.builder()
+                .email(email)
+                .password("Password12#$")
                 .build();
     }
 
