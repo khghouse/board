@@ -2,7 +2,7 @@ package com.board.docs.article;
 
 import com.board.api.article.ArticleController;
 import com.board.api.article.request.ArticleRequest;
-import com.board.dto.page.PageInfomation;
+import com.board.dto.page.PageInformation;
 import com.board.dto.page.PageResponse;
 import com.board.service.article.ArticleService;
 import com.board.service.article.response.ArticleDetailResponse;
@@ -222,7 +222,7 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
         ArticleDetailResponse articleResponse3 = toResponse(3L, "게시글 제목입니다. 3", "게시글 내용입니다. 3", memberResponse);
 
         PageResponse response = PageResponse.builder()
-                .pageInfomation(PageInfomation.of(1, 1, 3, true))
+                .pageInformation(PageInformation.of(1, 1, 3, true))
                 .contents(List.of(articleResponse3, articleResponse2, articleResponse1))
                 .build();
 
@@ -257,15 +257,15 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                                 fieldWithPath("data").type(JsonFieldType.OBJECT)
                                         .description("응답 데이터")
                                         .optional(),
-                                fieldWithPath("data.pageInfomation").type(JsonFieldType.OBJECT)
+                                fieldWithPath("data.pageInformation").type(JsonFieldType.OBJECT)
                                         .description("페이지 정보"),
-                                fieldWithPath("data.pageInfomation.pageNumber").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.pageInformation.pageNumber").type(JsonFieldType.NUMBER)
                                         .description("현재 페이지 번호"),
-                                fieldWithPath("data.pageInfomation.totalPages").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.pageInformation.totalPages").type(JsonFieldType.NUMBER)
                                         .description("총 페이지"),
-                                fieldWithPath("data.pageInfomation.totalElements").type(JsonFieldType.NUMBER)
+                                fieldWithPath("data.pageInformation.totalElements").type(JsonFieldType.NUMBER)
                                         .description("총 데이터 수"),
-                                fieldWithPath("data.pageInfomation.isLast").type(JsonFieldType.BOOLEAN)
+                                fieldWithPath("data.pageInformation.isLast").type(JsonFieldType.BOOLEAN)
                                         .description("마지막 페이지 여부 (true : 마지막 페이지, false : 마지막 페이지 아님)"),
                                 fieldWithPath("data.contents[]").type(JsonFieldType.ARRAY)
                                         .description("데이터 목록")

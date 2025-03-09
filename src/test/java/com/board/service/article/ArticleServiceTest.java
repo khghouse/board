@@ -220,10 +220,10 @@ class ArticleServiceTest extends IntegrationTestSupport {
         PageResponse result = articleService.getArticleList(request);
 
         // then
-        assertThat(result.getPageInfomation().getPageNumber()).isEqualTo(1);
-        assertThat(result.getPageInfomation().getTotalPages()).isEqualTo(1);
-        assertThat(result.getPageInfomation().getTotalElements()).isEqualTo(3);
-        assertThat(result.getPageInfomation().getIsLast()).isTrue();
+        assertThat(result.getPageInformation().getPageNumber()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalPages()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalElements()).isEqualTo(3);
+        assertThat(result.getPageInformation().getIsLast()).isTrue();
         assertThat(result.getContents()).hasSize(3)
                 .extracting("title", "content", "member.email")
                 .containsExactly(
@@ -234,7 +234,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     }
 
     @Test
-    @DisplayName("게시글 리스트 사이즈가 0이면 빈 배열을 응답한다.")
+    @DisplayName("리스트 사이즈가 0이면 빈 배열을 응답한다.")
     void getArticleListSizeZero() {
         // given
         PageServiceRequest request = PageServiceRequest.withDefault();
@@ -243,10 +243,10 @@ class ArticleServiceTest extends IntegrationTestSupport {
         PageResponse result = articleService.getArticleList(request);
 
         // then
-        assertThat(result.getPageInfomation().getPageNumber()).isEqualTo(1);
-        assertThat(result.getPageInfomation().getTotalPages()).isEqualTo(1);
-        assertThat(result.getPageInfomation().getTotalElements()).isEqualTo(0);
-        assertThat(result.getPageInfomation().getIsLast()).isTrue();
+        assertThat(result.getPageInformation().getPageNumber()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalPages()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalElements()).isEqualTo(0);
+        assertThat(result.getPageInformation().getIsLast()).isTrue();
         assertThat(result.getContents()).hasSize(0);
     }
 
@@ -270,10 +270,10 @@ class ArticleServiceTest extends IntegrationTestSupport {
         PageResponse result = articleService.getArticleList(request);
 
         // then
-        assertThat(result.getPageInfomation().getPageNumber()).isEqualTo(1);
-        assertThat(result.getPageInfomation().getTotalPages()).isEqualTo(4);
-        assertThat(result.getPageInfomation().getTotalElements()).isEqualTo(20);
-        assertThat(result.getPageInfomation().getIsLast()).isFalse();
+        assertThat(result.getPageInformation().getPageNumber()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalPages()).isEqualTo(4);
+        assertThat(result.getPageInformation().getTotalElements()).isEqualTo(20);
+        assertThat(result.getPageInformation().getIsLast()).isFalse();
         assertThat(result.getContents()).hasSize(5)
                 .extracting("title", "content", "member.email")
                 .containsExactly(
@@ -305,10 +305,10 @@ class ArticleServiceTest extends IntegrationTestSupport {
         PageResponse result = articleService.getArticleList(request);
 
         // then
-        assertThat(result.getPageInfomation().getPageNumber()).isEqualTo(5);
-        assertThat(result.getPageInfomation().getTotalPages()).isEqualTo(5);
-        assertThat(result.getPageInfomation().getTotalElements()).isEqualTo(20);
-        assertThat(result.getPageInfomation().getIsLast()).isTrue();
+        assertThat(result.getPageInformation().getPageNumber()).isEqualTo(5);
+        assertThat(result.getPageInformation().getTotalPages()).isEqualTo(5);
+        assertThat(result.getPageInformation().getTotalElements()).isEqualTo(20);
+        assertThat(result.getPageInformation().getIsLast()).isTrue();
         assertThat(result.getContents()).hasSize(4)
                 .extracting("title", "content", "member.email")
                 .containsExactly(
@@ -339,10 +339,10 @@ class ArticleServiceTest extends IntegrationTestSupport {
         PageResponse result = articleService.getArticleList(request);
 
         // then
-        assertThat(result.getPageInfomation().getPageNumber()).isEqualTo(2);
-        assertThat(result.getPageInfomation().getTotalPages()).isEqualTo(2);
-        assertThat(result.getPageInfomation().getTotalElements()).isEqualTo(20);
-        assertThat(result.getPageInfomation().getIsLast()).isTrue();
+        assertThat(result.getPageInformation().getPageNumber()).isEqualTo(2);
+        assertThat(result.getPageInformation().getTotalPages()).isEqualTo(2);
+        assertThat(result.getPageInformation().getTotalElements()).isEqualTo(20);
+        assertThat(result.getPageInformation().getIsLast()).isTrue();
         assertThat(result.getContents()).hasSize(10)
                 .extracting("title", "content", "member.email")
                 .containsExactly(

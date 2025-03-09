@@ -11,14 +11,16 @@ import java.util.List;
 @Getter
 @Builder
 @AllArgsConstructor(access = AccessLevel.PRIVATE)
-public class PageResponse {
+public class PageResponseWithExtraData<T> {
 
     private final PageInformation pageInformation;
+    private final T extraData;
     private final List<?> contents;
 
-    public static PageResponse of(Page<?> page, List<?> dtoContents) {
-        return PageResponse.builder()
+    public static <T> PageResponseWithExtraData<T> of(Page<?> page, T extraData, List<?> dtoContents) {
+        return PageResponseWithExtraData.<T>builder()
                 .pageInformation(PageInformation.of(page.getNumber(), page.getTotalPages(), page.getTotalElements(), page.isLast()))
+                .extraData(extraData)
                 .contents(dtoContents)
                 .build();
     }
