@@ -8,13 +8,13 @@ import com.board.dto.page.PageServiceRequest;
 import com.board.exception.BusinessException;
 import com.board.service.article.request.ArticleLikeServiceRequest;
 import com.board.service.member.response.MemberResponse;
+import com.board.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static com.board.enumeration.ErrorCode.ARTICLE_NOT_FOUND;
 import static com.board.enumeration.ErrorCode.MEMBER_NOT_FOUND;
@@ -53,11 +53,7 @@ public class ArticleLikeService {
             throw new BusinessException(e.getMessage());
         }
 
-        List<MemberResponse> members = pageArticleLikes.getContent()
-                .stream()
-                .map(ArticleLike::getMember)
-                .map(MemberResponse::of)
-                .collect(Collectors.toList());
+        List<MemberResponse> members = CommonUtil.mapperToList(pageArticleLikes.getContent(), ArticleLike::getMember, MemberResponse::of);
 
         return PageResponseWithExtraData.of(pageArticleLikes, articleId, members);
     }

@@ -11,12 +11,11 @@ import com.board.exception.BusinessException;
 import com.board.service.article.request.ArticleServiceRequest;
 import com.board.service.article.response.ArticleDetailResponse;
 import com.board.service.article.response.ArticleResponse;
+import com.board.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.stream.Collectors;
 
 import static com.board.enumeration.ErrorCode.ARTICLE_NOT_FOUND;
 
@@ -80,13 +79,7 @@ public class ArticleService {
             throw new BusinessException(e.getMessage());
         }
 
-        return PageResponse.of(
-                pageArticles,
-                pageArticles.getContent()
-                        .stream()
-                        .map(ArticleDetailResponse::of)
-                        .collect(Collectors.toList())
-        );
+        return PageResponse.of(pageArticles, CommonUtil.mapperToList(pageArticles.getContent(), ArticleDetailResponse::of));
     }
 
     private Article findValidArticle(Long id) {
