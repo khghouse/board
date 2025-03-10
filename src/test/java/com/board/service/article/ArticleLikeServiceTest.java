@@ -6,6 +6,8 @@ import com.board.domain.article.ArticleLikeRepository;
 import com.board.domain.article.ArticleRepository;
 import com.board.domain.member.Member;
 import com.board.domain.member.MemberRepository;
+import com.board.dto.page.PageResponseWithExtraData;
+import com.board.dto.page.PageServiceRequest;
 import com.board.exception.BusinessException;
 import com.board.service.article.request.ArticleLikeServiceRequest;
 import com.board.support.IntegrationTestSupport;
@@ -14,6 +16,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 import static com.board.enumeration.ErrorCode.ARTICLE_NOT_FOUND;
 import static com.board.enumeration.ErrorCode.MEMBER_NOT_FOUND;
@@ -173,6 +179,70 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
         assertThatThrownBy(() -> articleLikeService.unlike(request))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(MEMBER_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("특정 게시글에 좋아요를 누른 회원 목록을 조회하고 검증한다.")
+    void getLikedMembers() {
+        // given
+        List<Member> members = IntStream.range(1, 6)
+                .mapToObj(i -> toEntity("khghouse" + i + "@daum.net"))
+                .collect(Collectors.toList());
+        memberRepository.saveAll(members);
+
+        List<ArticleLike> articleLikes = IntStream.range(1, 6)
+                .mapToObj(i -> toEntity(members.get(i - 1)))
+                .collect(Collectors.toList());
+        articleLikeRepository.saveAll(articleLikes);
+
+        // when
+        PageResponseWithExtraData<Long> result = articleLikeService.getLikedMembers(article.getId(), PageServiceRequest.withDefault());
+
+        // then
+        assertThat(result.getPageInformation().getPageNumber()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalPages()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalElements()).isEqualTo(5);
+        assertThat(result.getPageInformation().getIsLast()).isTrue();
+        assertThat(result.getExtraData()).isEqualTo(article.getId());
+        assertThat(result.getContents()).hasSize(5)
+                .extracting("email")
+                .containsExactly(
+                        "khghouse5@daum.net",
+                        "khghouse4@daum.net",
+                        "khghouse3@daum.net",
+                        "khghouse2@daum.net",
+                        "khghouse1@daum.net"
+                );
+    }
+
+    @Test
+    @DisplayName("리스트 사이즈가 0이면 빈 배열을 응답한다.")
+    void getLikedMembersEmptyList() {
+        // when
+        PageResponseWithExtraData<Long> result = articleLikeService.getLikedMembers(article.getId(), PageServiceRequest.withDefault());
+
+        // then
+        assertThat(result.getPageInformation().getPageNumber()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalPages()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalElements()).isEqualTo(0);
+        assertThat(result.getPageInformation().getIsLast()).isTrue();
+        assertThat(result.getExtraData()).isEqualTo(article.getId());
+        assertThat(result.getContents()).hasSize(0);
+    }
+
+    private Member toEntity(String email) {
+        return Member.builder()
+                .email(email)
+                .password("Password12#$")
+                .deleted(false)
+                .build();
+    }
+
+    private ArticleLike toEntity(Member member) {
+        return ArticleLike.builder()
+                .article(article)
+                .member(member)
+                .build();
     }
 
 }
