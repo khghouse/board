@@ -7,6 +7,7 @@ import com.board.dto.page.PageResponseWithExtraData;
 import com.board.dto.page.PageServiceRequest;
 import com.board.exception.BusinessException;
 import com.board.service.article.request.ArticleLikeServiceRequest;
+import com.board.service.article.response.ArticleIdResponse;
 import com.board.service.member.response.MemberResponse;
 import com.board.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,7 @@ public class ArticleLikeService {
         articleLikeRepository.deleteByArticleAndMember(articleAndMember.article(), articleAndMember.member());
     }
 
-    public PageResponseWithExtraData<Long> getLikedMembers(Long articleId, PageServiceRequest request) {
+    public PageResponseWithExtraData<ArticleIdResponse> getLikedMembers(Long articleId, PageServiceRequest request) {
         Page<ArticleLike> pageArticleLikes;
         try {
             pageArticleLikes = articleLikeQueryRepository.findLikedMembers(articleId, request.toPageable());
@@ -55,10 +56,7 @@ public class ArticleLikeService {
 
         List<MemberResponse> members = CommonUtil.mapperToList(pageArticleLikes.getContent(), ArticleLike::getMember, MemberResponse::of);
 
-        return PageResponseWithExtraData.of(pageArticleLikes, articleId, members);
-    }
-
-    private record ArticleAndMember(Article article, Member member) {
+        return PageResponseWithExtraData.of(pageArticleLikes, new ArticleIdResponse(articleId), members);
     }
 
     private ArticleAndMember getArticleAndMember(Long articleId, Long memberId) {
@@ -69,6 +67,9 @@ public class ArticleLikeService {
                 .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
 
         return new ArticleAndMember(article, member);
+    }
+
+    private record ArticleAndMember(Article article, Member member) {
     }
 
 }

@@ -9,6 +9,7 @@ import com.board.domain.member.MemberRepository;
 import com.board.dto.page.PageResponseWithExtraData;
 import com.board.dto.page.PageServiceRequest;
 import com.board.exception.BusinessException;
+import com.board.service.article.response.ArticleIdResponse;
 import com.board.service.article.request.ArticleLikeServiceRequest;
 import com.board.support.IntegrationTestSupport;
 import org.junit.jupiter.api.BeforeEach;
@@ -196,14 +197,14 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
         articleLikeRepository.saveAll(articleLikes);
 
         // when
-        PageResponseWithExtraData<Long> result = articleLikeService.getLikedMembers(article.getId(), PageServiceRequest.withDefault());
+        PageResponseWithExtraData<ArticleIdResponse> result = articleLikeService.getLikedMembers(article.getId(), PageServiceRequest.withDefault());
 
         // then
         assertThat(result.getPageInformation().getPageNumber()).isEqualTo(1);
         assertThat(result.getPageInformation().getTotalPages()).isEqualTo(1);
         assertThat(result.getPageInformation().getTotalElements()).isEqualTo(5);
         assertThat(result.getPageInformation().getIsLast()).isTrue();
-        assertThat(result.getExtraData()).isEqualTo(article.getId());
+        assertThat(result.getExtraData()).isEqualTo(new ArticleIdResponse(article.getId()));
         assertThat(result.getContents()).hasSize(5)
                 .extracting("email")
                 .containsExactly(
@@ -219,14 +220,14 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
     @DisplayName("리스트 사이즈가 0이면 빈 배열을 응답한다.")
     void getLikedMembersEmptyList() {
         // when
-        PageResponseWithExtraData<Long> result = articleLikeService.getLikedMembers(article.getId(), PageServiceRequest.withDefault());
+        PageResponseWithExtraData<ArticleIdResponse> result = articleLikeService.getLikedMembers(article.getId(), PageServiceRequest.withDefault());
 
         // then
         assertThat(result.getPageInformation().getPageNumber()).isEqualTo(1);
         assertThat(result.getPageInformation().getTotalPages()).isEqualTo(1);
         assertThat(result.getPageInformation().getTotalElements()).isEqualTo(0);
         assertThat(result.getPageInformation().getIsLast()).isTrue();
-        assertThat(result.getExtraData()).isEqualTo(article.getId());
+        assertThat(result.getExtraData()).isEqualTo(new ArticleIdResponse(article.getId()));
         assertThat(result.getContents()).hasSize(0);
     }
 

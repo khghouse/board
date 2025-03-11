@@ -1,5 +1,6 @@
 package com.board.dto.page;
 
+import com.fasterxml.jackson.annotation.JsonUnwrapped;
 import lombok.AccessLevel;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -14,6 +15,8 @@ import java.util.List;
 public class PageResponseWithExtraData<T> {
 
     private final PageInformation pageInformation;
+
+    @JsonUnwrapped
     private final T extraData;
     private final List<?> contents;
 
