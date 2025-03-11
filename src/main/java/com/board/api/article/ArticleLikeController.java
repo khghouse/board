@@ -1,6 +1,7 @@
 package com.board.api.article;
 
 import com.board.api.ApiResponse;
+import com.board.dto.page.PageServiceRequest;
 import com.board.dto.security.SecurityUser;
 import com.board.service.article.ArticleLikeService;
 import com.board.service.article.request.ArticleLikeServiceRequest;
@@ -10,21 +11,25 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/articles/{id}/likes")
 public class ArticleLikeController {
 
     private final ArticleLikeService articleLikeService;
 
-    @PostMapping
+    @PostMapping("/articles/{id}/likes")
     public ApiResponse like(@PathVariable Long id, @AuthenticationPrincipal SecurityUser securityUser) {
         articleLikeService.like(ArticleLikeServiceRequest.of(id, securityUser.getMemberId()));
         return ApiResponse.ok();
     }
 
-    @DeleteMapping
+    @DeleteMapping("/articles/{id}/likes")
     public ApiResponse unlike(@PathVariable Long id, @AuthenticationPrincipal SecurityUser securityUser) {
         articleLikeService.unlike(ArticleLikeServiceRequest.of(id, securityUser.getMemberId()));
         return ApiResponse.ok();
+    }
+
+    @GetMapping("/articles/{id}/likes/members")
+    public ApiResponse getLikedMembers(@PathVariable Long id) {
+        return ApiResponse.ok(articleLikeService.getLikedMembers(id, PageServiceRequest.withDefault()));
     }
 
 }

@@ -8,6 +8,7 @@ import org.springframework.http.MediaType;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.delete;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.post;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -65,6 +66,32 @@ class ArticleLikeControllerTest extends ControllerTestSupport {
         mockMvc.perform(delete(PATH, "1L")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
+    }
+
+    @Test
+    @DisplayName("특정 게시글에 좋아요를 누른 회원 목록을 조회하고 정상 응답한다.")
+    void getLikedMembers() throws Exception {
+        // given
+        Long articleId = 1L;
+
+        // when, then
+        mockMvc.perform(get(PATH + "/members", articleId)
+                        .with(csrf()))
+                .andDo(print())
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    @DisplayName("특정 게시글에 좋아요를 누른 회원 목록을 조회할 때 ID값이 숫자 타입이 아니면 에러를 응답한다.")
+    void getLikedMembersIdTypeMismatch() throws Exception {
+        // when, then
+        mockMvc.perform(get(PATH + "/members", "1L")
+                        .with(csrf()))
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
