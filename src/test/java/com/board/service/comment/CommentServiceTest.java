@@ -168,9 +168,9 @@ class CommentServiceTest extends IntegrationTestSupport {
         CommentResponse result = commentService.getComment(comment.getId());
 
         // then
-        assertThat(result.getId()).isEqualTo(comment.getId());
-        assertThat(result.getContent()).isEqualTo(comment.getContent());
-        assertThat(result.getMember().getEmail()).isEqualTo("khghouse@daum.net");
+        assertThat(result.id()).isEqualTo(comment.getId());
+        assertThat(result.content()).isEqualTo(comment.getContent());
+        assertThat(result.member().email()).isEqualTo("khghouse@daum.net");
     }
 
     @Test

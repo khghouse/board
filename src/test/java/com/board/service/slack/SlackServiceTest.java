@@ -41,7 +41,7 @@ class SlackServiceTest extends IntegrationTestSupport {
         SlackResponse response = slackService.send(message);
 
         // then
-        assertThat(response.isOk()).isTrue();
+        assertThat(response.ok()).isTrue();
     }
 
     @Test
@@ -55,7 +55,7 @@ class SlackServiceTest extends IntegrationTestSupport {
         SlackResponse slackResponse = slackService.send(message);
 
         // then
-        assertThat(slackResponse.isOk()).isFalse();
+        assertThat(slackResponse.ok()).isFalse();
     }
 
     @Test

@@ -46,7 +46,7 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                 .build();
 
         BDDMockito.given(articleService.createArticle(any(), anyLong()))
-                .willReturn(toResponse(1L, "게시글 제목입니다.", "게시글 내용입니다."));
+                .willReturn(new ArticleResponse(1L, "게시글 제목입니다.", "게시글 내용입니다."));
 
         // when, then
         mockMvc.perform(post("/api/v1/articles")
@@ -87,12 +87,8 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
     @DisplayName("게시글 1건 조회 API")
     void getArticle() throws Exception {
         // given
-        MemberResponse memberResponse = MemberResponse.builder()
-                .id(1L)
-                .email("khghouse@naver.com")
-                .build();
-
-        ArticleDetailResponse response = toResponse(1L, "게시글 제목입니다.", "게시글 내용입니다.", memberResponse);
+        MemberResponse memberResponse = new MemberResponse(1L, "khghouse@naver.com");
+        ArticleDetailResponse response = new ArticleDetailResponse(1L, "게시글 제목입니다.", "게시글 내용입니다.", LocalDateTime.now(), LocalDateTime.now(), memberResponse);
 
         BDDMockito.given(articleService.getArticle(anyLong()))
                 .willReturn(response);
@@ -144,7 +140,7 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                 .build();
 
         BDDMockito.given(articleService.updateArticle(any(), anyLong()))
-                .willReturn(toResponse(1L, "게시글 제목", "게시글 내용"));
+                .willReturn(new ArticleResponse(1L, "게시글 제목", "게시글 내용"));
 
         // when, then
         mockMvc.perform(put("/api/v1/articles/{id}", 1L)
@@ -212,14 +208,11 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
     @DisplayName("게시글 리스트 조회 API")
     void getArticleList() throws Exception {
         // given
-        MemberResponse memberResponse = MemberResponse.builder()
-                .id(1L)
-                .email("khghouse@naver.com")
-                .build();
+        MemberResponse memberResponse = new MemberResponse(1L, "khghouse@naver.com");
 
-        ArticleDetailResponse articleResponse1 = toResponse(1L, "게시글 제목입니다. 1", "게시글 내용입니다. 1", memberResponse);
-        ArticleDetailResponse articleResponse2 = toResponse(2L, "게시글 제목입니다. 2", "게시글 내용입니다. 2", memberResponse);
-        ArticleDetailResponse articleResponse3 = toResponse(3L, "게시글 제목입니다. 3", "게시글 내용입니다. 3", memberResponse);
+        ArticleDetailResponse articleResponse1 = new ArticleDetailResponse(1L, "게시글 제목입니다. 1", "게시글 내용입니다. 1", LocalDateTime.now(), LocalDateTime.now(), memberResponse);
+        ArticleDetailResponse articleResponse2 = new ArticleDetailResponse(2L, "게시글 제목입니다. 2", "게시글 내용입니다. 2", LocalDateTime.now(), LocalDateTime.now(), memberResponse);
+        ArticleDetailResponse articleResponse3 = new ArticleDetailResponse(3L, "게시글 제목입니다. 3", "게시글 내용입니다. 3", LocalDateTime.now(), LocalDateTime.now(), memberResponse);
 
         PageResponse response = PageResponse.builder()
                 .pageInformation(PageInformation.of(1, 1, 3, true))
@@ -289,24 +282,5 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                         )
                 ));
     }
-
-    private static ArticleDetailResponse toResponse(long id, String title, String content, MemberResponse memberResponse) {
-        return ArticleDetailResponse.builder()
-                .id(id)
-                .title(title)
-                .content(content)
-                .createdDateTime(LocalDateTime.now())
-                .modifiedDateTime(LocalDateTime.now())
-                .member(memberResponse)
-                .build();
-    }
-
-    private static ArticleResponse toResponse(Long id, String title, String content) {
-        return ArticleResponse.builder()
-                .id(id)
-                .title(title)
-                .content(content)
-                .build();
-    }
-
+    
 }

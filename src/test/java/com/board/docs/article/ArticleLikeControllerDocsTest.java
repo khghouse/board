@@ -88,8 +88,8 @@ public class ArticleLikeControllerDocsTest extends RestDocsSupport {
     @DisplayName("특정 게시글을 좋아요한 회원 목록 조회 API")
     void getLikedMembers() throws Exception {
         // given
-        MemberResponse memberResponse1 = toResponse(1L, "khghouse@naver.com");
-        MemberResponse memberResponse2 = toResponse(2L, "khghouse@daum.net");
+        MemberResponse memberResponse1 = new MemberResponse(1L, "khghouse@naver.com");
+        MemberResponse memberResponse2 = new MemberResponse(2L, "khghouse@daum.net");
 
         PageResponseWithExtraData response = PageResponseWithExtraData.builder()
                 .pageInformation(PageInformation.of(1, 1, 2, true))
@@ -138,13 +138,6 @@ public class ArticleLikeControllerDocsTest extends RestDocsSupport {
                                         .description("회원 이메일")
                         )
                 ));
-    }
-
-    private MemberResponse toResponse(Long id, String email) {
-        return MemberResponse.builder()
-                .id(id)
-                .email(email)
-                .build();
     }
 
 }

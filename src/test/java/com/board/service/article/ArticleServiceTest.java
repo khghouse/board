@@ -74,10 +74,10 @@ class ArticleServiceTest extends IntegrationTestSupport {
         ArticleDetailResponse result = articleService.getArticle(article.getId());
 
         // then
-        assertThat(result.getId()).isEqualTo(article.getId());
-        assertThat(result.getTitle()).isEqualTo("안녕하세요.");
-        assertThat(result.getContent()).isEqualTo("반갑습니다.");
-        assertThat(result.getMember().getEmail()).isEqualTo("khghouse@daum.net");
+        assertThat(result.id()).isEqualTo(article.getId());
+        assertThat(result.title()).isEqualTo("안녕하세요.");
+        assertThat(result.content()).isEqualTo("반갑습니다.");
+        assertThat(result.member().email()).isEqualTo("khghouse@daum.net");
     }
 
     @Test

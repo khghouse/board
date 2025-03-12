@@ -39,7 +39,7 @@ public class SlackService {
                     .retrieve()
                     .bodyToMono(SlackResponse.class)
                     .doOnNext(response -> {
-                        if (!response.isOk()) {
+                        if (!response.ok()) {
                             log.error("Slack API Error : " + response);
                         }
                     }).block();
@@ -62,7 +62,7 @@ public class SlackService {
                 .retrieve()
                 .bodyToMono(SlackResponse.class)
                 .doOnNext(response -> {
-                    if (!response.isOk()) {
+                    if (!response.ok()) {
                         log.error("Slack API Error : " + response);
                     }
                 }).block();

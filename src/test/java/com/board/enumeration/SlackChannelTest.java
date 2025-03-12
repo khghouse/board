@@ -1,7 +1,7 @@
 package com.board.enumeration;
 
-import com.board.service.slack.response.SlackResponse;
 import com.board.service.slack.SlackService;
+import com.board.service.slack.response.SlackResponse;
 import com.board.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -23,8 +23,8 @@ class SlackChannelTest extends IntegrationTestSupport {
                 .map(SlackChannel::getChannelId)
                 .forEach(channel -> {
                     SlackResponse response = slackService.checkSlackChannel(channel);
-                    System.out.println("Checking Slack Channel : " + channel + " -> Exists : " + response.isOk());
-                    assertThat(response.isOk()).isTrue();
+                    System.out.println("Checking Slack Channel : " + channel + " -> Exists : " + response.ok());
+                    assertThat(response.ok()).isTrue();
                 });
     }
 

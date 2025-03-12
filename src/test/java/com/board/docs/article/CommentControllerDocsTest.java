@@ -72,17 +72,8 @@ public class CommentControllerDocsTest extends RestDocsSupport {
     @DisplayName("댓글 1건 조회 API")
     void getComment() throws Exception {
         // given
-        MemberResponse memberResponse = MemberResponse.builder()
-                .id(1L)
-                .email("khghouse@naver.com")
-                .build();
-
-        CommentResponse response = CommentResponse.builder()
-                .id(1L)
-                .content("댓글입니다.")
-                .createdDateTime(LocalDateTime.now())
-                .member(memberResponse)
-                .build();
+        MemberResponse memberResponse = new MemberResponse(1L, "khghouse@naver.com");
+        CommentResponse response = new CommentResponse(1L, "댓글입니다.", LocalDateTime.now(), memberResponse);
 
         BDDMockito.given(commentService.getComment(any()))
                 .willReturn(response);
