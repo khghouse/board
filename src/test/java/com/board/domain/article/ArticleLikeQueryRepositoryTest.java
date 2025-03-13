@@ -143,6 +143,82 @@ class ArticleLikeQueryRepositoryTest extends RepositoryTestSupport {
         assertThat(result.getContent()).hasSize(20);
     }
 
+    @Test
+    @DisplayName("특정 회원이 좋아요한 게시글 목록을 조회하고 검증한다.")
+    void findLikedArticles() {
+        // given
+        // member -> article 좋아요
+        ArticleLike articleLike = ArticleLike.builder()
+                .article(article)
+                .member(member)
+                .build();
+        articleLikeRepository.save(articleLike);
+
+        Article article2 = Article.builder()
+                .member(member)
+                .title("안녕하세요.")
+                .content("반갑습니다.")
+                .deleted(false)
+                .build();
+        articleRepository.save(article2);
+
+        // member -> article2 좋아요
+        ArticleLike articleLike2 = ArticleLike.builder()
+                .article(article2)
+                .member(member)
+                .build();
+        articleLikeRepository.save(articleLike2);
+
+        // 다른 회원
+        Member anotherMember = Member.builder()
+                .email("khghouse@naver.com")
+                .password("Password12#$")
+                .deleted(false)
+                .build();
+        memberRepository.save(anotherMember);
+
+        Article article3 = Article.builder()
+                .member(member)
+                .title("게시글 제목")
+                .content("게시글 내용")
+                .deleted(false)
+                .build();
+        articleRepository.save(article3);
+
+        // anotherMember -> article3 좋아요
+        ArticleLike articleLike3 = ArticleLike.builder()
+                .article(article3)
+                .member(anotherMember)
+                .build();
+        articleLikeRepository.save(articleLike3);
+
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+
+        // when
+        Page<ArticleLike> result = articleLikeQueryRepository.findLikedArticles(member.getId(), pageable);
+
+        // then
+        assertThat(result.getContent()).hasSize(2)
+                .extracting("article.id", "article.title", "article.content", "member.email")
+                .containsExactly(
+                        Tuple.tuple(article2.getId(), "안녕하세요.", "반갑습니다.", "khghouse@daum.net"),
+                        Tuple.tuple(article.getId(), "제목입니다.", "내용입니다.", "khghouse@daum.net")
+                );
+    }
+
+    @Test
+    @DisplayName("특정 회원이 좋아요한 게시글 목록을 조회하지만 결과값이 없다.")
+    void findLikedArticlesEmptyList() {
+        // given
+        Pageable pageable = PageRequest.of(0, 10, Sort.Direction.DESC, "id");
+
+        // when
+        Page<ArticleLike> result = articleLikeQueryRepository.findLikedArticles(member.getId(), pageable);
+
+        // then
+        assertThat(result).isEmpty();
+    }
+
     private Member toEntity(String email) {
         return Member.builder()
                 .email(email)

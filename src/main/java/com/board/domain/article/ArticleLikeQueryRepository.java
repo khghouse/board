@@ -20,6 +20,7 @@ public class ArticleLikeQueryRepository {
     private final JPAQueryFactory queryFactory;
     private final QArticleLike articleLike = QArticleLike.articleLike;
     private final QMember member = QMember.member;
+    private final QArticle article = QArticle.article;
 
     public Page<ArticleLike> findLikedMembers(Long articleId, Pageable pageable) {
         JPAQuery<ArticleLike> query = queryFactory.selectFrom(articleLike)
@@ -35,7 +36,30 @@ public class ArticleLikeQueryRepository {
                 Optional.ofNullable(queryFactory.select(articleLike.count())
                                 .from(articleLike)
                                 .innerJoin(articleLike.member, member)
-                                .where(member.deleted.isFalse())
+                                .where(articleLike.article.id.eq(articleId)
+                                        .and(member.deleted.isFalse()))
+                                .fetchOne())
+                        .orElse(0L);
+
+        return new PageImpl<>(dataList, pageable, count);
+    }
+
+    public Page<ArticleLike> findLikedArticles(Long memberId, Pageable pageable) {
+        JPAQuery<ArticleLike> query = queryFactory.selectFrom(articleLike)
+                .innerJoin(articleLike.article, article)
+                .fetchJoin()
+                .where(articleLike.member.id.eq(memberId)
+                        .and(article.deleted.isFalse()))
+                .orderBy(QuerydslUtil.createOrderSpecifiers(pageable, articleLike));
+        QuerydslUtil.applyPage(query, pageable);
+        List<ArticleLike> dataList = query.fetch();
+
+        long count = pageable.isUnpaged() ? dataList.size() :
+                Optional.ofNullable(queryFactory.select(articleLike.count())
+                                .from(articleLike)
+                                .innerJoin(articleLike.article, article)
+                                .where(articleLike.member.id.eq(memberId)
+                                        .and(article.deleted.isFalse()))
                                 .fetchOne())
                         .orElse(0L);
 
