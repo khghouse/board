@@ -8,6 +8,8 @@ import com.board.dto.page.PageServiceRequest;
 import com.board.exception.BusinessException;
 import com.board.service.article.request.ArticleLikeServiceRequest;
 import com.board.service.article.response.ArticleIdResponse;
+import com.board.service.article.response.ArticleResponse;
+import com.board.service.member.response.MemberIdResponse;
 import com.board.service.member.response.MemberResponse;
 import com.board.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
@@ -57,6 +59,19 @@ public class ArticleLikeService {
         List<MemberResponse> members = CommonUtil.mapperToList(pageArticleLikes.getContent(), ArticleLike::getMember, MemberResponse::of);
 
         return PageResponseWithExtraData.of(pageArticleLikes, new ArticleIdResponse(articleId), members);
+    }
+
+    public PageResponseWithExtraData<MemberIdResponse> getLikedArticles(Long memberId, PageServiceRequest request) {
+        Page<ArticleLike> pageArticleLikes;
+        try {
+            pageArticleLikes = articleLikeQueryRepository.findLikedArticles(memberId, request.toPageable());
+        } catch (Exception e) {
+            throw new BusinessException(e.getMessage());
+        }
+
+        List<ArticleResponse> articles = CommonUtil.mapperToList(pageArticleLikes.getContent(), ArticleLike::getArticle, ArticleResponse::of);
+
+        return PageResponseWithExtraData.of(pageArticleLikes, new MemberIdResponse(memberId), articles);
     }
 
     private ArticleAndMember getArticleAndMember(Long articleId, Long memberId) {

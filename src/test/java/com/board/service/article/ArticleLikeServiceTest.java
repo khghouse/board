@@ -9,9 +9,11 @@ import com.board.domain.member.MemberRepository;
 import com.board.dto.page.PageResponseWithExtraData;
 import com.board.dto.page.PageServiceRequest;
 import com.board.exception.BusinessException;
-import com.board.service.article.response.ArticleIdResponse;
 import com.board.service.article.request.ArticleLikeServiceRequest;
+import com.board.service.article.response.ArticleIdResponse;
+import com.board.service.member.response.MemberIdResponse;
 import com.board.support.IntegrationTestSupport;
+import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -82,10 +84,7 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
     @DisplayName("이미 좋아요를 추가한 케이스를 검증한다.")
     void alreadyLiked() {
         // given
-        ArticleLike articleLike = ArticleLike.builder()
-                .article(article)
-                .member(member)
-                .build();
+        ArticleLike articleLike = toEntity(member, article);
         articleLikeRepository.save(articleLike);
 
         long beforeCount = articleLikeRepository.count();
@@ -128,10 +127,7 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글 좋아요를 취소하고 검증한다.")
     void unlike() {
         // given
-        ArticleLike articleLike = ArticleLike.builder()
-                .article(article)
-                .member(member)
-                .build();
+        ArticleLike articleLike = toEntity(member, article);
         articleLikeRepository.save(articleLike);
 
         ArticleLikeServiceRequest request = ArticleLikeServiceRequest.of(article.getId(), member.getId());
@@ -192,7 +188,7 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
         memberRepository.saveAll(members);
 
         List<ArticleLike> articleLikes = IntStream.range(1, 6)
-                .mapToObj(i -> toEntity(members.get(i - 1)))
+                .mapToObj(i -> toEntity(members.get(i - 1), article))
                 .collect(Collectors.toList());
         articleLikeRepository.saveAll(articleLikes);
 
@@ -231,6 +227,55 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
         assertThat(result.getContents()).hasSize(0);
     }
 
+    @Test
+    @DisplayName("특정 회원이 좋아요한 게시글 목록을 조회하고 검증한다.")
+    void getLikedArticles() {
+        // given
+        List<Article> articles = IntStream.range(1, 6)
+                .mapToObj(i -> toEntity("제목입니다" + i, "내용입니다" + i, member))
+                .collect(Collectors.toList());
+        articleRepository.saveAll(articles);
+
+        List<ArticleLike> articleLikes = IntStream.range(1, 6)
+                .mapToObj(i -> toEntity(member, articles.get(i - 1)))
+                .collect(Collectors.toList());
+        articleLikeRepository.saveAll(articleLikes);
+
+        // when
+        PageResponseWithExtraData<MemberIdResponse> result = articleLikeService.getLikedArticles(member.getId(), PageServiceRequest.withDefault());
+
+        // then
+        assertThat(result.getPageInformation().getPageNumber()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalPages()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalElements()).isEqualTo(5);
+        assertThat(result.getPageInformation().getIsLast()).isTrue();
+        assertThat(result.getExtraData()).isEqualTo(new MemberIdResponse(member.getId()));
+        assertThat(result.getContents()).hasSize(5)
+                .extracting("title", "content")
+                .containsExactly(
+                        Tuple.tuple("제목입니다5", "내용입니다5"),
+                        Tuple.tuple("제목입니다4", "내용입니다4"),
+                        Tuple.tuple("제목입니다3", "내용입니다3"),
+                        Tuple.tuple("제목입니다2", "내용입니다2"),
+                        Tuple.tuple("제목입니다1", "내용입니다1")
+                );
+    }
+
+    @Test
+    @DisplayName("리스트 사이즈가 0이면 빈 배열을 응답한다.")
+    void getLikedArticlesEmptyList() {
+        // when
+        PageResponseWithExtraData<MemberIdResponse> result = articleLikeService.getLikedArticles(member.getId(), PageServiceRequest.withDefault());
+
+        // then
+        assertThat(result.getPageInformation().getPageNumber()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalPages()).isEqualTo(1);
+        assertThat(result.getPageInformation().getTotalElements()).isEqualTo(0);
+        assertThat(result.getPageInformation().getIsLast()).isTrue();
+        assertThat(result.getExtraData()).isEqualTo(new MemberIdResponse(member.getId()));
+        assertThat(result.getContents()).hasSize(0);
+    }
+
     private Member toEntity(String email) {
         return Member.builder()
                 .email(email)
@@ -239,9 +284,18 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
                 .build();
     }
 
-    private ArticleLike toEntity(Member member) {
+    private ArticleLike toEntity(Member member, Article article) {
         return ArticleLike.builder()
                 .article(article)
+                .member(member)
+                .build();
+    }
+
+    private Article toEntity(String title, String content, Member member) {
+        return Article.builder()
+                .title(title)
+                .content(content)
+                .deleted(false)
                 .member(member)
                 .build();
     }
