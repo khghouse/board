@@ -5,6 +5,8 @@ import com.board.dto.page.PageInformation;
 import com.board.dto.page.PageResponseWithExtraData;
 import com.board.service.article.ArticleLikeService;
 import com.board.service.article.response.ArticleIdResponse;
+import com.board.service.article.response.ArticleResponse;
+import com.board.service.member.response.MemberIdResponse;
 import com.board.service.member.response.MemberResponse;
 import com.board.support.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
@@ -91,7 +93,7 @@ public class ArticleLikeControllerDocsTest extends RestDocsSupport {
         MemberResponse memberResponse1 = new MemberResponse(1L, "khghouse@naver.com");
         MemberResponse memberResponse2 = new MemberResponse(2L, "khghouse@daum.net");
 
-        PageResponseWithExtraData response = PageResponseWithExtraData.builder()
+        PageResponseWithExtraData<ArticleIdResponse> response = PageResponseWithExtraData.<ArticleIdResponse>builder()
                 .pageInformation(PageInformation.of(1, 1, 2, true))
                 .extraData(new ArticleIdResponse(1L))
                 .contents(List.of(memberResponse2, memberResponse1))
@@ -136,6 +138,64 @@ public class ArticleLikeControllerDocsTest extends RestDocsSupport {
                                         .description("회원 ID"),
                                 fieldWithPath("data.contents[].email").type(JsonFieldType.STRING)
                                         .description("회원 이메일")
+                        )
+                ));
+    }
+
+    @Test
+    @DisplayName("특정 회원이 좋아요한 게시글 목록 조회 API")
+    void getLikedArticles() throws Exception {
+        // given
+        ArticleResponse articleResponse1 = new ArticleResponse(1L, "제목입니다1", "내용입니다1");
+        ArticleResponse articleResponse2 = new ArticleResponse(2L, "제목입니다2", "내용입니다2");
+
+        PageResponseWithExtraData<MemberIdResponse> response = PageResponseWithExtraData.<MemberIdResponse>builder()
+                .pageInformation(PageInformation.of(1, 1, 2, true))
+                .extraData(new MemberIdResponse(1L))
+                .contents(List.of(articleResponse2, articleResponse1))
+                .build();
+
+        BDDMockito.given(articleLikeService.getLikedArticles(anyLong(), any()))
+                .willReturn(response);
+
+        // when, then
+        mockMvc.perform(get("/members/{id}/likes/articles", 1L)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andDo(print())
+                .andDo(document.document(
+                        pathParameters(
+                                parameterWithName("id").description("회원 ID")
+                        ),
+                        responseFields(
+                                fieldWithPath("status").type(JsonFieldType.NUMBER)
+                                        .description("HTTP 상태 코드"),
+                                fieldWithPath("error").type(JsonFieldType.OBJECT)
+                                        .description("에러 정보")
+                                        .optional(),
+                                fieldWithPath("data").type(JsonFieldType.OBJECT)
+                                        .description("응답 데이터")
+                                        .optional(),
+                                fieldWithPath("data.pageInformation").type(JsonFieldType.OBJECT)
+                                        .description("페이지 정보"),
+                                fieldWithPath("data.pageInformation.pageNumber").type(JsonFieldType.NUMBER)
+                                        .description("현재 페이지 번호"),
+                                fieldWithPath("data.pageInformation.totalPages").type(JsonFieldType.NUMBER)
+                                        .description("총 페이지"),
+                                fieldWithPath("data.pageInformation.totalElements").type(JsonFieldType.NUMBER)
+                                        .description("총 데이터 수"),
+                                fieldWithPath("data.pageInformation.isLast").type(JsonFieldType.BOOLEAN)
+                                        .description("마지막 페이지 여부 (true : 마지막 페이지, false : 마지막 페이지 아님)"),
+                                fieldWithPath("data.memberId").type(JsonFieldType.NUMBER)
+                                        .description("회원 ID"),
+                                fieldWithPath("data.contents[]").type(JsonFieldType.ARRAY)
+                                        .description("데이터 목록")
+                                        .optional(),
+                                fieldWithPath("data.contents[].id").type(JsonFieldType.NUMBER)
+                                        .description("게시글 ID"),
+                                fieldWithPath("data.contents[].title").type(JsonFieldType.STRING)
+                                        .description("게시글 제목"),
+                                fieldWithPath("data.contents[].content").type(JsonFieldType.STRING)
+                                        .description("게시글 내용")
                         )
                 ));
     }

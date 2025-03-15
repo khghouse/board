@@ -32,4 +32,9 @@ public class ArticleLikeController {
         return ApiResponse.ok(articleLikeService.getLikedMembers(id, PageServiceRequest.withDefault()));
     }
 
+    @GetMapping("/members/{id}/likes/articles")
+    public ApiResponse getLikedArticles(@PathVariable Long id) {
+        return ApiResponse.ok(articleLikeService.getLikedArticles(id, PageServiceRequest.withDefault()));
+    }
+
 }
