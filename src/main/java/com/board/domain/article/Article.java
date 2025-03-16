@@ -32,13 +32,16 @@ public class Article extends BaseEntity {
 
     private Boolean deleted;
 
+    private int viewCount;
+
     @Builder
-    private Article(Long id, Member member, String title, String content, Boolean deleted) {
+    private Article(Long id, Member member, String title, String content, Boolean deleted, int viewCount) {
         this.id = id;
         this.member = member;
         this.title = validateTitle(title);
         this.content = validateContent(content);
         this.deleted = deleted;
+        this.viewCount = viewCount;
     }
 
     private String validateTitle(String title) {
@@ -73,6 +76,10 @@ public class Article extends BaseEntity {
         if (!this.getMember().getId().equals(requestMemberId)) {
             throw new BusinessException(INVALID_WRITER);
         }
+    }
+
+    public void incrementViewCount() {
+        this.viewCount++;
     }
 
 }
