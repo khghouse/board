@@ -18,8 +18,7 @@ import org.springframework.restdocs.payload.JsonFieldType;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.mock;
 import static org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders.*;
 import static org.springframework.restdocs.payload.PayloadDocumentation.*;
@@ -90,7 +89,7 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
         MemberResponse memberResponse = new MemberResponse(1L, "khghouse@naver.com");
         ArticleDetailResponse response = new ArticleDetailResponse(1L, "게시글 제목입니다.", "게시글 내용입니다.", LocalDateTime.now(), LocalDateTime.now(), memberResponse);
 
-        BDDMockito.given(articleService.getArticle(anyLong()))
+        BDDMockito.given(articleService.getArticle(anyLong(), anyString()))
                 .willReturn(response);
 
         // when, then
@@ -282,5 +281,5 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                         )
                 ));
     }
-    
+
 }

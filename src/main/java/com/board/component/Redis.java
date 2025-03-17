@@ -22,7 +22,12 @@ public class Redis {
     public String get(String key) {
         return redisTemplate.opsForValue().get(key);
     }
-    
+
+    public void set(String key, String value, long timeout, TimeUnit unit) {
+        redisTemplate.opsForValue()
+                .set(key, value, timeout, unit);
+    }
+
     public void setRefreshToken(Long memberId, String refreshToken) {
         redisTemplate.opsForValue()
                 .set(PREFIX_REDIS_KEY_REFRESH_TOKEN + memberId, refreshToken, jwtTokenProvider.getRefreshTokenExpirationSeconds(), TimeUnit.SECONDS);

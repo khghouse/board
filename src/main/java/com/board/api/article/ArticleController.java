@@ -5,6 +5,8 @@ import com.board.api.article.request.ArticleRequest;
 import com.board.dto.page.PageRequest;
 import com.board.dto.security.SecurityUser;
 import com.board.service.article.ArticleService;
+import com.board.util.CommonUtil;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
@@ -23,8 +25,8 @@ public class ArticleController {
     }
 
     @GetMapping("/{id}")
-    public ApiResponse getArticle(@PathVariable Long id) {
-        return ApiResponse.ok(articleService.getArticle(id));
+    public ApiResponse getArticle(@PathVariable Long id, HttpServletRequest request) {
+        return ApiResponse.ok(articleService.getArticle(id, CommonUtil.getClientIp(request)));
     }
 
     @PutMapping("/{id}")

@@ -71,7 +71,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
         Article article = createArticle(false, member);
 
         // when
-        ArticleDetailResponse result = articleService.getArticle(article.getId());
+        ArticleDetailResponse result = articleService.getArticle(article.getId(), "clientIp");
 
         // then
         assertThat(result.id()).isEqualTo(article.getId());
@@ -84,7 +84,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
     @DisplayName("게시글 1건의 조회 결과가 없어서 예외가 발생한다.")
     void getArticleNotFound() {
         // when, then
-        assertThatThrownBy(() -> articleService.getArticle(1L))
+        assertThatThrownBy(() -> articleService.getArticle(1L, "clientIp"))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(ARTICLE_NOT_FOUND.getMessage());
     }
