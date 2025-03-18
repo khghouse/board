@@ -1,5 +1,6 @@
 package com.board.service.article;
 
+import com.board.component.Redis;
 import com.board.domain.article.Article;
 import com.board.domain.article.ArticleRepository;
 import com.board.domain.member.Member;
@@ -30,6 +31,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 @Transactional
 class ArticleServiceTest extends IntegrationTestSupport {
 
+    public static final String PREFIX_REDIS_KEY_ARTICLE_VIEW = "articleView:";
+
     @Autowired
     private ArticleService articleService;
 
@@ -38,6 +41,9 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
     @Autowired
     private MemberRepository memberRepository;
+
+    @Autowired
+    private Redis redis;
 
     @Autowired
     private EntityManager entityManager;
@@ -52,7 +58,6 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void createArticle() {
         // given
         Member member = createMember();
-
         ArticleServiceRequest request = ArticleServiceRequest.withTitleAndContent("안녕하세요.", "반갑습니다.");
 
         // when
@@ -87,6 +92,82 @@ class ArticleServiceTest extends IntegrationTestSupport {
         assertThatThrownBy(() -> articleService.getArticle(1L, "clientIp"))
                 .isInstanceOf(BusinessException.class)
                 .hasMessage(ARTICLE_NOT_FOUND.getMessage());
+    }
+
+    @Test
+    @DisplayName("게시글을 조회하고 조회수가 증가했는지 확인한다.")
+    void getArticleViewCount() {
+        // given
+        Member member = createMember();
+        Article article = createArticle(false, member);
+        String clientIp = "111.11.11.111";
+
+        // when
+        articleService.getArticle(article.getId(), clientIp);
+
+        // then
+        String key = PREFIX_REDIS_KEY_ARTICLE_VIEW + article.getId() + ":" + clientIp;
+        String lastViewTime = redis.get(key);
+
+        assertThat(article.getViewCount()).isEqualTo(1);
+        assertThat(lastViewTime).isNotNull();
+
+        // tearDown
+        redis.delete(key);
+    }
+
+    @Test
+    @DisplayName("유저 2명이 게시글을 조회하고 조회수가 증가했는지 확인한다.")
+    void getArticleViewCountAnotherClientIp() {
+        // given
+        Member member = createMember();
+        Article article = createArticle(false, member);
+        String clientIp = "111.11.11.111";
+        articleService.getArticle(article.getId(), clientIp);
+
+        String anotherClientIp = "222.22.22.222";
+
+        // when
+        articleService.getArticle(article.getId(), anotherClientIp);
+
+        // then
+        assertThat(article.getViewCount()).isEqualTo(2);
+
+        String key = PREFIX_REDIS_KEY_ARTICLE_VIEW + article.getId() + ":" + clientIp;
+        String key2 = PREFIX_REDIS_KEY_ARTICLE_VIEW + article.getId() + ":" + anotherClientIp;
+        String lastViewTime = redis.get(key);
+        String lastViewTime2 = redis.get(key2);
+
+        assertThat(lastViewTime).isNotNull();
+        assertThat(lastViewTime2).isNotNull();
+
+        // tearDown
+        redis.delete(key);
+        redis.delete(key2);
+    }
+
+    @Test
+    @DisplayName("같은 아이피로 게시글을 여러 번 조회하면 조회수 1만 증가한다.")
+    void getArticleViewCountSameIp() {
+        // given
+        Member member = createMember();
+        Article article = createArticle(false, member);
+        String clientIp = "111.11.11.111";
+
+        // when
+        articleService.getArticle(article.getId(), clientIp);
+        articleService.getArticle(article.getId(), clientIp);
+        articleService.getArticle(article.getId(), clientIp);
+
+        // then
+        String key = PREFIX_REDIS_KEY_ARTICLE_VIEW + article.getId() + ":" + clientIp;
+        String lastViewTime = redis.get(key);
+
+        assertThat(article.getViewCount()).isEqualTo(1);
+        assertThat(lastViewTime).isNotNull();
+
+        // tearDown
+        redis.delete(key);
     }
 
     @Test

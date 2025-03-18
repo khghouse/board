@@ -28,6 +28,10 @@ public class Redis {
                 .set(key, value, timeout, unit);
     }
 
+    public void delete(String key) {
+        redisTemplate.delete(key);
+    }
+
     public void setRefreshToken(Long memberId, String refreshToken) {
         redisTemplate.opsForValue()
                 .set(PREFIX_REDIS_KEY_REFRESH_TOKEN + memberId, refreshToken, jwtTokenProvider.getRefreshTokenExpirationSeconds(), TimeUnit.SECONDS);
