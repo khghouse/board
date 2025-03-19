@@ -10,6 +10,7 @@ public record ArticleDetailResponse(
         Long id,
         String title,
         String content,
+        int viewCount,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
         LocalDateTime createdDateTime,
         @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss")
@@ -21,6 +22,7 @@ public record ArticleDetailResponse(
                 article.getId(),
                 article.getTitle(),
                 article.getContent(),
+                article.getViewCount(),
                 article.getCreatedDateTime(),
                 article.getModifiedDateTime(),
                 MemberResponse.of(article.getMember())

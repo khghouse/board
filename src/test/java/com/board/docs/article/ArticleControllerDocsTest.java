@@ -87,7 +87,7 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
     void getArticle() throws Exception {
         // given
         MemberResponse memberResponse = new MemberResponse(1L, "khghouse@naver.com");
-        ArticleDetailResponse response = new ArticleDetailResponse(1L, "게시글 제목입니다.", "게시글 내용입니다.", LocalDateTime.now(), LocalDateTime.now(), memberResponse);
+        ArticleDetailResponse response = new ArticleDetailResponse(1L, "게시글 제목입니다.", "게시글 내용입니다.", 10, LocalDateTime.now(), LocalDateTime.now(), memberResponse);
 
         BDDMockito.given(articleService.getArticle(anyLong(), anyString()))
                 .willReturn(response);
@@ -115,6 +115,8 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                                         .description("게시글 제목"),
                                 fieldWithPath("data.content").type(JsonFieldType.STRING)
                                         .description("게시글 내용"),
+                                fieldWithPath("data.viewCount").type(JsonFieldType.NUMBER)
+                                        .description("조회 수"),
                                 fieldWithPath("data.createdDateTime").type(JsonFieldType.STRING)
                                         .description("등록일시 [yyyy-MM-dd HH:mm:ss]"),
                                 fieldWithPath("data.modifiedDateTime").type(JsonFieldType.STRING)
@@ -209,9 +211,9 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
         // given
         MemberResponse memberResponse = new MemberResponse(1L, "khghouse@naver.com");
 
-        ArticleDetailResponse articleResponse1 = new ArticleDetailResponse(1L, "게시글 제목입니다. 1", "게시글 내용입니다. 1", LocalDateTime.now(), LocalDateTime.now(), memberResponse);
-        ArticleDetailResponse articleResponse2 = new ArticleDetailResponse(2L, "게시글 제목입니다. 2", "게시글 내용입니다. 2", LocalDateTime.now(), LocalDateTime.now(), memberResponse);
-        ArticleDetailResponse articleResponse3 = new ArticleDetailResponse(3L, "게시글 제목입니다. 3", "게시글 내용입니다. 3", LocalDateTime.now(), LocalDateTime.now(), memberResponse);
+        ArticleDetailResponse articleResponse1 = new ArticleDetailResponse(1L, "게시글 제목입니다. 1", "게시글 내용입니다. 1", 156, LocalDateTime.now(), LocalDateTime.now(), memberResponse);
+        ArticleDetailResponse articleResponse2 = new ArticleDetailResponse(2L, "게시글 제목입니다. 2", "게시글 내용입니다. 2", 954, LocalDateTime.now(), LocalDateTime.now(), memberResponse);
+        ArticleDetailResponse articleResponse3 = new ArticleDetailResponse(3L, "게시글 제목입니다. 3", "게시글 내용입니다. 3", 382, LocalDateTime.now(), LocalDateTime.now(), memberResponse);
 
         PageResponse response = PageResponse.builder()
                 .pageInformation(PageInformation.of(1, 1, 3, true))
@@ -268,6 +270,8 @@ public class ArticleControllerDocsTest extends RestDocsSupport {
                                         .description("게시글 제목"),
                                 fieldWithPath("data.contents[].content").type(JsonFieldType.STRING)
                                         .description("게시글 내용"),
+                                fieldWithPath("data.contents[].viewCount").type(JsonFieldType.NUMBER)
+                                        .description("조회 수"),
                                 fieldWithPath("data.contents[].createdDateTime").type(JsonFieldType.STRING)
                                         .description("등록일시 [yyyy-MM-dd HH:mm:ss]"),
                                 fieldWithPath("data.contents[].modifiedDateTime").type(JsonFieldType.STRING)
