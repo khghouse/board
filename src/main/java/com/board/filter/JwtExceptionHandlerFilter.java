@@ -1,13 +1,12 @@
 package com.board.filter;
 
-import com.board.api.ApiResponse;
+import com.board.dto.ApiResponse;
 import com.board.exception.JwtException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -25,7 +24,7 @@ public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
     }
 
     private void setErrorResponse(HttpServletResponse response, String message) {
-        ApiResponse apiResponse = ApiResponse.of(HttpStatus.UNAUTHORIZED, null, message);
+        ApiResponse<Void> apiResponse = ApiResponse.unauthorized(message);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

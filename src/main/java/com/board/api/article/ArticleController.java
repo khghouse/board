@@ -1,6 +1,6 @@
 package com.board.api.article;
 
-import com.board.api.ApiResponse;
+import com.board.dto.ApiResponse;
 import com.board.api.article.request.ArticleRequest;
 import com.board.dto.page.PageRequest;
 import com.board.dto.security.SecurityUser;

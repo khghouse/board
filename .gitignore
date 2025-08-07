@@ -40,3 +40,5 @@ out/
 /src/main/resources/application-redis.yml
 /src/main/resources/application-mail-account.yml
 /src/main/resources/application-slack.yml
+*.http
+http-client.env.json

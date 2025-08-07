@@ -1,6 +1,6 @@
 package com.board.api.comment;
 
-import com.board.api.ApiResponse;
+import com.board.dto.ApiResponse;
 import com.board.api.comment.request.CommentRequest;
 import com.board.dto.security.SecurityUser;
 import com.board.service.comment.CommentService;

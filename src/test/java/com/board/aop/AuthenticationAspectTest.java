@@ -48,7 +48,7 @@ class AuthenticationAspectTest extends IntegrationTestSupport {
 //                .andExpect(status().isUnauthorized())
 //                .andExpect(jsonPath("$.status").value("401"))
 //                .andExpect(jsonPath("$.data").isEmpty())
-//                .andExpect(jsonPath("$.error").value("인증 정보가 존재하지 않습니다."));
+//                .andExpect(jsonPath("$.error.message").value("인증 정보가 존재하지 않습니다."));
 //    }
 //
 //    @Test
@@ -63,7 +63,7 @@ class AuthenticationAspectTest extends IntegrationTestSupport {
 //                .andExpect(status().isUnauthorized())
 //                .andExpect(jsonPath("$.status").value("401"))
 //                .andExpect(jsonPath("$.data").isEmpty())
-//                .andExpect(jsonPath("$.error").value("인증 정보가 유효하지 않습니다."));
+//                .andExpect(jsonPath("$.error.message").value("인증 정보가 유효하지 않습니다."));
 //    }
 
 }

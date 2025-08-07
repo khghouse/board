@@ -1,6 +1,6 @@
 package com.board.api.auth;
 
-import com.board.api.ApiResponse;
+import com.board.dto.ApiResponse;
 import com.board.api.auth.request.AuthRequest;
 import com.board.api.auth.request.ReissueRequest;
 import com.board.exception.UnauthorizedException;
@@ -8,6 +8,7 @@ import com.board.provider.JwtTokenProvider;
 import com.board.service.auth.AuthService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -41,7 +42,7 @@ public class AuthController {
     @PostMapping("/logout")
     public ApiResponse logout(HttpServletRequest request) {
         String accessToken = jwtTokenProvider.resolveToken(request);
-        if (accessToken == null) {
+        if (!StringUtils.hasText(accessToken)) {
             throw new UnauthorizedException("인증되지 않은 요청입니다.");
         }
         authService.logout(accessToken);

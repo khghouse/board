@@ -39,8 +39,10 @@ class ArticleLikeControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
+                .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.error.message").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
 
     @Test
@@ -67,8 +69,10 @@ class ArticleLikeControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
+                .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.error.message").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
 
     @Test
@@ -93,8 +97,10 @@ class ArticleLikeControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
+                .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.error.message").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
 
     @Test
@@ -119,8 +125,10 @@ class ArticleLikeControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
+                .andExpect(jsonPath("$.success").value(false))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.error").value("요청 파라미터 타입이 올바르지 않습니다."));
+                .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
+                .andExpect(jsonPath("$.error.message").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
 
 }

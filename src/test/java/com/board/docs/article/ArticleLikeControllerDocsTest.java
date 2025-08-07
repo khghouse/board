@@ -52,6 +52,8 @@ public class ArticleLikeControllerDocsTest extends RestDocsSupport {
                         responseFields(
                                 fieldWithPath("status").type(JsonFieldType.NUMBER)
                                         .description("HTTP 상태 코드"),
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("요청 처리 결과"),
                                 fieldWithPath("error").type(JsonFieldType.OBJECT)
                                         .description("에러 정보")
                                         .optional(),
@@ -76,6 +78,8 @@ public class ArticleLikeControllerDocsTest extends RestDocsSupport {
                         responseFields(
                                 fieldWithPath("status").type(JsonFieldType.NUMBER)
                                         .description("HTTP 상태 코드"),
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("요청 처리 결과"),
                                 fieldWithPath("error").type(JsonFieldType.OBJECT)
                                         .description("에러 정보")
                                         .optional(),
@@ -113,6 +117,8 @@ public class ArticleLikeControllerDocsTest extends RestDocsSupport {
                         responseFields(
                                 fieldWithPath("status").type(JsonFieldType.NUMBER)
                                         .description("HTTP 상태 코드"),
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("요청 처리 결과"),
                                 fieldWithPath("error").type(JsonFieldType.OBJECT)
                                         .description("에러 정보")
                                         .optional(),
@@ -169,6 +175,8 @@ public class ArticleLikeControllerDocsTest extends RestDocsSupport {
                         responseFields(
                                 fieldWithPath("status").type(JsonFieldType.NUMBER)
                                         .description("HTTP 상태 코드"),
+                                fieldWithPath("success").type(JsonFieldType.BOOLEAN)
+                                        .description("요청 처리 결과"),
                                 fieldWithPath("error").type(JsonFieldType.OBJECT)
                                         .description("에러 정보")
                                         .optional(),
