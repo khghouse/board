@@ -1,6 +1,6 @@
 package com.board.api.article;
 
-import com.board.api.article.request.ArticleRequest;
+import com.board.domain.article.dto.request.ArticleRequest;
 import com.board.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,6 +1,6 @@
 package com.board.support.security;
 
-import com.board.dto.security.SecurityUser;
+import com.board.global.security.SecurityUser;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

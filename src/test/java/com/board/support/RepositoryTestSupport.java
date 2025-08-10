@@ -1,6 +1,6 @@
 package com.board.support;
 
-import com.board.configuration.QuerydslConfig;
+import com.board.global.config.QuerydslConfig;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;

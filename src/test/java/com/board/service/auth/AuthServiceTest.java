@@ -1,14 +1,15 @@
 package com.board.service.auth;
 
-import com.board.component.Redis;
-import com.board.domain.member.Member;
-import com.board.domain.member.MemberRepository;
-import com.board.dto.jwt.JwtToken;
-import com.board.exception.BusinessException;
-import com.board.exception.JwtException;
-import com.board.provider.JwtTokenProvider;
-import com.board.service.auth.request.AuthServiceRequest;
-import com.board.service.auth.request.ReissueServiceRequest;
+import com.board.global.infrastructure.redis.Redis;
+import com.board.domain.auth.service.AuthService;
+import com.board.domain.member.entity.Member;
+import com.board.domain.member.repository.MemberRepository;
+import com.board.global.security.JwtToken;
+import com.board.global.common.exception.BusinessException;
+import com.board.global.security.JwtException;
+import com.board.global.security.JwtTokenProvider;
+import com.board.domain.auth.dto.request.AuthServiceRequest;
+import com.board.domain.auth.dto.request.ReissueServiceRequest;
 import com.board.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.board.enumeration.ErrorCode.MEMBER_NOT_FOUND;
+import static com.board.global.common.enumeration.ErrorCode.MEMBER_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

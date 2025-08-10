@@ -1,6 +1,7 @@
 package com.board.service.slack;
 
-import com.board.service.slack.response.SlackResponse;
+import com.board.global.infrastructure.slack.SlackService;
+import com.board.global.infrastructure.slack.dto.SlackResponse;
 import com.board.support.IntegrationTestSupport;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

@@ -1,13 +1,14 @@
 package com.board.provider;
 
+import com.board.global.security.JwtTokenProvider;
 import com.board.support.IntegrationTestSupport;
-import com.board.domain.member.Member;
-import com.board.domain.member.MemberRepository;
-import com.board.dto.jwt.JwtToken;
-import com.board.dto.security.SecurityUser;
-import com.board.enumeration.JwtErrorCode;
-import com.board.exception.ForbiddenException;
-import com.board.exception.JwtException;
+import com.board.domain.member.entity.Member;
+import com.board.domain.member.repository.MemberRepository;
+import com.board.global.security.JwtToken;
+import com.board.global.security.SecurityUser;
+import com.board.global.security.JwtErrorCode;
+import com.board.global.common.exception.ForbiddenException;
+import com.board.global.security.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;

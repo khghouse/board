@@ -1,6 +1,6 @@
 package com.board.api.comment;
 
-import com.board.api.comment.request.CommentRequest;
+import com.board.domain.comment.dto.request.CommentRequest;
 import com.board.support.ControllerTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,14 +1,14 @@
 package com.board.support;
 
-import com.board.api.article.ArticleController;
-import com.board.api.article.ArticleLikeController;
-import com.board.api.auth.AuthController;
-import com.board.api.comment.CommentController;
-import com.board.provider.JwtTokenProvider;
-import com.board.service.article.ArticleLikeService;
-import com.board.service.article.ArticleService;
-import com.board.service.auth.AuthService;
-import com.board.service.comment.CommentService;
+import com.board.domain.article.controller.ArticleController;
+import com.board.domain.article.controller.ArticleLikeController;
+import com.board.domain.auth.controller.AuthController;
+import com.board.domain.comment.controller.CommentController;
+import com.board.global.security.JwtTokenProvider;
+import com.board.domain.article.service.ArticleLikeService;
+import com.board.domain.article.service.ArticleService;
+import com.board.domain.auth.service.AuthService;
+import com.board.domain.comment.service.CommentService;
 import com.board.support.security.WithCustomSecurityUser;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -1,7 +1,8 @@
 package com.board.component;
 
+import com.board.global.infrastructure.redis.Redis;
 import com.board.support.IntegrationTestSupport;
-import com.board.exception.BusinessException;
+import com.board.global.common.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;

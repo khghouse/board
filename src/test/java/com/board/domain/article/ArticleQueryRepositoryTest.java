@@ -1,7 +1,10 @@
 package com.board.domain.article;
 
-import com.board.domain.member.Member;
-import com.board.domain.member.MemberRepository;
+import com.board.domain.article.entity.Article;
+import com.board.domain.article.repository.ArticleQueryRepository;
+import com.board.domain.article.repository.ArticleRepository;
+import com.board.domain.member.entity.Member;
+import com.board.domain.member.repository.MemberRepository;
 import com.board.support.RepositoryTestSupport;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;

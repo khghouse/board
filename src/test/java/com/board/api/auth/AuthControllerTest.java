@@ -1,8 +1,8 @@
 package com.board.api.auth;
 
 import com.board.support.ControllerTestSupport;
-import com.board.api.auth.request.AuthRequest;
-import com.board.api.auth.request.ReissueRequest;
+import com.board.domain.auth.dto.request.AuthRequest;
+import com.board.domain.auth.dto.request.ReissueRequest;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;

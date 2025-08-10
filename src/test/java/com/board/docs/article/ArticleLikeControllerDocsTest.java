@@ -1,13 +1,13 @@
 package com.board.docs.article;
 
-import com.board.api.article.ArticleLikeController;
-import com.board.dto.page.PageInformation;
-import com.board.dto.page.PageResponseWithExtraData;
-import com.board.service.article.ArticleLikeService;
-import com.board.service.article.response.ArticleIdResponse;
-import com.board.service.article.response.ArticleResponse;
-import com.board.service.member.response.MemberIdResponse;
-import com.board.service.member.response.MemberResponse;
+import com.board.domain.article.controller.ArticleLikeController;
+import com.board.global.common.dto.page.PageInformation;
+import com.board.global.common.dto.page.PageResponseWithExtraData;
+import com.board.domain.article.service.ArticleLikeService;
+import com.board.domain.article.dto.response.ArticleIdResponse;
+import com.board.domain.article.dto.response.ArticleResponse;
+import com.board.domain.member.dto.response.MemberIdResponse;
+import com.board.domain.member.dto.response.MemberResponse;
 import com.board.support.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

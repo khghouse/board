@@ -1,6 +1,7 @@
 package com.board.service.mail;
 
-import com.board.service.mail.request.MailServiceRequest;
+import com.board.global.infrastructure.mail.dto.MailServiceRequest;
+import com.board.global.infrastructure.mail.MailService;
 import com.board.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

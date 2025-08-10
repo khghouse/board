@@ -1,12 +1,13 @@
 package com.board.domain.article;
 
-import com.board.domain.member.Member;
-import com.board.exception.BusinessException;
+import com.board.domain.article.entity.Article;
+import com.board.domain.member.entity.Member;
+import com.board.global.common.exception.BusinessException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.board.enumeration.ErrorCode.*;
+import static com.board.global.common.enumeration.ErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

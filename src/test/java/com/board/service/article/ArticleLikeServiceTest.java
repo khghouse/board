@@ -1,17 +1,18 @@
 package com.board.service.article;
 
-import com.board.domain.article.Article;
-import com.board.domain.article.ArticleLike;
-import com.board.domain.article.ArticleLikeRepository;
-import com.board.domain.article.ArticleRepository;
-import com.board.domain.member.Member;
-import com.board.domain.member.MemberRepository;
-import com.board.dto.page.PageResponseWithExtraData;
-import com.board.dto.page.PageServiceRequest;
-import com.board.exception.BusinessException;
-import com.board.service.article.request.ArticleLikeServiceRequest;
-import com.board.service.article.response.ArticleIdResponse;
-import com.board.service.member.response.MemberIdResponse;
+import com.board.domain.article.entity.Article;
+import com.board.domain.article.entity.ArticleLike;
+import com.board.domain.article.repository.ArticleLikeRepository;
+import com.board.domain.article.repository.ArticleRepository;
+import com.board.domain.article.service.ArticleLikeService;
+import com.board.domain.member.entity.Member;
+import com.board.domain.member.repository.MemberRepository;
+import com.board.global.common.dto.page.PageResponseWithExtraData;
+import com.board.global.common.dto.page.PageServiceRequest;
+import com.board.global.common.exception.BusinessException;
+import com.board.domain.article.dto.request.ArticleLikeServiceRequest;
+import com.board.domain.article.dto.response.ArticleIdResponse;
+import com.board.domain.member.dto.response.MemberIdResponse;
 import com.board.support.IntegrationTestSupport;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,8 +25,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.board.enumeration.ErrorCode.ARTICLE_NOT_FOUND;
-import static com.board.enumeration.ErrorCode.MEMBER_NOT_FOUND;
+import static com.board.global.common.enumeration.ErrorCode.ARTICLE_NOT_FOUND;
+import static com.board.global.common.enumeration.ErrorCode.MEMBER_NOT_FOUND;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

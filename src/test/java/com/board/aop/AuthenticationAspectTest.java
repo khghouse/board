@@ -1,7 +1,7 @@
 package com.board.aop;
 
 import com.board.support.IntegrationTestSupport;
-import com.board.provider.JwtTokenProvider;
+import com.board.global.security.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.web.servlet.MockMvc;

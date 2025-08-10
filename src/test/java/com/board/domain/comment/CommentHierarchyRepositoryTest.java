@@ -1,9 +1,13 @@
 package com.board.domain.comment;
 
-import com.board.domain.article.Article;
-import com.board.domain.article.ArticleRepository;
-import com.board.domain.member.Member;
-import com.board.domain.member.MemberRepository;
+import com.board.domain.article.entity.Article;
+import com.board.domain.article.repository.ArticleRepository;
+import com.board.domain.comment.entity.Comment;
+import com.board.domain.comment.entity.CommentHierarchy;
+import com.board.domain.comment.repository.CommentHierarchyRepository;
+import com.board.domain.comment.repository.CommentRepository;
+import com.board.domain.member.entity.Member;
+import com.board.domain.member.repository.MemberRepository;
 import com.board.support.RepositoryTestSupport;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;

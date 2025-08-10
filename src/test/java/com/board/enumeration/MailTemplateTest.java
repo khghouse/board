@@ -1,5 +1,6 @@
 package com.board.enumeration;
 
+import com.board.global.infrastructure.mail.MailTemplate;
 import com.board.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

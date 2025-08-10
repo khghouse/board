@@ -1,10 +1,10 @@
 package com.board.docs.article;
 
-import com.board.api.comment.CommentController;
-import com.board.api.comment.request.CommentRequest;
-import com.board.service.comment.CommentService;
-import com.board.service.comment.response.CommentResponse;
-import com.board.service.member.response.MemberResponse;
+import com.board.domain.comment.controller.CommentController;
+import com.board.domain.comment.dto.request.CommentRequest;
+import com.board.domain.comment.service.CommentService;
+import com.board.domain.comment.dto.response.CommentResponse;
+import com.board.domain.member.dto.response.MemberResponse;
 import com.board.support.RestDocsSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

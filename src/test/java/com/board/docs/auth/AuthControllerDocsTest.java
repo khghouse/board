@@ -1,11 +1,11 @@
 package com.board.docs.auth;
 
-import com.board.api.auth.AuthController;
-import com.board.api.auth.request.AuthRequest;
+import com.board.domain.auth.controller.AuthController;
+import com.board.domain.auth.dto.request.AuthRequest;
 import com.board.support.RestDocsSupport;
-import com.board.dto.jwt.JwtToken;
-import com.board.provider.JwtTokenProvider;
-import com.board.service.auth.AuthService;
+import com.board.global.security.JwtToken;
+import com.board.global.security.JwtTokenProvider;
+import com.board.domain.auth.service.AuthService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;

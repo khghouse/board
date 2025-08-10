@@ -1,15 +1,16 @@
 package com.board.service.comment;
 
-import com.board.domain.article.Article;
-import com.board.domain.article.ArticleRepository;
-import com.board.domain.comment.Comment;
-import com.board.domain.comment.CommentRepository;
-import com.board.domain.member.Member;
-import com.board.domain.member.MemberRepository;
-import com.board.exception.BusinessException;
-import com.board.service.comment.request.ChildCommentServiceRequest;
-import com.board.service.comment.request.CommentServiceRequest;
-import com.board.service.comment.response.CommentResponse;
+import com.board.domain.article.entity.Article;
+import com.board.domain.article.repository.ArticleRepository;
+import com.board.domain.comment.entity.Comment;
+import com.board.domain.comment.repository.CommentRepository;
+import com.board.domain.comment.service.CommentService;
+import com.board.domain.member.entity.Member;
+import com.board.domain.member.repository.MemberRepository;
+import com.board.global.common.exception.BusinessException;
+import com.board.domain.comment.dto.request.ChildCommentServiceRequest;
+import com.board.domain.comment.dto.request.CommentServiceRequest;
+import com.board.domain.comment.dto.response.CommentResponse;
 import com.board.support.IntegrationTestSupport;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -18,7 +19,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.board.enumeration.ErrorCode.*;
+import static com.board.global.common.enumeration.ErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

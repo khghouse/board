@@ -1,6 +1,8 @@
 package com.board.domain.member;
 
-import com.board.component.SecurityEncoder;
+import com.board.global.security.SecurityEncoder;
+import com.board.domain.member.entity.Member;
+import com.board.domain.member.repository.MemberRepository;
 import com.board.support.RepositoryTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

@@ -1,7 +1,11 @@
 package com.board.domain.article;
 
-import com.board.domain.member.Member;
-import com.board.domain.member.MemberRepository;
+import com.board.domain.article.entity.Article;
+import com.board.domain.article.entity.ArticleLike;
+import com.board.domain.article.repository.ArticleLikeRepository;
+import com.board.domain.article.repository.ArticleRepository;
+import com.board.domain.member.entity.Member;
+import com.board.domain.member.repository.MemberRepository;
 import com.board.support.RepositoryTestSupport;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;

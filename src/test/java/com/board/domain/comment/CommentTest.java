@@ -1,10 +1,11 @@
 package com.board.domain.comment;
 
-import com.board.exception.BusinessException;
+import com.board.domain.comment.entity.Comment;
+import com.board.global.common.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import static com.board.enumeration.ErrorCode.LENGTH_EXCEEDED;
+import static com.board.global.common.enumeration.ErrorCode.LENGTH_EXCEEDED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 

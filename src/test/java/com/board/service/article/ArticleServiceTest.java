@@ -1,16 +1,17 @@
 package com.board.service.article;
 
-import com.board.component.Redis;
-import com.board.domain.article.Article;
-import com.board.domain.article.ArticleRepository;
-import com.board.domain.member.Member;
-import com.board.domain.member.MemberRepository;
-import com.board.dto.page.PageResponse;
-import com.board.dto.page.PageServiceRequest;
-import com.board.exception.BusinessException;
-import com.board.service.article.request.ArticleServiceRequest;
-import com.board.service.article.response.ArticleDetailResponse;
-import com.board.service.article.response.ArticleResponse;
+import com.board.global.infrastructure.redis.Redis;
+import com.board.domain.article.entity.Article;
+import com.board.domain.article.repository.ArticleRepository;
+import com.board.domain.article.service.ArticleService;
+import com.board.domain.member.entity.Member;
+import com.board.domain.member.repository.MemberRepository;
+import com.board.global.common.dto.page.PageResponse;
+import com.board.global.common.dto.page.PageServiceRequest;
+import com.board.global.common.exception.BusinessException;
+import com.board.domain.article.dto.request.ArticleServiceRequest;
+import com.board.domain.article.dto.response.ArticleDetailResponse;
+import com.board.domain.article.dto.response.ArticleResponse;
 import com.board.support.IntegrationTestSupport;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.groups.Tuple;
@@ -24,7 +25,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
-import static com.board.enumeration.ErrorCode.*;
+import static com.board.global.common.enumeration.ErrorCode.*;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
