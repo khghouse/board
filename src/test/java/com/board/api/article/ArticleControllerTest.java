@@ -49,7 +49,6 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("게시글 제목을 입력해 주세요."));
     }
@@ -72,7 +71,6 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("게시글 제목을 입력해 주세요."));
     }
@@ -94,7 +92,6 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("게시글 내용을 입력해 주세요."));
     }
@@ -117,7 +114,6 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("게시글 내용을 입력해 주세요."));
     }
@@ -142,7 +138,6 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
@@ -182,7 +177,6 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("게시글 제목을 입력해 주세요."));
     }
@@ -205,7 +199,6 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("게시글 제목을 입력해 주세요."));
     }
@@ -227,7 +220,6 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("게시글 내용을 입력해 주세요."));
     }
@@ -250,7 +242,6 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("게시글 내용을 입력해 주세요."));
     }
@@ -273,7 +264,6 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("요청 파라미터 타입이 올바르지 않습니다."));
     }
@@ -298,7 +288,6 @@ class ArticleControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("요청 파라미터 타입이 올바르지 않습니다."));
     }

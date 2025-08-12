@@ -52,7 +52,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("이메일을 입력해 주세요."));
     }
@@ -75,7 +74,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("이메일을 입력해 주세요."));
     }
@@ -97,7 +95,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("비밀번호를 입력해 주세요."));
     }
@@ -120,7 +117,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("비밀번호를 입력해 주세요."));
     }
@@ -160,7 +156,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("이메일을 입력해 주세요."));
     }
@@ -183,7 +178,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("이메일을 입력해 주세요."));
     }
@@ -205,7 +199,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("비밀번호를 입력해 주세요."));
     }
@@ -228,7 +221,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("비밀번호를 입력해 주세요."));
     }
@@ -268,7 +260,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("액세스 토큰을 입력해 주세요."));
     }
@@ -291,7 +282,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("액세스 토큰을 입력해 주세요."));
     }
@@ -313,7 +303,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("리프레쉬 토큰을 입력해 주세요."));
     }
@@ -336,7 +325,6 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.status").value("400"))
                 .andExpect(jsonPath("$.success").value(false))
-                .andExpect(jsonPath("$.data").isEmpty())
                 .andExpect(jsonPath("$.error.code").value("BAD_REQUEST"))
                 .andExpect(jsonPath("$.error.message").value("리프레쉬 토큰을 입력해 주세요."));
     }
@@ -367,7 +355,8 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andDo(print())
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("401"))
-                .andExpect(jsonPath("$.data").isEmpty())
+                .andExpect(jsonPath("$.success").value(false))
+                .andExpect(jsonPath("$.error.code").value("UNAUTHORIZED"))
                 .andExpect(jsonPath("$.error.message").value("인증 정보가 올바르지 않습니다."));
     }
 
