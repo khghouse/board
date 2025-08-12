@@ -1,9 +1,9 @@
 package com.board.global.security;
 
-import com.board.global.common.exception.ForbiddenException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -18,7 +18,7 @@ public class SecurityAuthenticationProvider implements AuthenticationProvider {
     @Override
     public Authentication authenticate(Authentication authentication) throws AuthenticationException {
         if (!supports(authentication.getClass())) {
-            throw new ForbiddenException("인증 정보가 유효하지 않습니다.");
+            throw new BadCredentialsException("지원하지 않는 인증 방식입니다.");
         }
 
         // 초기 인증 토큰에서 Principal(접근 주체)의 아이디 추출

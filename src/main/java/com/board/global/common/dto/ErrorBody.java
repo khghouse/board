@@ -4,7 +4,8 @@ import com.board.global.common.enumeration.ErrorCode;
 import com.board.global.security.JwtErrorCode;
 import lombok.Getter;
 
-import static org.springframework.http.HttpStatus.*;
+import static org.springframework.http.HttpStatus.BAD_REQUEST;
+import static org.springframework.http.HttpStatus.FORBIDDEN;
 
 @Getter
 public class ErrorBody {
@@ -25,8 +26,8 @@ public class ErrorBody {
         return new ErrorBody(BAD_REQUEST.name(), message);
     }
 
-    public static ErrorBody unauthorized(String message) {
-        return new ErrorBody(UNAUTHORIZED.name(), message);
+    public static ErrorBody unauthorized(ErrorCode errorCode) {
+        return new ErrorBody(errorCode.name(), errorCode.getMessage());
     }
 
     public static ErrorBody jwtUnauthorized(JwtErrorCode jwtErrorCode) {
@@ -35,10 +36,6 @@ public class ErrorBody {
 
     public static ErrorBody forbidden(String message) {
         return new ErrorBody(FORBIDDEN.name(), message);
-    }
-
-    public static ErrorBody unprocessableEntity(String message) {
-        return new ErrorBody(UNPROCESSABLE_ENTITY.name(), message);
     }
 
 }

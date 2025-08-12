@@ -1,6 +1,8 @@
 package com.board.domain.article.service;
 
-import com.board.global.infrastructure.redis.Redis;
+import com.board.domain.article.dto.request.ArticleServiceRequest;
+import com.board.domain.article.dto.response.ArticleDetailResponse;
+import com.board.domain.article.dto.response.ArticleResponse;
 import com.board.domain.article.entity.Article;
 import com.board.domain.article.repository.ArticleQueryRepository;
 import com.board.domain.article.repository.ArticleRepository;
@@ -8,11 +10,10 @@ import com.board.domain.member.entity.Member;
 import com.board.domain.member.repository.MemberRepository;
 import com.board.global.common.dto.page.PageResponse;
 import com.board.global.common.dto.page.PageServiceRequest;
-import com.board.global.common.exception.BusinessException;
-import com.board.domain.article.dto.request.ArticleServiceRequest;
-import com.board.domain.article.dto.response.ArticleDetailResponse;
-import com.board.domain.article.dto.response.ArticleResponse;
+import com.board.global.common.exception.NotFoundException;
+import com.board.global.common.exception.UnprocessableEntityException;
 import com.board.global.common.util.CommonUtil;
+import com.board.global.infrastructure.redis.Redis;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
@@ -86,7 +87,7 @@ public class ArticleService {
         try {
             pageArticles = articleQueryRepository.findActiveArticles(request.toPageable());
         } catch (Exception e) {
-            throw new BusinessException(e.getMessage());
+            throw new UnprocessableEntityException(e.getMessage());
         }
 
         return PageResponse.of(pageArticles, CommonUtil.mapperToList(pageArticles.getContent(), ArticleDetailResponse::of));
@@ -94,12 +95,12 @@ public class ArticleService {
 
     private Article findValidArticle(Long id) {
         return articleRepository.findByIdAndDeletedFalse(id)
-                .orElseThrow(() -> new BusinessException(ARTICLE_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
     }
 
     private Article findArticle(Long id) {
         return articleRepository.findById(id)
-                .orElseThrow(() -> new BusinessException(ARTICLE_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
     }
 
     private boolean isIncrementViewCount(Long id, String clientIp) {

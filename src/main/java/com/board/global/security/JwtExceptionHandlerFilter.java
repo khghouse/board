@@ -13,17 +13,18 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 
 public class JwtExceptionHandlerFilter extends OncePerRequestFilter {
+
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
         try {
             filterChain.doFilter(request, response);
         } catch (JwtException e) {
-            setErrorResponse(response, e.getJwtErrorCode().getMessage());
+            setErrorResponse(response, e.getJwtErrorCode());
         }
     }
 
-    private void setErrorResponse(HttpServletResponse response, String message) {
-        ApiResponse<Void> apiResponse = ApiResponse.unauthorized(message);
+    private void setErrorResponse(HttpServletResponse response, JwtErrorCode jwtErrorCode) {
+        ApiResponse<Void> apiResponse = ApiResponse.jwtUnauthorized(jwtErrorCode);
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         response.setCharacterEncoding(StandardCharsets.UTF_8.name());
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

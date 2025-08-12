@@ -1,11 +1,13 @@
 package com.board.domain.auth.controller;
 
-import com.board.global.common.dto.ApiResponse;
 import com.board.domain.auth.dto.request.AuthRequest;
 import com.board.domain.auth.dto.request.ReissueRequest;
-import com.board.global.common.exception.UnauthorizedException;
-import com.board.global.security.JwtTokenProvider;
 import com.board.domain.auth.service.AuthService;
+import com.board.global.common.dto.ApiResponse;
+import com.board.global.common.enumeration.ErrorCode;
+import com.board.global.common.exception.UnauthorizedException;
+import com.board.global.security.JwtToken;
+import com.board.global.security.JwtTokenProvider;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.util.StringUtils;
@@ -24,26 +26,26 @@ public class AuthController {
     private final JwtTokenProvider jwtTokenProvider;
 
     @PostMapping("/signup")
-    public ApiResponse signup(@RequestBody @Validated AuthRequest request) {
+    public ApiResponse<Void> signup(@RequestBody @Validated AuthRequest request) {
         authService.signup(request.toServiceRequest());
         return ApiResponse.ok();
     }
 
     @PostMapping("/login")
-    public ApiResponse login(@RequestBody @Validated AuthRequest request) {
+    public ApiResponse<JwtToken> login(@RequestBody @Validated AuthRequest request) {
         return ApiResponse.ok(authService.login(request.toServiceRequest()));
     }
 
     @PostMapping("/token/reissue")
-    public ApiResponse reissueToken(@RequestBody @Validated ReissueRequest request) {
+    public ApiResponse<JwtToken> reissueToken(@RequestBody @Validated ReissueRequest request) {
         return ApiResponse.ok(authService.reissueToken(request.toServiceRequest()));
     }
 
     @PostMapping("/logout")
-    public ApiResponse logout(HttpServletRequest request) {
+    public ApiResponse<Void> logout(HttpServletRequest request) {
         String accessToken = jwtTokenProvider.resolveToken(request);
         if (!StringUtils.hasText(accessToken)) {
-            throw new UnauthorizedException("인증되지 않은 요청입니다.");
+            throw new UnauthorizedException(ErrorCode.UNAUTHORIZED);
         }
         authService.logout(accessToken);
         return ApiResponse.ok();

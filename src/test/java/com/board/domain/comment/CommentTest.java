@@ -1,7 +1,7 @@
 package com.board.domain.comment;
 
 import com.board.domain.comment.entity.Comment;
-import com.board.global.common.exception.BusinessException;
+import com.board.global.common.exception.UnprocessableEntityException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -36,8 +36,8 @@ class CommentTest {
 
         // when, then
         assertThatThrownBy(() -> toEntityByContent(content))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(String.format("%s [최대 %d자]", LENGTH_EXCEEDED.getMessage(), 300));
+                .isInstanceOf(UnprocessableEntityException.class)
+                .hasMessage(LENGTH_EXCEEDED.getMessage()); // 글자 수 제한을 초과하였습니다. [최대 {0}자]
     }
 
     private static Comment toEntityByContent(String content) {

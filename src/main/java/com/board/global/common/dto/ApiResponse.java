@@ -2,11 +2,13 @@ package com.board.global.common.dto;
 
 import com.board.global.common.enumeration.ErrorCode;
 import com.board.global.security.JwtErrorCode;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.Getter;
 
 import static org.springframework.http.HttpStatus.*;
 
 @Getter
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse<T> {
 
     private final int status;
@@ -43,8 +45,8 @@ public class ApiResponse<T> {
         return new ApiResponse<>(BAD_REQUEST.value(), false, ErrorBody.badRequest(errorMessage));
     }
 
-    public static ApiResponse<Void> unauthorized(String errorMessage) {
-        return new ApiResponse<>(UNAUTHORIZED.value(), false, ErrorBody.unauthorized(errorMessage));
+    public static ApiResponse<Void> unauthorized(ErrorCode errorCode) {
+        return new ApiResponse<>(UNAUTHORIZED.value(), false, ErrorBody.unauthorized(errorCode));
     }
 
     public static ApiResponse<Void> jwtUnauthorized(JwtErrorCode jwtErrorCode) {
@@ -59,7 +61,12 @@ public class ApiResponse<T> {
         return new ApiResponse<>(NOT_FOUND.value(), false, ErrorBody.fromErrorCode(errorCode));
     }
 
-    public static ApiResponse<Void> unprocessableEntity(String errorMessage) {
-        return new ApiResponse<>(UNPROCESSABLE_ENTITY.value(), false, ErrorBody.unprocessableEntity(errorMessage));
+    public static ApiResponse<Void> conflict(ErrorCode errorCode) {
+        return new ApiResponse<>(CONFLICT.value(), false, ErrorBody.fromErrorCode(errorCode));
     }
+
+    public static ApiResponse<Void> unprocessableEntity(ErrorCode errorCode) {
+        return new ApiResponse<>(UNPROCESSABLE_ENTITY.value(), false, ErrorBody.fromErrorCode(errorCode));
+    }
+
 }

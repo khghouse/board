@@ -1,8 +1,8 @@
 package com.board.component;
 
 import com.board.global.infrastructure.redis.Redis;
+import com.board.global.security.JwtException;
 import com.board.support.IntegrationTestSupport;
-import com.board.global.common.exception.BusinessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.concurrent.TimeUnit;
 
+import static com.board.global.security.JwtErrorCode.INVALID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -117,8 +118,8 @@ class RedisTest extends IntegrationTestSupport {
 
         // when
         assertThatThrownBy(() -> redis.compareRefreshToken(2L, requestRefreshToken))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage("인증 정보가 유효하지 않습니다.");
+                .isInstanceOf(JwtException.class)
+                .hasMessage(INVALID.getMessage()); // 유효하지 않는 토큰입니다.
 
         // tearDown
         redisTemplate.delete(PREFIX_REDIS_KEY_REFRESH_TOKEN + 1L);
@@ -135,8 +136,8 @@ class RedisTest extends IntegrationTestSupport {
 
         // when
         assertThatThrownBy(() -> redis.compareRefreshToken(1L, requestRefreshToken))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage("인증 정보가 유효하지 않습니다.");
+                .isInstanceOf(JwtException.class)
+                .hasMessage(INVALID.getMessage()); // 유효하지 않는 토큰입니다.
 
         // tearDown
         redisTemplate.delete(PREFIX_REDIS_KEY_REFRESH_TOKEN + 1L);

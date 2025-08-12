@@ -24,16 +24,6 @@ public class ExceptionAdvice {
                 .getDefaultMessage());
     }
 
-//    @ExceptionHandler(NoSuchElementException.class)
-//    public ApiResponse noSuchElementException(NoSuchElementException e) {
-//        return ApiResponse.businessException(e.getMessage());
-//    }
-
-    @ExceptionHandler(BusinessException.class)
-    public ApiResponse businessException(BusinessException e) {
-        return ApiResponse.unprocessableEntity(e.getMessage());
-    }
-
     /**
      * PathVariable 변수의 값을 전달 받을 때, 데이터 타입이 일치하지 않는 경우 <br />
      * - /articles/10 -> o <br />
@@ -49,7 +39,7 @@ public class ExceptionAdvice {
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
     @ExceptionHandler(UnauthorizedException.class)
     public ApiResponse<?> unauthorizedException(UnauthorizedException e) {
-        return ApiResponse.unauthorized(e.getMessage());
+        return ApiResponse.unauthorized(e.getErrorCode());
     }
 
     @ResponseStatus(HttpStatus.UNAUTHORIZED)
@@ -68,6 +58,18 @@ public class ExceptionAdvice {
     @ExceptionHandler(NotFoundException.class)
     public ApiResponse<?> notFoundException(NotFoundException e) {
         return ApiResponse.notFound(e.getErrorCode());
+    }
+
+    @ResponseStatus(HttpStatus.CONFLICT)
+    @ExceptionHandler(ConflictException.class)
+    public ApiResponse<?> conflictException(ConflictException e) {
+        return ApiResponse.conflict(e.getErrorCode());
+    }
+
+    @ResponseStatus(HttpStatus.UNPROCESSABLE_ENTITY)
+    @ExceptionHandler(UnprocessableEntityException.class)
+    public ApiResponse unprocessableEntityException(UnprocessableEntityException e) {
+        return ApiResponse.unprocessableEntity(e.getErrorCode());
     }
 
 }

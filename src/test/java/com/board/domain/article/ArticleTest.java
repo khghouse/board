@@ -2,7 +2,9 @@ package com.board.domain.article;
 
 import com.board.domain.article.entity.Article;
 import com.board.domain.member.entity.Member;
-import com.board.global.common.exception.BusinessException;
+import com.board.global.common.exception.ConflictException;
+import com.board.global.common.exception.ForbiddenException;
+import com.board.global.common.exception.UnprocessableEntityException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -39,8 +41,8 @@ class ArticleTest {
     void validateTitleOverLength() {
         // when, then
         assertThatThrownBy(() -> toEntityByTitle("안녕하세요. 50자를 한번 넘겨보겠습니다. 아직 부족한가요?? 제목은 50자를 초과하며 안됩니다."))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(String.format("%s [최대 %d자]", LENGTH_EXCEEDED.getMessage(), 50));
+                .isInstanceOf(UnprocessableEntityException.class)
+                .hasMessage(LENGTH_EXCEEDED.getMessage()); // 글자 수 제한을 초과하였습니다. [최대 {0}자]
     }
 
     @Test
@@ -57,8 +59,8 @@ class ArticleTest {
                 "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
                 "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!" +
                 "설마 내용을 500자 초과하려는 건가요? 이건 복붙을 참을 수 없습니다. 화이팅!! 화이팅!!!"))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(String.format("%s [최대 %d자]", LENGTH_EXCEEDED.getMessage(), 500));
+                .isInstanceOf(UnprocessableEntityException.class)
+                .hasMessage(LENGTH_EXCEEDED.getMessage()); // 글자 수 제한을 초과하였습니다. [최대 {0}자]
     }
 
     @Test
@@ -96,8 +98,8 @@ class ArticleTest {
 
         // when, then
         assertThatThrownBy(article::delete)
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(ALREADY_DELETED.getMessage());
+                .isInstanceOf(ConflictException.class)
+                .hasMessage(ALREADY_DELETED.getMessage()); // 이미 삭제되었습니다.
     }
 
     @Test
@@ -118,8 +120,8 @@ class ArticleTest {
 
         // when, then
         assertThatThrownBy(() -> article.validateWriter(2L))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(INVALID_WRITER.getMessage());
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage(INVALID_WRITER.getMessage()); // 작성자가 아닙니다.
     }
 
     @Test

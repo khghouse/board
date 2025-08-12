@@ -1,14 +1,9 @@
 package com.board.provider;
 
-import com.board.global.security.JwtTokenProvider;
-import com.board.support.IntegrationTestSupport;
 import com.board.domain.member.entity.Member;
 import com.board.domain.member.repository.MemberRepository;
-import com.board.global.security.JwtToken;
-import com.board.global.security.SecurityUser;
-import com.board.global.security.JwtErrorCode;
-import com.board.global.common.exception.ForbiddenException;
-import com.board.global.security.JwtException;
+import com.board.global.security.*;
+import com.board.support.IntegrationTestSupport;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -16,6 +11,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
@@ -105,7 +101,7 @@ class JwtTokenProviderTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> jwtTokenProvider.getAuthentication(accessToken))
-                .isInstanceOf(ForbiddenException.class)
+                .isInstanceOf(BadCredentialsException.class)
                 .hasMessage("권한 정보가 없는 토큰입니다.");
     }
 

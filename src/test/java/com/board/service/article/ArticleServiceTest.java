@@ -1,6 +1,8 @@
 package com.board.service.article;
 
-import com.board.global.infrastructure.redis.Redis;
+import com.board.domain.article.dto.request.ArticleServiceRequest;
+import com.board.domain.article.dto.response.ArticleDetailResponse;
+import com.board.domain.article.dto.response.ArticleResponse;
 import com.board.domain.article.entity.Article;
 import com.board.domain.article.repository.ArticleRepository;
 import com.board.domain.article.service.ArticleService;
@@ -8,10 +10,11 @@ import com.board.domain.member.entity.Member;
 import com.board.domain.member.repository.MemberRepository;
 import com.board.global.common.dto.page.PageResponse;
 import com.board.global.common.dto.page.PageServiceRequest;
-import com.board.global.common.exception.BusinessException;
-import com.board.domain.article.dto.request.ArticleServiceRequest;
-import com.board.domain.article.dto.response.ArticleDetailResponse;
-import com.board.domain.article.dto.response.ArticleResponse;
+import com.board.global.common.exception.ConflictException;
+import com.board.global.common.exception.ForbiddenException;
+import com.board.global.common.exception.NotFoundException;
+import com.board.global.common.exception.UnprocessableEntityException;
+import com.board.global.infrastructure.redis.Redis;
 import com.board.support.IntegrationTestSupport;
 import jakarta.persistence.EntityManager;
 import org.assertj.core.groups.Tuple;
@@ -91,8 +94,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void getArticleNotFound() {
         // when, then
         assertThatThrownBy(() -> articleService.getArticle(1L, "clientIp"))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(ARTICLE_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(ARTICLE_NOT_FOUND.getMessage()); // 게시글 정보가 존재하지 않습니다.
     }
 
     @Test
@@ -209,8 +212,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleService.updateArticle(request, 1L))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(ARTICLE_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(ARTICLE_NOT_FOUND.getMessage()); // 게시글 정보가 존재하지 않습니다.
     }
 
     @Test
@@ -224,8 +227,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleService.updateArticle(request, 2L))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(INVALID_WRITER.getMessage());
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage(INVALID_WRITER.getMessage()); // 작성자가 아닙니다.
     }
 
     @Test
@@ -252,8 +255,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleService.deleteArticle(article.getId(), member.getId()))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(ALREADY_DELETED.getMessage());
+                .isInstanceOf(ConflictException.class)
+                .hasMessage(ALREADY_DELETED.getMessage()); // 이미 삭제되었습니다.
     }
 
     @Test
@@ -261,8 +264,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
     void deleteArticleNotFound() {
         // when, then
         assertThatThrownBy(() -> articleService.deleteArticle(1L, 1L))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(ARTICLE_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(ARTICLE_NOT_FOUND.getMessage()); // 게시글 정보가 존재하지 않습니다.
     }
 
     @Test
@@ -274,8 +277,8 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleService.deleteArticle(article.getId(), 2L))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(INVALID_WRITER.getMessage());
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage(INVALID_WRITER.getMessage()); // 작성자가 아닙니다.
     }
 
     @Test
@@ -449,7 +452,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleService.getArticleList(request))
-                .isInstanceOf(BusinessException.class);
+                .isInstanceOf(UnprocessableEntityException.class);
     }
 
     @Test
@@ -460,7 +463,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleService.getArticleList(request))
-                .isInstanceOf(BusinessException.class);
+                .isInstanceOf(UnprocessableEntityException.class);
     }
 
     @Test
@@ -471,7 +474,7 @@ class ArticleServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleService.getArticleList(request))
-                .isInstanceOf(BusinessException.class);
+                .isInstanceOf(UnprocessableEntityException.class);
     }
 
     private Member createMember() {

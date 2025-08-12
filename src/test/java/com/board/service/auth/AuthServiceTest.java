@@ -1,15 +1,16 @@
 package com.board.service.auth;
 
-import com.board.global.infrastructure.redis.Redis;
+import com.board.domain.auth.dto.request.AuthServiceRequest;
+import com.board.domain.auth.dto.request.ReissueServiceRequest;
 import com.board.domain.auth.service.AuthService;
 import com.board.domain.member.entity.Member;
 import com.board.domain.member.repository.MemberRepository;
-import com.board.global.security.JwtToken;
-import com.board.global.common.exception.BusinessException;
+import com.board.global.common.exception.ConflictException;
+import com.board.global.common.exception.UnauthorizedException;
+import com.board.global.infrastructure.redis.Redis;
 import com.board.global.security.JwtException;
+import com.board.global.security.JwtToken;
 import com.board.global.security.JwtTokenProvider;
-import com.board.domain.auth.dto.request.AuthServiceRequest;
-import com.board.domain.auth.dto.request.ReissueServiceRequest;
 import com.board.support.IntegrationTestSupport;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +21,10 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.transaction.annotation.Transactional;
 
-import static com.board.global.common.enumeration.ErrorCode.MEMBER_NOT_FOUND;
+import static com.board.global.common.enumeration.ErrorCode.EMAIL_ALREADY_REGISTERED;
+import static com.board.global.common.enumeration.ErrorCode.INVALID_CREDENTIALS;
+import static com.board.global.security.JwtErrorCode.INVALID_TOKEN_USER;
+import static com.board.global.security.JwtErrorCode.MALFORMED;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -55,8 +59,7 @@ class AuthServiceTest extends IntegrationTestSupport {
         authService.signup(request);
 
         // then
-        Member result = memberRepository.findByEmail("khghouse@daum.net")
-                .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+        Member result = memberRepository.findByEmail("khghouse@daum.net").orElseThrow();
         assertThat(result).isNotNull();
     }
 
@@ -76,8 +79,8 @@ class AuthServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> authService.signup(request))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage("이미 가입된 이메일입니다.");
+                .isInstanceOf(ConflictException.class)
+                .hasMessage(EMAIL_ALREADY_REGISTERED.getMessage()); // 이미 가입된 이메일입니다.
     }
 
     @Test
@@ -109,8 +112,8 @@ class AuthServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> authService.login(request))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage("존재하지 않는 계정입니다.");
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage(INVALID_CREDENTIALS.getMessage()); // 아이디와 비밀번호를 다시 확인해 주세요.
     }
 
     @Test
@@ -129,8 +132,8 @@ class AuthServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> authService.login(request))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage("아이디와 비밀번호를 다시 확인해 주세요.");
+                .isInstanceOf(UnauthorizedException.class)
+                .hasMessage(INVALID_CREDENTIALS.getMessage()); // 아이디와 비밀번호를 다시 확인해 주세요.
     }
 
     @Test
@@ -188,8 +191,8 @@ class AuthServiceTest extends IntegrationTestSupport {
 
         // when, Then
         assertThatThrownBy(() -> authService.reissueToken(request))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage("존재하지 않는 계정입니다.");
+                .isInstanceOf(JwtException.class)
+                .hasMessage(INVALID_TOKEN_USER.getMessage()); // 토큰에 포함된 사용자 정보를 찾을 수 없습니다.
 
         // tearDown
         redis.deleteRefreshToken(member.getId());
@@ -204,7 +207,7 @@ class AuthServiceTest extends IntegrationTestSupport {
         // when, Then
         assertThatThrownBy(() -> authService.reissueToken(request))
                 .isInstanceOf(JwtException.class)
-                .hasMessage("손상된 토큰입니다.");
+                .hasMessage(MALFORMED.getMessage()); // 손상된 토큰입니다.
     }
 
     @Test
@@ -246,7 +249,7 @@ class AuthServiceTest extends IntegrationTestSupport {
         // when, Then
         assertThatThrownBy(() -> authService.logout(accessToken))
                 .isInstanceOf(JwtException.class)
-                .hasMessage("손상된 토큰입니다.");
+                .hasMessage(MALFORMED.getMessage()); // 손상된 토큰입니다.
     }
 
 }

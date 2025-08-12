@@ -1,6 +1,5 @@
 package com.board.global.security;
 
-import com.board.global.common.exception.ForbiddenException;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
@@ -9,6 +8,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import lombok.Getter;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -91,7 +91,7 @@ public class JwtTokenProvider {
         Claims claims = parseClaims(accessToken, accessKey);
 
         if (claims.get("authorities") == null) {
-            throw new ForbiddenException("권한 정보가 없는 토큰입니다.");
+            throw new BadCredentialsException("권한 정보가 없는 토큰입니다.");
         }
 
         // 클레임에서 권한 정보 가져오기

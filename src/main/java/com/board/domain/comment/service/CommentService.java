@@ -3,15 +3,15 @@ package com.board.domain.comment.service;
 
 import com.board.domain.article.entity.Article;
 import com.board.domain.article.repository.ArticleRepository;
-import com.board.domain.comment.entity.Comment;
-import com.board.domain.comment.repository.CommentRepository;
-import com.board.domain.member.entity.Member;
-import com.board.domain.member.repository.MemberRepository;
-import com.board.global.common.exception.BusinessException;
 import com.board.domain.comment.dto.request.ChildCommentServiceRequest;
 import com.board.domain.comment.dto.request.CommentHierarchyServiceRequest;
 import com.board.domain.comment.dto.request.CommentServiceRequest;
 import com.board.domain.comment.dto.response.CommentResponse;
+import com.board.domain.comment.entity.Comment;
+import com.board.domain.comment.repository.CommentRepository;
+import com.board.domain.member.entity.Member;
+import com.board.domain.member.repository.MemberRepository;
+import com.board.global.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -64,14 +64,14 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long commentId, Long memberId) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new BusinessException(COMMENT_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(COMMENT_NOT_FOUND));
         comment.validateWriter(memberId);
         comment.delete();
     }
 
     private Comment saveComment(String content, Long memberId, Long articleId) {
         Article article = articleRepository.findByIdAndDeletedFalse(articleId)
-                .orElseThrow(() -> new BusinessException(ARTICLE_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
         Member memberProxy = memberRepository.getReferenceById(memberId);
 
@@ -80,7 +80,7 @@ public class CommentService {
 
     private Comment findValidComment(Long commentId) {
         return commentRepository.findByIdAndDeletedFalse(commentId)
-                .orElseThrow(() -> new BusinessException(COMMENT_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(COMMENT_NOT_FOUND));
     }
 
 }

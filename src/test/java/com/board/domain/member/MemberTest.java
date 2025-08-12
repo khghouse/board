@@ -1,10 +1,12 @@
 package com.board.domain.member;
 
-import com.board.global.security.SecurityEncoder;
 import com.board.domain.member.entity.Member;
+import com.board.global.security.SecurityEncoder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import static com.board.global.common.enumeration.ErrorCode.INVALID_EMAIL_FORMAT;
+import static com.board.global.common.enumeration.ErrorCode.INVALID_PASSWORD_FORMAT;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
@@ -46,7 +48,7 @@ class MemberTest {
         // when, then
         assertThatThrownBy(() -> toEntityByEmail("khg house@daum.net"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("잘못된 이메일 형식입니다.");
+                .hasMessage(INVALID_EMAIL_FORMAT.getMessage()); // 잘못된 이메일 형식입니다.
     }
 
     @Test
@@ -55,7 +57,7 @@ class MemberTest {
         // when, then
         assertThatThrownBy(() -> toEntityByEmail("khghouse*@daum.net"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("잘못된 이메일 형식입니다.");
+                .hasMessage(INVALID_EMAIL_FORMAT.getMessage()); // 잘못된 이메일 형식입니다.
     }
 
     @Test
@@ -64,7 +66,7 @@ class MemberTest {
         // when, then
         assertThatThrownBy(() -> toEntityByEmail("khghouse@@daum.net"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("잘못된 이메일 형식입니다.");
+                .hasMessage(INVALID_EMAIL_FORMAT.getMessage()); // 잘못된 이메일 형식입니다.
     }
 
     @Test
@@ -83,7 +85,7 @@ class MemberTest {
         // when, then
         assertThatThrownBy(() -> toEntityByPassword("Khghouse12!"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("비밀번호는 영문 대문자, 소문자, 숫자, 특수문자가 최소 1개 이상 포함된 12자리 이상 문자열이어야 합니다.");
+                .hasMessage(INVALID_PASSWORD_FORMAT.getMessage()); // 비밀번호는 영문 대문자, 소문자, 숫자, 특수문자가 최소 1개 이상 포함된 12자리 이상 문자열이어야 합니다.
     }
 
     @Test
@@ -92,7 +94,7 @@ class MemberTest {
         // when, then
         assertThatThrownBy(() -> toEntityByPassword("KHGHOUSE12!@"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("비밀번호는 영문 대문자, 소문자, 숫자, 특수문자가 최소 1개 이상 포함된 12자리 이상 문자열이어야 합니다.");
+                .hasMessage(INVALID_PASSWORD_FORMAT.getMessage()); // 비밀번호는 영문 대문자, 소문자, 숫자, 특수문자가 최소 1개 이상 포함된 12자리 이상 문자열이어야 합니다.
     }
 
     @Test
@@ -101,7 +103,7 @@ class MemberTest {
         // when, then
         assertThatThrownBy(() -> toEntityByPassword("khghouse12!@"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("비밀번호는 영문 대문자, 소문자, 숫자, 특수문자가 최소 1개 이상 포함된 12자리 이상 문자열이어야 합니다.");
+                .hasMessage(INVALID_PASSWORD_FORMAT.getMessage()); // 비밀번호는 영문 대문자, 소문자, 숫자, 특수문자가 최소 1개 이상 포함된 12자리 이상 문자열이어야 합니다.
     }
 
     @Test
@@ -110,7 +112,7 @@ class MemberTest {
         // when, then
         assertThatThrownBy(() -> toEntityByPassword("Khghouse!@#$"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("비밀번호는 영문 대문자, 소문자, 숫자, 특수문자가 최소 1개 이상 포함된 12자리 이상 문자열이어야 합니다.");
+                .hasMessage(INVALID_PASSWORD_FORMAT.getMessage()); // 비밀번호는 영문 대문자, 소문자, 숫자, 특수문자가 최소 1개 이상 포함된 12자리 이상 문자열이어야 합니다.
     }
 
     @Test
@@ -119,7 +121,7 @@ class MemberTest {
         // when, then
         assertThatThrownBy(() -> toEntityByPassword("Khghouse1234"))
                 .isInstanceOf(IllegalArgumentException.class)
-                .hasMessage("비밀번호는 영문 대문자, 소문자, 숫자, 특수문자가 최소 1개 이상 포함된 12자리 이상 문자열이어야 합니다.");
+                .hasMessage(INVALID_PASSWORD_FORMAT.getMessage()); // 비밀번호는 영문 대문자, 소문자, 숫자, 특수문자가 최소 1개 이상 포함된 12자리 이상 문자열이어야 합니다.
     }
 
     @Test

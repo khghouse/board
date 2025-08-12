@@ -1,9 +1,11 @@
 package com.board.domain.comment.entity;
 
-import com.board.global.common.entity.BaseEntity;
 import com.board.domain.article.entity.Article;
 import com.board.domain.member.entity.Member;
-import com.board.global.common.exception.BusinessException;
+import com.board.global.common.entity.BaseEntity;
+import com.board.global.common.exception.ConflictException;
+import com.board.global.common.exception.ForbiddenException;
+import com.board.global.common.exception.UnprocessableEntityException;
 import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -55,14 +57,14 @@ public class Comment extends BaseEntity {
     private String validateContent(String content) {
         int maxLength = 300;
         if (content.length() > maxLength) {
-            throw new BusinessException(LENGTH_EXCEEDED, maxLength);
+            throw new UnprocessableEntityException(LENGTH_EXCEEDED, maxLength);
         }
         return content;
     }
 
     public void validateWriter(Long requestMemberId) {
         if (!this.getMember().getId().equals(requestMemberId)) {
-            throw new BusinessException(INVALID_WRITER);
+            throw new ForbiddenException(INVALID_WRITER);
         }
     }
 
@@ -76,7 +78,7 @@ public class Comment extends BaseEntity {
 
     public void delete() {
         if (this.deleted) {
-            throw new BusinessException(ALREADY_DELETED);
+            throw new ConflictException(ALREADY_DELETED);
         }
         this.deleted = true;
     }

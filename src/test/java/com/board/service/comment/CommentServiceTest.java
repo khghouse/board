@@ -2,15 +2,17 @@ package com.board.service.comment;
 
 import com.board.domain.article.entity.Article;
 import com.board.domain.article.repository.ArticleRepository;
+import com.board.domain.comment.dto.request.ChildCommentServiceRequest;
+import com.board.domain.comment.dto.request.CommentServiceRequest;
+import com.board.domain.comment.dto.response.CommentResponse;
 import com.board.domain.comment.entity.Comment;
 import com.board.domain.comment.repository.CommentRepository;
 import com.board.domain.comment.service.CommentService;
 import com.board.domain.member.entity.Member;
 import com.board.domain.member.repository.MemberRepository;
-import com.board.global.common.exception.BusinessException;
-import com.board.domain.comment.dto.request.ChildCommentServiceRequest;
-import com.board.domain.comment.dto.request.CommentServiceRequest;
-import com.board.domain.comment.dto.response.CommentResponse;
+import com.board.global.common.exception.ConflictException;
+import com.board.global.common.exception.ForbiddenException;
+import com.board.global.common.exception.NotFoundException;
 import com.board.support.IntegrationTestSupport;
 import jakarta.persistence.EntityManager;
 import org.junit.jupiter.api.BeforeEach;
@@ -85,8 +87,8 @@ class CommentServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> commentService.createComment(request, member.getId()))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(ARTICLE_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(ARTICLE_NOT_FOUND.getMessage()); // 게시글 정보가 존재하지 않습니다.
     }
 
     @Test
@@ -137,8 +139,8 @@ class CommentServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> commentService.createChildComment(request, member.getId()))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(ARTICLE_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(ARTICLE_NOT_FOUND.getMessage()); // 게시글 정보가 존재하지 않습니다.
     }
 
     @Test
@@ -149,8 +151,8 @@ class CommentServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> commentService.createChildComment(request, member.getId()))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(COMMENT_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(COMMENT_NOT_FOUND.getMessage()); // 댓글 정보가 존재하지 않습니다.
     }
 
     @Test
@@ -179,8 +181,8 @@ class CommentServiceTest extends IntegrationTestSupport {
     void getCommentNotFound() {
         // when, then
         assertThatThrownBy(() -> commentService.getComment(1L))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(COMMENT_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(COMMENT_NOT_FOUND.getMessage()); // 댓글 정보가 존재하지 않습니다.
     }
 
     @Test
@@ -218,8 +220,8 @@ class CommentServiceTest extends IntegrationTestSupport {
 
         // when, then1
         assertThatThrownBy(() -> commentService.updateComment(request, 1L))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(COMMENT_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(COMMENT_NOT_FOUND.getMessage()); // 댓글 정보가 존재하지 않습니다.
     }
 
     @Test
@@ -238,8 +240,8 @@ class CommentServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> commentService.updateComment(request, 2L))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(INVALID_WRITER.getMessage());
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage(INVALID_WRITER.getMessage()); // 작성자가 아닙니다.
     }
 
     @Test
@@ -276,8 +278,8 @@ class CommentServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> commentService.deleteComment(comment.getId(), member.getId()))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(ALREADY_DELETED.getMessage());
+                .isInstanceOf(ConflictException.class)
+                .hasMessage(ALREADY_DELETED.getMessage()); // 이미 삭제되었습니다.
     }
 
     @Test
@@ -285,8 +287,8 @@ class CommentServiceTest extends IntegrationTestSupport {
     void deleteCommentNotFound() {
         // when, then
         assertThatThrownBy(() -> commentService.deleteComment(1L, 1L))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(COMMENT_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(COMMENT_NOT_FOUND.getMessage()); // 댓글 정보가 존재하지 않습니다.
     }
 
     @Test
@@ -303,8 +305,8 @@ class CommentServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> commentService.deleteComment(comment.getId(), 2L))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(INVALID_WRITER.getMessage());
+                .isInstanceOf(ForbiddenException.class)
+                .hasMessage(INVALID_WRITER.getMessage()); // 작성자가 아닙니다.
     }
 
 }

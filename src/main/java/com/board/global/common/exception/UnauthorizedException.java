@@ -1,5 +1,6 @@
 package com.board.global.common.exception;
 
+import com.board.global.common.enumeration.ErrorCode;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -8,8 +9,11 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
 public class UnauthorizedException extends RuntimeException {
 
-    public UnauthorizedException(String message) {
-        super(message);
+    private final ErrorCode errorCode;
+
+    public UnauthorizedException(ErrorCode errorCode) {
+        super(errorCode.getMessage());
+        this.errorCode = errorCode;
     }
 
 }

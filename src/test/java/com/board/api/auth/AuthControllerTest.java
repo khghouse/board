@@ -368,7 +368,7 @@ class AuthControllerTest extends ControllerTestSupport {
                 .andExpect(status().isUnauthorized())
                 .andExpect(jsonPath("$.status").value("401"))
                 .andExpect(jsonPath("$.data").isEmpty())
-                .andExpect(jsonPath("$.error.message").value("인증되지 않은 요청입니다."));
+                .andExpect(jsonPath("$.error.message").value("인증 정보가 올바르지 않습니다."));
     }
 
 }

@@ -1,14 +1,13 @@
 package com.board.global.infrastructure.redis;
 
-import com.board.global.common.exception.BusinessException;
+import com.board.global.security.JwtErrorCode;
+import com.board.global.security.JwtException;
 import com.board.global.security.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.TimeUnit;
-
-import static com.board.global.common.enumeration.ErrorCode.INVALID_AUTHENTICATION;
 
 @Component
 @RequiredArgsConstructor
@@ -44,7 +43,7 @@ public class Redis {
 
         // 클라이언트로 전달받은 리프레쉬 토큰과 비교
         if (!refreshToken.equals(redisRefreshToken)) {
-            throw new BusinessException(INVALID_AUTHENTICATION);
+            throw new JwtException(JwtErrorCode.INVALID);
         }
     }
 

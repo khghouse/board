@@ -1,11 +1,14 @@
 package com.board.domain.article.controller;
 
-import com.board.global.common.dto.ApiResponse;
 import com.board.domain.article.dto.request.ArticleRequest;
-import com.board.global.common.dto.page.PageRequest;
-import com.board.global.security.SecurityUser;
+import com.board.domain.article.dto.response.ArticleDetailResponse;
+import com.board.domain.article.dto.response.ArticleResponse;
 import com.board.domain.article.service.ArticleService;
+import com.board.global.common.dto.ApiResponse;
+import com.board.global.common.dto.page.PageRequest;
+import com.board.global.common.dto.page.PageResponse;
 import com.board.global.common.util.CommonUtil;
+import com.board.global.security.SecurityUser;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -20,28 +23,28 @@ public class ArticleController {
     private final ArticleService articleService;
 
     @PostMapping
-    public ApiResponse createArticle(@Validated @RequestBody ArticleRequest request, @AuthenticationPrincipal SecurityUser securityUser) {
+    public ApiResponse<ArticleResponse> createArticle(@Validated @RequestBody ArticleRequest request, @AuthenticationPrincipal SecurityUser securityUser) {
         return ApiResponse.ok(articleService.createArticle(request.toServiceRequest(), securityUser.getMemberId()));
     }
 
     @GetMapping("/{id}")
-    public ApiResponse getArticle(@PathVariable Long id, HttpServletRequest request) {
+    public ApiResponse<ArticleDetailResponse> getArticle(@PathVariable Long id, HttpServletRequest request) {
         return ApiResponse.ok(articleService.getArticle(id, CommonUtil.getClientIp(request)));
     }
 
     @PutMapping("/{id}")
-    public ApiResponse updateArticle(@PathVariable Long id, @RequestBody @Validated ArticleRequest request, @AuthenticationPrincipal SecurityUser securityUser) {
+    public ApiResponse<ArticleResponse> updateArticle(@PathVariable Long id, @RequestBody @Validated ArticleRequest request, @AuthenticationPrincipal SecurityUser securityUser) {
         return ApiResponse.ok(articleService.updateArticle(request.toServiceRequest(id), securityUser.getMemberId()));
     }
 
     @DeleteMapping("/{id}")
-    public ApiResponse deleteArticle(@PathVariable Long id, @AuthenticationPrincipal SecurityUser securityUser) {
+    public ApiResponse<Void> deleteArticle(@PathVariable Long id, @AuthenticationPrincipal SecurityUser securityUser) {
         articleService.deleteArticle(id, securityUser.getMemberId());
         return ApiResponse.ok();
     }
 
     @GetMapping
-    public ApiResponse getArticleList(PageRequest request) {
+    public ApiResponse<PageResponse> getArticleList(PageRequest request) {
         return ApiResponse.ok(articleService.getArticleList(request.toServiceRequest()));
     }
 

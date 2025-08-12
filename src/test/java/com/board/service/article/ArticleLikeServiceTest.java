@@ -1,18 +1,18 @@
 package com.board.service.article;
 
+import com.board.domain.article.dto.request.ArticleLikeServiceRequest;
+import com.board.domain.article.dto.response.ArticleIdResponse;
 import com.board.domain.article.entity.Article;
 import com.board.domain.article.entity.ArticleLike;
 import com.board.domain.article.repository.ArticleLikeRepository;
 import com.board.domain.article.repository.ArticleRepository;
 import com.board.domain.article.service.ArticleLikeService;
+import com.board.domain.member.dto.response.MemberIdResponse;
 import com.board.domain.member.entity.Member;
 import com.board.domain.member.repository.MemberRepository;
 import com.board.global.common.dto.page.PageResponseWithExtraData;
 import com.board.global.common.dto.page.PageServiceRequest;
-import com.board.global.common.exception.BusinessException;
-import com.board.domain.article.dto.request.ArticleLikeServiceRequest;
-import com.board.domain.article.dto.response.ArticleIdResponse;
-import com.board.domain.member.dto.response.MemberIdResponse;
+import com.board.global.common.exception.NotFoundException;
 import com.board.support.IntegrationTestSupport;
 import org.assertj.core.groups.Tuple;
 import org.junit.jupiter.api.BeforeEach;
@@ -108,8 +108,8 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleLikeService.like(request))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(ARTICLE_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(ARTICLE_NOT_FOUND.getMessage()); // 게시글 정보가 존재하지 않습니다.
     }
 
     @Test
@@ -120,8 +120,8 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleLikeService.like(request))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(MEMBER_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(MEMBER_NOT_FOUND.getMessage()); // 존재하지 않는 계정입니다.
     }
 
     @Test
@@ -163,8 +163,8 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleLikeService.unlike(request))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(ARTICLE_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(ARTICLE_NOT_FOUND.getMessage()); // 게시글 정보가 존재하지 않습니다.
     }
 
     @Test
@@ -175,8 +175,8 @@ class ArticleLikeServiceTest extends IntegrationTestSupport {
 
         // when, then
         assertThatThrownBy(() -> articleLikeService.unlike(request))
-                .isInstanceOf(BusinessException.class)
-                .hasMessage(MEMBER_NOT_FOUND.getMessage());
+                .isInstanceOf(NotFoundException.class)
+                .hasMessage(MEMBER_NOT_FOUND.getMessage()); // 존재하지 않는 계정입니다.
     }
 
     @Test

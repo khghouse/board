@@ -1,20 +1,21 @@
 package com.board.domain.article.service;
 
+import com.board.domain.article.dto.request.ArticleLikeServiceRequest;
+import com.board.domain.article.dto.response.ArticleIdResponse;
+import com.board.domain.article.dto.response.ArticleResponse;
 import com.board.domain.article.entity.Article;
 import com.board.domain.article.entity.ArticleLike;
 import com.board.domain.article.repository.ArticleLikeQueryRepository;
 import com.board.domain.article.repository.ArticleLikeRepository;
 import com.board.domain.article.repository.ArticleRepository;
+import com.board.domain.member.dto.response.MemberIdResponse;
+import com.board.domain.member.dto.response.MemberResponse;
 import com.board.domain.member.entity.Member;
 import com.board.domain.member.repository.MemberRepository;
 import com.board.global.common.dto.page.PageResponseWithExtraData;
 import com.board.global.common.dto.page.PageServiceRequest;
-import com.board.global.common.exception.BusinessException;
-import com.board.domain.article.dto.request.ArticleLikeServiceRequest;
-import com.board.domain.article.dto.response.ArticleIdResponse;
-import com.board.domain.article.dto.response.ArticleResponse;
-import com.board.domain.member.dto.response.MemberIdResponse;
-import com.board.domain.member.dto.response.MemberResponse;
+import com.board.global.common.exception.NotFoundException;
+import com.board.global.common.exception.UnprocessableEntityException;
 import com.board.global.common.util.CommonUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -57,7 +58,7 @@ public class ArticleLikeService {
         try {
             pageArticleLikes = articleLikeQueryRepository.findLikedMembers(articleId, request.toPageable());
         } catch (Exception e) {
-            throw new BusinessException(e.getMessage());
+            throw new UnprocessableEntityException(e.getMessage());
         }
 
         List<MemberResponse> members = CommonUtil.mapperToList(pageArticleLikes.getContent(), ArticleLike::getMember, MemberResponse::of);
@@ -70,7 +71,7 @@ public class ArticleLikeService {
         try {
             pageArticleLikes = articleLikeQueryRepository.findLikedArticles(memberId, request.toPageable());
         } catch (Exception e) {
-            throw new BusinessException(e.getMessage());
+            throw new UnprocessableEntityException(e.getMessage());
         }
 
         List<ArticleResponse> articles = CommonUtil.mapperToList(pageArticleLikes.getContent(), ArticleLike::getArticle, ArticleResponse::of);
@@ -80,10 +81,10 @@ public class ArticleLikeService {
 
     private ArticleAndMember getArticleAndMember(Long articleId, Long memberId) {
         Article article = articleRepository.findById(articleId)
-                .orElseThrow(() -> new BusinessException(ARTICLE_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
         Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new BusinessException(MEMBER_NOT_FOUND));
+                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
 
         return new ArticleAndMember(article, member);
     }

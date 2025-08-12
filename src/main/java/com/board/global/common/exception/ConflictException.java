@@ -4,13 +4,13 @@ import com.board.global.common.enumeration.ErrorCode;
 import lombok.Getter;
 
 @Getter
-public class ForbiddenException extends RuntimeException {
+public class ConflictException extends RuntimeException {
 
     private final ErrorCode errorCode;
 
-    public ForbiddenException(ErrorCode errorCode) {
+    public ConflictException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
     }
-
+    
 }
