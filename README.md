@@ -54,6 +54,15 @@ board
 
 <br />
 
+### 🔑 인증
+- JWT 기반 인증: Authorization 헤더로 토큰 전달
+
+```
+Authorization: Bearer <access_token>
+```
+
+<br />
+
 ### 📋 응답 상태 코드
 
 - 해당 프로젝트에서는 다음과 같은 HTTP 상태 코드를 정의합니다.
