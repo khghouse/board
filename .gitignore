@@ -42,3 +42,4 @@ out/
 /src/main/resources/application-slack.yml
 *.http
 http-client.env.json
+.env
