@@ -43,6 +43,7 @@ dependencies {
     implementation 'com.querydsl:querydsl-jpa:5.0.0:jakarta' // Spring Boot 3.x jakarta 기반 의존성 추가
 
     compileOnly 'org.projectlombok:lombok'
+    runtimeOnly 'com.mysql:mysql-connector-j'
     runtimeOnly 'com.h2database:h2'
 
     annotationProcessor 'org.projectlombok:lombok'

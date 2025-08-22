@@ -16,7 +16,7 @@ class MailTemplateTest extends IntegrationTestSupport {
     @Test
     @DisplayName("메일 템플릿 파일이 실제 존재하는지 체크한다.")
     void existTemplateFile() {
-        final String directoryPath = "/templates";
+        final String directoryPath = "/templates/";
         final String fileExtension = ".html";
 
         Stream.of(MailTemplate.values())

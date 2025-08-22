@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  app: # 서비스명: app
+    build:
+      context: . # Dockerfile이 위치한 디렉토리
+      dockerfile: Dockerfile # 사용할 Dockerfile 이름 (기본값이므로 생략 가능)
+    container_name: spring-app
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_PROFILES_ACTIVE: dev
+      SPRING_DATASOURCE_URL: jdbc:mysql://mysql:3306/${MYSQL_DATABASE}?serverTimezone=Asia/Seoul&characterEncoding=UTF-8
+      SPRING_DATASOURCE_USERNAME: ${MYSQL_USER}
+      SPRING_DATASOURCE_PASSWORD: ${MYSQL_PASSWORD}
+    depends_on: # mysql이 먼저 실행되도록 의존성 지정
+      mysql: # 서비스명 참조
+        condition: service_healthy # MySQL 완전 준비 후 시작
+    volumes:
+      - ./logs:/app/logs # 로그 파일 저장
+
+  mysql: # 서비스명 : mysql
+    image: mysql:8.4.6
+    container_name: mysql-db
+    environment:
+      MYSQL_ROOT_PASSWORD: ${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${MYSQL_DATABASE}
+      MYSQL_USER: ${MYSQL_USER}
+      MYSQL_PASSWORD: ${MYSQL_PASSWORD}
+      TZ: Asia/Seoul
+    ports:
+      - "3306:3306"
+    command: --character-set-server=utf8mb4 --collation-server=utf8mb4_unicode_ci
+    volumes:
+      - db-data:/var/lib/mysql # 데이터 영속화를 위한 볼륨 설정
+    healthcheck:
+      test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+volumes:
+  db-data: # 위에서 지정한 볼륨 이름 (MySQL 데이터 유지용)
