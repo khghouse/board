@@ -1,17 +1,31 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration scan="true" scanPeriod="10 seconds">
-    <include resource="org/springframework/boot/logging/logback/defaults.xml"/>
 
     <!-- 로그 저장 위치 및 파일명 -->
     <property name="LOG_PATH" value="./logs"/>
     <property name="LOG_FILE" value="board"/>
 
+    <!-- 색상 변환기 등록 -->
+    <conversionRule conversionWord="clr" converterClass="org.springframework.boot.logging.logback.ColorConverter"/>
+    <conversionRule conversionWord="wEx" converterClass="org.springframework.boot.logging.logback.WhitespaceThrowableProxyConverter"/>
+    <conversionRule conversionWord="wExFull" converterClass="org.springframework.boot.logging.logback.ExtendedWhitespaceThrowableProxyConverter"/>
+
+    <!-- 기타 속성 -->
+    <property name="PID" value="${PID:- }"/>
+    <property name="LOG_EXCEPTION_CONVERSION_WORD" value="%wEx"/>
+
+    <!-- 콘솔 로그 패턴 -->
+    <property name="CONSOLE_PATTERN"
+              value="%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}"/>
+
+    <!-- 파일명 패턴 -->
+    <property name="FILE_NAME_PATTERN" value="${LOG_PATH}/%d{yyyy-MM-dd}.${LOG_FILE}.%i.log"/>
+
     <!-- Spring Profile: local, test -->
     <springProfile name="local,test">
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
-                <!-- 콘솔 로그 패턴 정의 -->
-                <pattern>%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}</pattern>
+                <pattern>${CONSOLE_PATTERN}</pattern>
                 <charset>UTF-8</charset>
             </encoder>
         </appender>
@@ -27,24 +41,27 @@
 
     <!-- Spring Profile: dev,prod -->
     <springProfile name="dev,prod">
+        <!-- 콘솔 Appender -->
         <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
             <encoder>
-                <!-- 콘솔 로그 패턴 정의 -->
-                <pattern>%clr(%d{yyyy-MM-dd HH:mm:ss.SSS}){faint} %clr(%5p) %clr(${PID:- }){magenta} %clr(---){faint} %clr([%15.15t]){faint} %clr(%-40.40logger{39}){cyan} %clr(:){faint} %m%n${LOG_EXCEPTION_CONVERSION_WORD:-%wEx}</pattern>
+                <pattern>${CONSOLE_PATTERN}</pattern>
                 <charset>UTF-8</charset>
             </encoder>
         </appender>
 
-        <!-- 파일 로그 출력 -->
+        <!-- 파일 Appender -->
         <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
-            <file>${LOG_PATH}/${LOG_FILE}.log</file>
-            <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-                <fileNamePattern>${LOG_PATH}/${LOG_FILE}.%d{yyyy-MM-dd}.log</fileNamePattern>
-                <maxHistory>30</maxHistory>
+            <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+                <fileNamePattern>${FILE_NAME_PATTERN}</fileNamePattern> <!-- 파일명: yyyy-MM-dd.board.i.log -->
+                <maxFileSize>100MB</maxFileSize> <!-- 하루 단위 + 파일당 최대 100MB -->
+                <maxHistory>7</maxHistory> <!-- 로컬 보관 7일 -->
+                <totalSizeCap>1GB</totalSizeCap> <!-- 전체 용량 제한 -->
             </rollingPolicy>
             <encoder>
-                <pattern>${CONSOLE_LOG_PATTERN}</pattern>
-                <charset>UTF-8</charset>
+                <pattern>
+                    <pattern>${CONSOLE_PATTERN}</pattern>
+                    <charset>UTF-8</charset>
+                </pattern>
             </encoder>
         </appender>
 
