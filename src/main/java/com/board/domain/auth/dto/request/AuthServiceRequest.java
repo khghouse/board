@@ -1,6 +1,5 @@
 package com.board.domain.auth.dto.request;
 
-import com.board.domain.member.entity.Member;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,14 +23,6 @@ public class AuthServiceRequest {
         return AuthServiceRequest.builder()
                 .email(email)
                 .password(password)
-                .build();
-    }
-
-    public Member toEntity() {
-        return Member.builder()
-                .email(email)
-                .password(password)
-                .deleted(false)
                 .build();
     }
 

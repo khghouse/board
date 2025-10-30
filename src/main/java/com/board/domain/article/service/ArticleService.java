@@ -7,7 +7,7 @@ import com.board.domain.article.entity.Article;
 import com.board.domain.article.repository.ArticleQueryRepository;
 import com.board.domain.article.repository.ArticleRepository;
 import com.board.domain.member.entity.Member;
-import com.board.domain.member.repository.MemberRepository;
+import com.board.domain.member.service.MemberService;
 import com.board.global.common.dto.page.PageResponse;
 import com.board.global.common.dto.page.PageServiceRequest;
 import com.board.global.common.exception.NotFoundException;
@@ -32,9 +32,9 @@ public class ArticleService {
     public static final long ARTICLE_VIEW_INCREMENT_INTERVAL_IN_MILLIS = 60 * 60 * 1000;
 
     private final Redis redis;
+    private final MemberService memberService;
 
     private final ArticleRepository articleRepository;
-    private final MemberRepository memberRepository;
     private final ArticleQueryRepository articleQueryRepository;
 
     /**
@@ -42,8 +42,8 @@ public class ArticleService {
      */
     @Transactional
     public ArticleResponse createArticle(ArticleServiceRequest request, Long memberId) {
-        Member memberProxy = memberRepository.getReferenceById(memberId);
-        Article article = articleRepository.save(request.toEntity(memberProxy));
+        Member member = memberService.getMemberById(memberId);
+        Article article = articleRepository.save(request.toEntity(member));
         return ArticleResponse.of(article);
     }
 

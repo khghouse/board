@@ -5,7 +5,6 @@ import com.board.domain.article.dto.response.ArticleDetailResponse;
 import com.board.domain.article.dto.response.ArticleResponse;
 import com.board.domain.article.entity.Article;
 import com.board.domain.article.repository.ArticleRepository;
-import com.board.domain.article.service.ArticleService;
 import com.board.domain.member.entity.Member;
 import com.board.domain.member.repository.MemberRepository;
 import com.board.global.common.dto.page.PageResponse;

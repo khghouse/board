@@ -11,7 +11,7 @@ import com.board.domain.article.repository.ArticleRepository;
 import com.board.domain.member.dto.response.MemberIdResponse;
 import com.board.domain.member.dto.response.MemberResponse;
 import com.board.domain.member.entity.Member;
-import com.board.domain.member.repository.MemberRepository;
+import com.board.domain.member.service.MemberService;
 import com.board.global.common.dto.page.PageResponseWithExtraData;
 import com.board.global.common.dto.page.PageServiceRequest;
 import com.board.global.common.exception.NotFoundException;
@@ -25,17 +25,16 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 import static com.board.global.common.enumeration.ErrorCode.ARTICLE_NOT_FOUND;
-import static com.board.global.common.enumeration.ErrorCode.MEMBER_NOT_FOUND;
 
 @Service
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 public class ArticleLikeService {
 
-    private final ArticleLikeRepository articleLikeRepository;
-    private final ArticleRepository articleRepository;
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
 
+    private final ArticleRepository articleRepository;
+    private final ArticleLikeRepository articleLikeRepository;
     private final ArticleLikeQueryRepository articleLikeQueryRepository;
 
     @Transactional
@@ -83,8 +82,7 @@ public class ArticleLikeService {
         Article article = articleRepository.findById(articleId)
                 .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
-        Member member = memberRepository.findById(memberId)
-                .orElseThrow(() -> new NotFoundException(MEMBER_NOT_FOUND));
+        Member member = memberService.getMemberById(memberId);
 
         return new ArticleAndMember(article, member);
     }

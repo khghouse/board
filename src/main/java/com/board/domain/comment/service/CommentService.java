@@ -10,7 +10,7 @@ import com.board.domain.comment.dto.response.CommentResponse;
 import com.board.domain.comment.entity.Comment;
 import com.board.domain.comment.repository.CommentRepository;
 import com.board.domain.member.entity.Member;
-import com.board.domain.member.repository.MemberRepository;
+import com.board.domain.member.service.MemberService;
 import com.board.global.common.exception.NotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -25,10 +25,10 @@ import static com.board.global.common.enumeration.ErrorCode.COMMENT_NOT_FOUND;
 public class CommentService {
 
     private final CommentHierarchySerivce commentHierarchySerivce;
+    private final MemberService memberService;
 
     private final CommentRepository commentRepository;
     private final ArticleRepository articleRepository;
-    private final MemberRepository memberRepository;
 
     /**
      * 일반 댓글(루트 댓글)인 경우 댓글 등록
@@ -73,9 +73,9 @@ public class CommentService {
         Article article = articleRepository.findByIdAndDeletedFalse(articleId)
                 .orElseThrow(() -> new NotFoundException(ARTICLE_NOT_FOUND));
 
-        Member memberProxy = memberRepository.getReferenceById(memberId);
+        Member member = memberService.getMemberById(memberId);
 
-        return commentRepository.save(Comment.of(article, memberProxy, content));
+        return commentRepository.save(Comment.of(article, member, content));
     }
 
     private Comment findValidComment(Long commentId) {

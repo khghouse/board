@@ -2,9 +2,10 @@ package com.board.domain.auth.service;
 
 import com.board.domain.auth.dto.request.AuthServiceRequest;
 import com.board.domain.auth.dto.request.ReissueServiceRequest;
+import com.board.domain.member.dto.request.MemberServiceRequest;
 import com.board.domain.member.entity.Member;
-import com.board.domain.member.repository.MemberRepository;
-import com.board.global.common.exception.ConflictException;
+import com.board.domain.member.service.MemberService;
+import com.board.global.common.exception.NotFoundException;
 import com.board.global.common.exception.UnauthorizedException;
 import com.board.global.event.SignupCompletionMailEvent;
 import com.board.global.infrastructure.redis.Redis;
@@ -21,9 +22,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
-
-import static com.board.global.common.enumeration.ErrorCode.EMAIL_ALREADY_REGISTERED;
 import static com.board.global.common.enumeration.ErrorCode.INVALID_CREDENTIALS;
 import static com.board.global.security.JwtErrorCode.INVALID_TOKEN_USER;
 
@@ -32,7 +30,7 @@ import static com.board.global.security.JwtErrorCode.INVALID_TOKEN_USER;
 @Transactional(readOnly = true)
 public class AuthService {
 
-    private final MemberRepository memberRepository;
+    private final MemberService memberService;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationProvider authenticationProvider;
     private final PasswordEncoder passwordEncoder;
@@ -44,8 +42,14 @@ public class AuthService {
      */
     @Transactional
     public void signup(AuthServiceRequest request) {
-        validateAlreadyJoinedMember(request.getEmail());
-        memberRepository.save(request.toEntity());
+        memberService.validateAlreadyJoinedMember(request.getEmail());
+
+        MemberServiceRequest memberRequest = MemberServiceRequest.of(
+                request.getEmail(),
+                request.getPassword());
+
+        memberService.createMember(memberRequest);
+
         eventPublisher.publishEvent(SignupCompletionMailEvent.create(request.getEmail()));
     }
 
@@ -54,8 +58,7 @@ public class AuthService {
      */
     public JwtToken login(AuthServiceRequest request) {
         // 회원 인증 : 아이디에 해당하는 회원이 존재하는지 체크
-        Member member = memberRepository.findByEmailAndDeletedFalse(request.getEmail())
-                .orElseThrow(() -> new UnauthorizedException(INVALID_CREDENTIALS));
+        Member member = getValidMemberForToken(request.getEmail());
 
         // 회원 인증 : 비밀번호가 일치하는지 체크
         if (!passwordEncoder.matches(request.getPassword(), member.getPassword())) {
@@ -88,8 +91,7 @@ public class AuthService {
         Long memberId = jwtTokenProvider.getMemberIdByAccessToken(request.getAccessToken());
 
         // 회원 정보 조회
-        Member member = memberRepository.findByIdAndDeletedFalse(memberId)
-                .orElseThrow(() -> new JwtException(INVALID_TOKEN_USER));
+        Member member = getValidMemberForToken(memberId);
 
         // 리프레쉬 토큰 비교
         redis.compareRefreshToken(memberId, refreshToken);
@@ -141,14 +143,19 @@ public class AuthService {
         return jwtTokenProvider.generateToken(authenticate);
     }
 
-    /**
-     * 이미 가입된 회원인지 체크 by email
-     */
-    private void validateAlreadyJoinedMember(String email) {
-        Optional<Member> optMember = memberRepository.findByEmailAndDeletedFalse(email);
+    private Member getValidMemberForToken(Long memberId) {
+        try {
+            return memberService.getValidMemberById(memberId);
+        } catch (NotFoundException e) {
+            throw new JwtException(INVALID_TOKEN_USER);
+        }
+    }
 
-        if (optMember.isPresent()) {
-            throw new ConflictException(EMAIL_ALREADY_REGISTERED);
+    private Member getValidMemberForToken(String email) {
+        try {
+            return memberService.getValidMemberByEmail(email);
+        } catch (NotFoundException e) {
+            throw new UnauthorizedException(INVALID_CREDENTIALS);
         }
     }
 
